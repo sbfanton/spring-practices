@@ -1,2 +1,2 @@
-# spring-practices
-Repositorio con prácticas de temas varios del framework de desarrollo web Spring
+# Spring Framework Practices
+Prácticas y ejemplos varios de desarrollo de temas varios con framework de desarrollo web con `Spring` y `SpringBoot`

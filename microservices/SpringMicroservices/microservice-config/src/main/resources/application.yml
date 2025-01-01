@@ -1,0 +1,13 @@
+server:
+  port: 8889 #lo usual es usar el 8888 pero phpMyAdmin lo usaba
+
+spring:
+  profiles:
+    active: native
+  application:
+    name: mcsv-config
+  cloud:
+    config:
+      server:
+        native: 
+          search-locations: classpath:/configurations

@@ -1,0 +1,266 @@
+{
+	"info": {
+		"_postman_id": "40fec045-23d9-47fb-9882-fdb2571b3592",
+		"name": "Primeros microservicios",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "GetAllStudents",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:{{student-micros-port}}/api/students",
+					"host": [
+						"localhost"
+					],
+					"port": "{{student-micros-port}}",
+					"path": [
+						"api",
+						"students"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetStudentById",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:{{student-micros-port}}/api/students/:student-id",
+					"host": [
+						"localhost"
+					],
+					"port": "{{student-micros-port}}",
+					"path": [
+						"api",
+						"students",
+						":student-id"
+					],
+					"variable": [
+						{
+							"key": "student-id",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "SaveStudent",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Ana\",\n    \"lastName\": \"Aguirre\",\n    \"email\": \"ana.aguirre@mimail.com\",\n    \"courseId\": 3\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:{{student-micros-port}}/api/students",
+					"host": [
+						"localhost"
+					],
+					"port": "{{student-micros-port}}",
+					"path": [
+						"api",
+						"students"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DeleteStudentById",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost:{{student-micros-port}}/api/students/:student-id",
+					"host": [
+						"localhost"
+					],
+					"port": "{{student-micros-port}}",
+					"path": [
+						"api",
+						"students",
+						":student-id"
+					],
+					"variable": [
+						{
+							"key": "student-id",
+							"value": "6"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetAllCourses",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:{{course-micros-port}}/api/courses",
+					"host": [
+						"localhost"
+					],
+					"port": "{{course-micros-port}}",
+					"path": [
+						"api",
+						"courses"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetCourseById",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:{{course-micros-port}}/api/courses/:course-id",
+					"host": [
+						"localhost"
+					],
+					"port": "{{course-micros-port}}",
+					"path": [
+						"api",
+						"courses",
+						":course-id"
+					],
+					"variable": [
+						{
+							"key": "course-id",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "SaveCourse",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Sociología\",\n    \"teacher\": \"Andrés García\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:{{course-micros-port}}/api/courses",
+					"host": [
+						"localhost"
+					],
+					"port": "{{course-micros-port}}",
+					"path": [
+						"api",
+						"courses"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DeleteCourseById",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost:{{course-micros-port}}/api/courses/:course-id",
+					"host": [
+						"localhost"
+					],
+					"port": "{{course-micros-port}}",
+					"path": [
+						"api",
+						"courses",
+						":course-id"
+					],
+					"variable": [
+						{
+							"key": "course-id",
+							"value": "6"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetStudentsByCourseId",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:{{course-micros-port}}/api/courses/:course-id/students",
+					"host": [
+						"localhost"
+					],
+					"port": "{{course-micros-port}}",
+					"path": [
+						"api",
+						"courses",
+						":course-id",
+						"students"
+					],
+					"variable": [
+						{
+							"key": "course-id",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "student-micros-port",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "course-micros-port",
+			"value": "",
+			"type": "default"
+		}
+	]
+}
