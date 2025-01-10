@@ -19,7 +19,6 @@ import com.course.springsecuritycourse.service.ProductService;
 
 import jakarta.validation.Valid;
 
-
 @RestController
 @RequestMapping("${corporation.api}/products")
 public class ProductController {
@@ -28,26 +27,26 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping
-    public ResponseEntity<?> getAllProducts() {
+    public ResponseEntity<List<Product>> getAllProducts() {
         List<Product> products = productService.getAllproducts();
-        return new ResponseEntity(products, HttpStatus.OK);
+        return new ResponseEntity<>(products, HttpStatus.OK);
     }
     
     @GetMapping("/{id}")
-    public ResponseEntity<?> getProductById(@PathVariable Long id) {
+    public ResponseEntity<Product> getProductById(@PathVariable Long id) {
         Product product = productService.getProductById(id);
-        return new ResponseEntity(product, HttpStatus.OK);
+        return new ResponseEntity<>(product, HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<?> saveProduct(@RequestBody @Valid Product product) {
+    public ResponseEntity<Product> saveProduct(@RequestBody @Valid Product product) {
         Product savedProduct = productService.saveProduct(product);
-        return new ResponseEntity(savedProduct, HttpStatus.CREATED);
+        return new ResponseEntity<>(savedProduct, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteProductById(@PathVariable Long id) {
+    public ResponseEntity<StatusDTO> deleteProductById(@PathVariable Long id) {
         StatusDTO statusDTO = productService.deleteProductById(id);
-        return new ResponseEntity(statusDTO, HttpStatus.OK);
+        return new ResponseEntity<>(statusDTO, HttpStatus.OK);
     }
 }

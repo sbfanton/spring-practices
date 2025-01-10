@@ -1,22 +1,25 @@
 package com.course.springsecuritycourse.service;
 
-import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 import javax.crypto.SecretKey;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import com.course.springsecuritycourse.entity.User;
+import com.course.springsecuritycourse.util.RandomKeyGen;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.Jwts.SIG;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.security.SecureDigestAlgorithm;
+import jakarta.annotation.PostConstruct;
 
 /*
  * Los claims en un JSON Web Token (JWT) son declaraciones sobre una entidad (generalmente, el usuario) y metadatos adicionales. Los claims son la parte central del JWT y se utilizan para transmitir información entre las partes de manera segura y confiable.
@@ -40,13 +43,28 @@ Los claims se encuentran en el payload (carga útil) del jwt
 @Service
 public class JwtService {
 
-    private static final String SECRET_KEY = "901f47cae3b3817661ad2cceea486d0dd36a831ff4370a994996896d994c8ca166d0d269a42e36acfcd7fc11254f7c32b610e2d428ac67b7cce1e592fbb373ca93dc4ea16e28648b42f62505a32d11c74c0ed7f6eb0fcdb13af7d6dff590b1f66001539588e9f6b20a6e70e6ac9f815ec4f19d2565f9ca64ad2902761f5e5fee";
+    private String secretKey;
 
-    public String getToken(UserDetails user) {
-        return getToken(new HashMap<>(), user);
+    @PostConstruct
+    public void generateSKey() {
+        secretKey = RandomKeyGen.generateRandomKey();
     }
 
-    private String getToken(Map<String, Object> extraClaims, UserDetails user) {
+    public String getToken(User user) {
+        Map<String, Object> extraClaims = generateExtraClaimsMap(user);
+        return generateToken(extraClaims, user);
+    }
+
+    private Map<String, Object> generateExtraClaimsMap(User user) {
+        Map <String, Object> extraClaims = new HashMap<>();
+        extraClaims.put("userId", user.getUsername());
+        extraClaims.put("firstName", user.getFirstName());
+        extraClaims.put("lastName", user.getLastName());
+        extraClaims.put("country", user.getCountry());
+        return extraClaims;
+    }
+
+    private String generateToken(Map<String, Object> extraClaims, User user) {
         return Jwts.builder()
                    .claims(extraClaims)
                    .subject(user.getUsername())
@@ -57,7 +75,38 @@ public class JwtService {
     }
 
     private SecretKey getKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
+
+    public String getUsernameFromToken(String token) {
+        return getClaim(token, Claims::getSubject);
+    }
+
+    private Date getExpirationDate(String token) {
+        return getClaim(token, Claims::getExpiration);
+    }
+
+    private boolean isTokenExpired(String token) {
+        return getExpirationDate(token).before(new Date(System.currentTimeMillis()));
+    }
+
+    public boolean isTokenValid(String token, UserDetails userDetails) {
+        String username = getUsernameFromToken(token);
+        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    }
+
+    private Claims getClaims(String token) {
+        return Jwts.parser()
+                   .verifyWith(getKey())
+                   .build()
+                   .parseSignedClaims(token)
+                   .getPayload(); 
+    }
+
+    public <T> T getClaim(String token, Function<Claims, T> claimsResolver) {
+        
+        final Claims claims = getClaims(token);
+        return claimsResolver.apply(claims);
+    } 
 }

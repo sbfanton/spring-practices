@@ -26,14 +26,14 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponseDTO> login(@RequestBody @Valid LoginDTO loginDTO) {
-        return new ResponseEntity<AuthResponseDTO>(
+        return new ResponseEntity<>(
             authService.login(loginDTO), 
             HttpStatus.OK);
     }
 
     @PostMapping("/register")
     public ResponseEntity<AuthResponseDTO> register(@RequestBody @Valid RegisterDTO registerDTO) {
-        return new ResponseEntity<AuthResponseDTO>(
+        return new ResponseEntity<>(
             authService.register(registerDTO), 
             HttpStatus.OK);
     }

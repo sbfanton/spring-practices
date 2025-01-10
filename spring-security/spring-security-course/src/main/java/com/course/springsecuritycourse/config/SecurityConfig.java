@@ -1,12 +1,15 @@
-package com.course.springsecuritycourse.config.security;
+package com.course.springsecuritycourse.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
-import static org.springframework.security.config.Customizer.withDefaults;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 @Configuration
@@ -15,6 +18,12 @@ public class SecurityConfig {
     
     @Value("${corporation.api}")
     private String corporationApi;
+
+    @Autowired
+    private AuthenticationProvider authProvider;
+
+    @Autowired
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
 
     /*
     Aqui estamos creando la cadena de filtros de seguridad que se aplicaran 
@@ -30,7 +39,11 @@ public class SecurityConfig {
                 authreq -> authreq.requestMatchers(corporationApi + "/auth/**").permitAll() //endpoints publicos
                                   .anyRequest().authenticated() //endpoints protegidos por los filtros de seguridad
             )
-            .formLogin(withDefaults())
+            .sessionManagement( //como utilizamos jwt y no sesiones a traves de cookies o sessions, ponemos que la sesion es sin estado
+                sessionManager -> sessionManager.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            )
+            .authenticationProvider(authProvider) // seteamos el proveedor que se encargará del login y verificar las credenciales
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // seteamos el filtro que utilizaremos para validar y verificar los jwt
             .build();
     }
 }
