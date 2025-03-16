@@ -1,3 +1,47 @@
+colecciones -> equivalentes a tablas en SQL
+documentos -> equivalentes a registros en SQL
+
+
+Comandos MongoDB:
+
+brew services start mongodb-community@4.4 (iniciar server de mongodb)
+
+brew services stop mongodb-community@4.4 (detener server de mongodb)
+
+brew services list (ver estados de servicios)
+
+mongo (iniciar cliente de shell de mongo)
+
+tail -f /usr/local/var/log/mongodb/mongo.log  (los en tiempo real del servidor de mongo)
+
+db (ver database actual)
+
+show dbs
+
+db.help()
+
+use pruebadb (switchea la consola a la base de datos pruebadb, para que se cree la base, se debe insertar al menos un dato)
+
+
+db.products.insert({"name": "laptop"}) (insertar un documento o dato en tabla products)
+
+db.products.insert([{"name": "mouse"}, {"name": "printer", "description": "HP"}])  (insertar varios documentos a una colección)
+
+tener en cuenta que en una misma colección, los documentos pueden tener estructura variada
+
+
+show collections
+
+db.dropDatabase()  (elimina la base de datos actual)
+
+db.createCollection("users")
+
+db.products.drop() (elimina la coleccion products)
+
+db.products.find() (devuelve todos los datos de la colección products)
+
+db.products.find().pretty()  (lo mismo que el anterior, pero formatearlo cada documento)
+
 db.products.find({"name": "Mouse"}).pretty()  (busca un ítem con un atributo y valor de atributo especifico)
 
 db.products.find({"compatibility": "Windows"}).pretty() (si compatibility es una lista, devuelve aquellos documentos que tengan el ítem Windows en dicho atributo compatibility)
@@ -31,9 +75,5 @@ db.products.update({name: "Auriculares"}, {$rename: {name: "nombre"}})  (del obj
 db.products.remove({name: "Desktop"})  (eliminar el producto con name Desktop)
 
 db.products.remove({}) (elimina TODOS los documentos de la colección)
-
-
-
-
 
 
