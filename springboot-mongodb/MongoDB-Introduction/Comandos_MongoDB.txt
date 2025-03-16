@@ -1,0 +1,39 @@
+db.products.find({"name": "Mouse"}).pretty()  (busca un ítem con un atributo y valor de atributo especifico)
+
+db.products.find({"compatibility": "Windows"}).pretty() (si compatibility es una lista, devuelve aquellos documentos que tengan el ítem Windows en dicho atributo compatibility)
+
+db.products.find({"compatibility": "Windows", "name": "Auriculares"}).pretty() (idem anterior, pero agregando un filtro mas)
+
+db.products.findOne({"compatibility": "Windows"})  (devuelve solo el primer dato que coincide con ese filtro)
+
+db.products.find({"compatibility": "Windows", "name": "Auriculares"}, {"name": 1, "description": 1, "_id": 0}).pretty()  (de los elementos que me devuelva, solo me muestra los atributos name y description)
+
+db.products.find({"compatibility": "Windows"}).sort({name: 1}).pretty()  (ordena los resultados alfabéticamente por el name)
+
+db.products.find({"compatibility": "Windows"}).limit(1).sort({name: 1}).pretty()  (quiero ver el primer dato solamente, o los n datos establecidos en el parámetro limit)
+
+db.products.count()  (para ver la cantidad de datos en la colección products)
+
+db.products.find().forEach(product => print("Product Name: " + product.name))  (como MongoDB se basa en Javascript, puedo ejecutar funciones en dicho lenguaje, como en este caso, que recorro los documentos que me devuelve find() y muestro el nombre)
+
+db.products.find({ "name": { $regex: "mouse", $options: "i" } }).pretty()  (busca los productos que tengan incluido en su nombre la palabra mouse, sin distinguir entre mayusculas y minúsculas)
+
+db.products.update({name: "Auriculares"}, {price: 110}) (actualiza el o los productos que tengan por nombre Auriculares, y reemplaza todo el documento entero por el objeto que paso en el segundo parámetro, donde tengo price)
+
+db.products.update({name: "Auriculares"}, {$set: {price: 110} })  (este comando solo actualiza el o los atributos que se pasan en el objeto de $set)
+
+db.products.update({name: "Desktop"}, {$set: {description: "Gaming Desktop"}}, {upsert: true}) (con upset en true estoy indicando que si el producto que estoy queriendo actualizar no existe, que lo inserte o lo cree con los datos del $set)
+
+db.products.update({name: "Auriculares"}, {$inc: {price: 10}}) ($inc sirve para incrementar valores numéricos, en este caso queremos incrementar el precio en 10 de los productos con nombre Auriculares)
+
+db.products.update({name: "Auriculares"}, {$rename: {name: "nombre"}})  (del objeto con valor Auriculares en el atributo name, quiero cambiar el nombre del atributo "name" por "nombre")
+
+db.products.remove({name: "Desktop"})  (eliminar el producto con name Desktop)
+
+db.products.remove({}) (elimina TODOS los documentos de la colección)
+
+
+
+
+
+
