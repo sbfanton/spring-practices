@@ -1,170 +1,166 @@
 {
 	"info": {
-		"_postman_id": "ce12a276-d9d8-4f91-b323-5f05f34025be",
+		"_postman_id": "f6c95c90-eabd-4911-83f2-c9d0106cadcc",
 		"name": "Online_Shop_MongoDB",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "GetClients",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "localhost:8080/clientes?nombre_like=Simpson",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"clientes"
-					],
-					"query": [
-						{
-							"key": "nombre_like",
-							"value": "Simpson"
+			"name": "Customers",
+			"item": [
+				{
+					"name": "GetCustomers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:9091/customers?name=Bart&age=10&address_city=Springfield",
+							"host": [
+								"localhost"
+							],
+							"port": "9091",
+							"path": [
+								"customers"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "Bart"
+								},
+								{
+									"key": "age",
+									"value": "10"
+								},
+								{
+									"key": "address_city",
+									"value": "Springfield"
+								},
+								{
+									"key": "email",
+									"value": "fdsfdsf",
+									"disabled": true
+								}
+							]
 						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "GetClienteById",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "localhost:8080/clientes/:id",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"clientes",
-						":id"
-					],
-					"variable": [
-						{
-							"key": "id",
-							"value": "67d8c126dc0efe2d6bf4e318"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "CreateCliente",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"nombre\": \"Bart Simpson\",\n    \"edad\": 10,\n    \"email\": \"bart.simpson@example.com\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "localhost:8080/clientes",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"clientes"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "UpdateCliente",
-			"request": {
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"nombre\": \"Lisa Simpson\",\n    \"edad\": 9,\n    \"email\": \"lisa.simpson@example.com\",\n    \"telefono\": \"555-0987\",\n    \"direccion\": {\n            \"calle\": \"Av. Siempre Viva\",\n            \"ciudad\": \"Springfield\",\n            \"numero\": 743\n        }\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "GetCustomerByCustomerId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:9091/customers/:id",
+							"host": [
+								"localhost"
+							],
+							"port": "9091",
+							"path": [
+								"customers",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "45678987"
+								}
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "localhost:8080/clientes/:id",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"clientes",
-						":id"
-					],
-					"variable": [
-						{
-							"key": "id",
-							"value": "67d8c126dc0efe2d6bf4e318"
+				{
+					"name": "CreateCustomer",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"customerId\": \"13678987\",\n    \"name\": \"Bartholomew James\",\n    \"age\": 45,\n    \"email\": \"bartholomew.james@example.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:9091/customers",
+							"host": [
+								"localhost"
+							],
+							"port": "9091",
+							"path": [
+								"customers"
+							]
 						}
-					]
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateCustomer",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"customerId\": \"45678987\",\n    \"name\": \"Bart Simpson\",\n    \"age\": 10,\n    \"email\": \"bart.simpson@example.com\",\n    \"phoneNumber\": \"555-0987\",\n    \"address\": {\n            \"street\": \"Av. Siempre Viva\",\n            \"city\": \"Springfield\",\n            \"number\": 743\n        }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:9091/customers/:id",
+							"host": [
+								"localhost"
+							],
+							"port": "9091",
+							"path": [
+								"customers",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "45678987"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteCustomerByCustomerId",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:9091/customers/:id",
+							"host": [
+								"localhost"
+							],
+							"port": "9091",
+							"path": [
+								"customers",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "45678987"
+								}
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "GetClienteByEmail",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "localhost:8080/clientes/email/:email",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"clientes",
-						"email",
-						":email"
-					],
-					"variable": [
-						{
-							"key": "email",
-							"value": "lisa.simpson@example.com"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "DeleteClienteById",
-			"request": {
-				"method": "DELETE",
-				"header": [],
-				"url": {
-					"raw": "localhost:8080/clientes/:id",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"clientes",
-						":id"
-					],
-					"variable": [
-						{
-							"key": "id",
-							"value": "67d8c29e20f12a6b1b40e304"
-						}
-					]
-				}
-			},
-			"response": []
+			"name": "Products",
+			"item": []
 		}
 	]
 }

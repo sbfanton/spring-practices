@@ -1,0 +1,14 @@
+{
+    "_id": "ObjectId",
+    "name": "str",
+    "country": "str",
+    "founded": "int",
+    "branches": [
+        {
+            "street": "str",
+            "number": "int",
+            "city": "str"
+        }
+    ],
+    "products": "list[str]"
+}

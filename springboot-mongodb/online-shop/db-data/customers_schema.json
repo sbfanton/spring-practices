@@ -1,0 +1,13 @@
+{
+    "_id": "ObjectId",
+    "customerId": "str",
+    "name": "str",
+    "age": "int",
+    "email": "str",
+    "phoneNumber": "str",
+    "address": {
+        "street": "str",
+        "number": "int",
+        "city": "str"
+    }
+}

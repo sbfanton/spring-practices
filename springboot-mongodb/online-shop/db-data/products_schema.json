@@ -1,0 +1,10 @@
+{
+    "_id": "ObjectId",
+    "name": "str",
+    "description": "str",
+    "price": "int",
+    "facturer": "str",
+    "features": "list[str]",
+    "compatibility": "list[str]",
+    "includedItems": "list[str]"
+}

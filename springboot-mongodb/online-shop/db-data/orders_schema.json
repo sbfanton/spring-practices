@@ -1,0 +1,14 @@
+{
+    "_id": "ObjectId",
+    "orderId": "int",
+    "customerId": "str",
+    "items": [
+        {
+            "name": "str",
+            "quantity": "int",
+            "price": "int"
+        }
+    ],
+    "total": "int",
+    "status": "str"
+}
