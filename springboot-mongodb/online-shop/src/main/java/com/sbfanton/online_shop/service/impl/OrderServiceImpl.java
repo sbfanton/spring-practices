@@ -1,21 +1,26 @@
 package com.sbfanton.online_shop.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.apache.commons.lang3.tuple.Triple;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.sbfanton.online_shop.model.Customer;
 import com.sbfanton.online_shop.model.Order;
 import com.sbfanton.online_shop.repository.OrderRepository;
+import com.sbfanton.online_shop.repository.custom.criteria.OrderCriteria;
 import com.sbfanton.online_shop.service.OrderService;
 
 import utils.EnumUtils;
 import utils.ParamsConverter;
 import utils.ParamsValidator;
+import utils.constants.CollectionsNames;
 import utils.constants.CustomerReqAllowedParams;
+import utils.constants.OrderReqAllowedParams;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -23,24 +28,24 @@ public class OrderServiceImpl implements OrderService {
 	@Autowired
 	private OrderRepository orderRepository;
 	
+	@Autowired
+	private OrderCriteria orderCriteria;
+	
 	public List<Order> getAllOrders() {
         return orderRepository.findAll();
     }
 
-    public Optional<Order> getOrderById(String id) {
-        return orderRepository.findById(id);
+    public Optional<Order> getOrderByOrderId(String id) {
+        return orderRepository.findOrderByOrderId(Integer.parseInt(id));
     }
 
-    public List<Order> getOrdersByCustomer(String customerId) {
-        return orderRepository.findByCustomerId(customerId);
-    }
 
     public Order createOrder(Order order) {
         return orderRepository.save(order);
     }
 
     public Order updateOrder(String id, Order updatedOrder) {
-        return orderRepository.findById(id)
+        return orderRepository.findOrderByOrderId(Integer.parseInt(id))
             .map(order -> {
                 order.setOrderId(updatedOrder.getOrderId());
                 order.setCustomerId(updatedOrder.getCustomerId());
@@ -51,20 +56,27 @@ public class OrderServiceImpl implements OrderService {
             }).orElseThrow(() -> new RuntimeException("Order not found"));
     }
 
-    public void deleteOrder(String id) {
-        orderRepository.deleteById(id);
+    public void deleteOrderByOrderId(String id) {
+        orderRepository.deleteByorderId(Integer.parseInt(id));
     }
     
     @SuppressWarnings("unchecked")
 	public List<Order> getOrdersFiltered(Map<String, String> filters) throws Exception {
-		/*ParamsValidator.validateParams(
+		ParamsValidator.validateParams(
 				filters, 
-				EnumUtils.getEnumPropertyValues(CustomerReqAllowedParams.class, "getParamName"));
-		*/
-		Map<String, Object> convertedFilters = 
-				ParamsConverter.convertReqParamsMapToGenericMap(filters);
-		List<Order> orders = (List<Order>) orderRepository
-				.searchDocumentsFiltered(convertedFilters, Customer.class);
+				EnumUtils.getEnumPropertyValues(OrderReqAllowedParams.class, "getParamName"));
+		List<Triple<String, Class<?>, Object>> convertedFilters = 
+				ParamsConverter.convertReqParamsMapToGenericMap(filters, Order.class.getName());
+		
+		
+		
+		List<Order> orders = new ArrayList<>();
+				/*(List<Order>) orderRepository
+				.searchDocumentsFiltered(
+						convertedFilters, 
+						Order.class, 
+						CollectionsNames.ORDERS.getName(), 
+						orderCriteria);*/
 		
 		return orders;
 	}

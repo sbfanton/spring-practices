@@ -14,11 +14,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:9091/customers?name=Bart&age=10&address_city=Springfield",
+							"raw": "{{main-path}}/customers?name=Bart",
 							"host": [
-								"localhost"
+								"{{main-path}}"
 							],
-							"port": "9091",
 							"path": [
 								"customers"
 							],
@@ -29,15 +28,32 @@
 								},
 								{
 									"key": "age",
-									"value": "10"
-								},
-								{
-									"key": "address_city",
-									"value": "Springfield"
+									"value": "10",
+									"disabled": true
 								},
 								{
 									"key": "email",
-									"value": "fdsfdsf",
+									"value": "bart.simpson@example.com",
+									"disabled": true
+								},
+								{
+									"key": "phone",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "addressStreet",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "addressNumber",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "addressCity",
+									"value": "Springfield",
 									"disabled": true
 								}
 							]
@@ -51,11 +67,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:9091/customers/:id",
+							"raw": "{{main-path}}/customers/:id",
 							"host": [
-								"localhost"
+								"{{main-path}}"
 							],
-							"port": "9091",
 							"path": [
 								"customers",
 								":id"
@@ -85,11 +100,10 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:9091/customers",
+							"raw": "{{main-path}}/customers",
 							"host": [
-								"localhost"
+								"{{main-path}}"
 							],
-							"port": "9091",
 							"path": [
 								"customers"
 							]
@@ -112,11 +126,10 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:9091/customers/:id",
+							"raw": "{{main-path}}/customers/:id",
 							"host": [
-								"localhost"
+								"{{main-path}}"
 							],
-							"port": "9091",
 							"path": [
 								"customers",
 								":id"
@@ -137,11 +150,10 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "localhost:9091/customers/:id",
+							"raw": "{{main-path}}/customers/:id",
 							"host": [
-								"localhost"
+								"{{main-path}}"
 							],
-							"port": "9091",
 							"path": [
 								"customers",
 								":id"
@@ -160,7 +172,195 @@
 		},
 		{
 			"name": "Products",
-			"item": []
+			"item": [
+				{
+					"name": "GetProducts",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{main-path}}/products?features=LED",
+							"host": [
+								"{{main-path}}"
+							],
+							"path": [
+								"products"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "monitor",
+									"disabled": true
+								},
+								{
+									"key": "description",
+									"value": "Full HD",
+									"disabled": true
+								},
+								{
+									"key": "price",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "facturer",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "features",
+									"value": "LED"
+								},
+								{
+									"key": "compatibility",
+									"value": "Windows",
+									"disabled": true
+								},
+								{
+									"key": "includedItems",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetProductId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{main-path}}/products/:id",
+							"host": [
+								"{{main-path}}"
+							],
+							"path": [
+								"products",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "67ddbe28a90f871e617c503d"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateProduct",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Ergo 80 Genius\",\n  \"description\": \"Mouse Ergonómico\",\n  \"price\": 350.50,\n  \"facturer\": \"Genius\",\n  \"features\": [\n    \"Mouse inalámbrico con tecnología USB 3.0\",\n    \"Formato ergonómico\"\n  ],\n  \"compatibility\": [\n    \"Windows\",\n    \"Mac\",\n    \"Linux\"\n  ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{main-path}}/products",
+							"host": [
+								"{{main-path}}"
+							],
+							"path": [
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateProduct",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Ergo 80 Genius\",\n  \"description\": \"Mouse Ergonómico\",\n  \"price\": 350.50,\n  \"facturer\": \"Genius\",\n  \"features\": [\n    \"Mouse inalámbrico con tecnología USB 3.0\",\n    \"Formato ergonómico\",\n    \"Colores negro, oro y plata\"\n  ],\n  \"compatibility\": [\n    \"Windows\",\n    \"Mac\",\n    \"Linux\"\n  ],\n  \"includedItems\": [\n      \"Mouse ergonómico\",\n      \"Pila de prueba AA\",\n      \"Conector USB\"   \n  ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{main-path}}/products/:id",
+							"host": [
+								"{{main-path}}"
+							],
+							"path": [
+								"products",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "67ddbe28a90f871e617c503d"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteProduct",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{main-path}}/products/:id",
+							"host": [
+								"{{main-path}}"
+							],
+							"path": [
+								"products",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "main-path",
+			"value": "localhost:9091",
+			"type": "default"
 		}
 	]
 }

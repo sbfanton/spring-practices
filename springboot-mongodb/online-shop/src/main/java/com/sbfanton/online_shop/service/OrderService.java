@@ -9,10 +9,9 @@ import com.sbfanton.online_shop.model.Order;
 public interface OrderService {
 
 	public List<Order> getAllOrders();
-    public Optional<Order> getOrderById(String id);
-    public List<Order> getOrdersByCustomer(String customerId);
+    public Optional<Order> getOrderByOrderId(String id);
     public Order createOrder(Order order);
     public Order updateOrder(String id, Order updatedOrder);
-    public void deleteOrder(String id);
+    public void deleteOrderByOrderId(String id);
     public List<Order> getOrdersFiltered(Map<String, String> filters) throws Exception;
 }

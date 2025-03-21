@@ -4,6 +4,7 @@
     "customerId": "str",
     "items": [
         {
+            "productId": "int",
             "name": "str",
             "quantity": "int",
             "price": "int"

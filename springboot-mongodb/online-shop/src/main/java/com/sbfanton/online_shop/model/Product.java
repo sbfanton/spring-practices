@@ -24,10 +24,11 @@ public class Product {
 
     @Id
     private String id; 
+    private Integer productId;
     private String name;
     private String description;
-    private int price;
-    private String facturer;
+    private Double price;
+    private ProductFacturer facturer;
     private List<String> features;
     private List<String> compatibility;
     private List<String> includedItems;

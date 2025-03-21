@@ -21,9 +21,9 @@ public class Order {
 
 	@Id
     private String id;
-    private int orderId;
+    private Integer orderId;
     private String customerId;
-    private List<Item> items;
-    private int total;
+    private List<OrderItem> items;
+    private Double total;
     private String status;
 }

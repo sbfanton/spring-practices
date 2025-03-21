@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.apache.commons.lang3.tuple.Triple;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +15,7 @@ import com.sbfanton.online_shop.service.CustomerService;
 import utils.EnumUtils;
 import utils.ParamsConverter;
 import utils.ParamsValidator;
+import utils.constants.CollectionsNames;
 import utils.constants.CustomerReqAllowedParams;
 
 @Service
@@ -59,10 +61,10 @@ public class CustomerServiceImpl implements CustomerService {
 		ParamsValidator.validateParams(
 				filters, 
 				EnumUtils.getEnumPropertyValues(CustomerReqAllowedParams.class, "getParamName"));
-		Map<String, Object> convertedFilters = 
-				ParamsConverter.convertReqParamsMapToGenericMap(filters);
+		List<Triple<String, Class<?>, Object>> convertedFilters = 
+				ParamsConverter.convertReqParamsMapToGenericMap(filters, Customer.class.getName());
 		List<Customer> customers = (List<Customer>) customerRepository
-				.searchDocumentsFiltered(convertedFilters, Customer.class);
+				.searchDocumentsFiltered(convertedFilters, Customer.class, CollectionsNames.CUSTOMERS.getName(), null);
 		
 		return customers;
 	}

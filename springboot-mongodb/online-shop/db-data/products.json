@@ -1,43 +1,75 @@
 [{
+  "productId": 1,
   "name": "Laptop Dell XPS 13",
   "description": "Laptop ultradelgada con pantalla 4K y procesador Intel Core i7",
   "price": 1200,
-  "facturer": "Dell"
-},{
+  "facturer": {
+    "id": null,
+    "name": "Dell"
+  }
+},
+{
+  "productId": 2,
   "name": "Teclado mecánico Razer",
   "description": "Teclado mecánico con retroiluminación RGB y switches mecánicos Razer Green",
   "price": 120
 },{
+  "productId": 3,
   "name": "Monitor ASUS 24\"",
   "description": "Monitor Full HD de 24 pulgadas con tecnología IPS",
   "price": 200,
-  "facturer": "ASUS"
+  "facturer": {
+    "id": 1,
+    "name": "ASUS"
+  }
 },{
+  "productId": 14,
   "name": "Mouse Logitech G Pro",
   "price": 50,
-  "facturer": "Logitech"
+  "facturer": {
+    "id": 3,
+    "name": "Logitech"
+  }
 },{
+  "productId": 4,
   "name": "RAM Corsair Vengeance 16GB",
   "price": 80
 },{
+  "productId": 5,
   "name": "GPU NVIDIA RTX 3070",
   "description": "Tarjeta gráfica de alto rendimiento para juegos y trabajo profesional",
   "price": 500,
-  "facturer": "NVIDIA"
+  "facturer": {
+    "id": null,
+    "name": "NVIDIA"
+  }
 },{
+  "productId": 6,
   "name": "CPU Intel Core i5-11600K",
   "description": "Procesador Intel Core i5 de 6 núcleos y 12 hilos",
-  "price": 280
+  "price": 280,
+  "facturer": {
+    "id": 4,
+    "name": "Intel"
+  }
 },{
+  "productId": 7,
   "name": "Disco SSD Samsung 1TB",
   "description": "Disco SSD con 1TB de capacidad, lectura 3500MB/s, escritura 3000MB/s",
   "price": 100,
-  "facturer": "Samsung"
+  "facturer": {
+    "id": 2,
+    "name": "Samsung"
+  }
 },{
-  "name": "Monitor",
+  "productId": 8,
+  "name": "Monitor genérico",
   "description": "Monitor LED de 24 pulgadas con resolución Full HD",
   "price": 150,
-  "facturer": "Generic",
+  "facturer": {
+    "id": null,
+    "name": "Generic"
+  },
   "features": [
     "Pantalla LED",
     "Resolución Full HD",
@@ -45,29 +77,42 @@
     "Angulo de visión 178°"
   ]
 },{
-  "name": "Mouse",
+  "productId": 9,
+  "name": "Mouse genérico",
   "description": "Mouse óptico ergonómico con 6 botones",
   "price": 20,
-  "facturer": "Generic",
+  "facturer": {
+    "id": null,
+    "name": "Generic"
+  },
   "compatibility": [
     "Windows",
     "Mac OS",
     "Linux"
   ]
 },{
-  "name": "Teclado",
+  "productId": 10,
+  "name": "Teclado genérico",
   "description": "Teclado mecánico con retroiluminación LED y switches azules",
   "price": 50,
-  "facturer": "Generic",
+  "facturer": {
+    "id": null,
+    "name": "Generic"
+  },
   "includedItems": [
     "Teclado",
     "Cable USB-C",
     "Manual de usuario"
   ]
 },{
+  "productId": 11,
+  "name": "Auriculares genéricos",
   "description": "Auriculares inalámbricos con cancelación de ruido",
   "price": 120,
-  "facturer": "Generic",
+  "facturer": {
+    "id": null,
+    "name": "Generic"
+  },
   "features": [
     "Cancelación activa de ruido",
     "Conexión Bluetooth 5.0",
@@ -77,9 +122,9 @@
     "iOS",
     "Android",
     "Windows"
-  ],
-  "nombre": "Auriculares"
+  ]
 },{
+  "productId": 12,
   "name": "Disco SSD",
   "description": "Disco SSD de 512GB con lectura 550MB/s y escritura 500MB/s",
   "price": 60,
@@ -89,6 +134,10 @@
     "Manual de instalación"
   ]
 },{
-  "name": "Laptop",
-  "facturer": "HP"
+  "productId": 13,
+  "name": "Laptop HP Pavilion dv6",
+  "facturer": {
+    "id": null,
+    "name": "HP"
+  }
 }]

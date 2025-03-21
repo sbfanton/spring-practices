@@ -1,14 +1,22 @@
 package com.sbfanton.online_shop.service.impl;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
+import org.apache.commons.lang3.tuple.Triple;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.sbfanton.online_shop.model.Product;
 import com.sbfanton.online_shop.repository.ProductRepository;
 import com.sbfanton.online_shop.service.ProductService;
+
+import utils.EnumUtils;
+import utils.ParamsConverter;
+import utils.ParamsValidator;
+import utils.constants.CollectionsNames;
+import utils.constants.ProductReqAllowedParams;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -20,8 +28,8 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findAll();
     }
 
-    public Optional<Product> getProductById(String id) {
-        return productRepository.findById(id);
+    public Optional<Product> getProductByProductId(String id) {
+        return productRepository.findByProductId(Integer.parseInt(id));
     }
 
     public Product createProduct(Product product) {
@@ -29,7 +37,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     public Product updateProduct(String id, Product productDetails) {
-        return productRepository.findById(id).map(product -> {
+        return productRepository.findByProductId(Integer.parseInt(id)).map(product -> {
             product.setName(productDetails.getName());
             product.setDescription(productDetails.getDescription());
             product.setPrice(productDetails.getPrice());
@@ -41,16 +49,21 @@ public class ProductServiceImpl implements ProductService {
         }).orElseThrow(() -> new RuntimeException("Producto no encontrado"));
     }
 
-    public void deleteProduct(String id) {
-        productRepository.deleteById(id);
+    public void deleteProductByProductId(String id) {
+        productRepository.deleteByProductId(Integer.parseInt(id));
     }
 
-	public List<Product> getProductsByNameLike(String name) {
-		return productRepository.findByNameLike(name);
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Product> getProductsFiltered(Map<String, String> filters) throws Exception {
+		ParamsValidator.validateParams(
+				filters, 
+				EnumUtils.getEnumPropertyValues(ProductReqAllowedParams.class, "getParamName"));
+		List<Triple<String, Class<?>, Object>> convertedFilters = 
+				ParamsConverter.convertReqParamsMapToGenericMap(filters, Product.class.getName());
+		List<Product> products = (List<Product>) productRepository
+				.searchDocumentsFiltered(convertedFilters, Product.class, CollectionsNames.PRODUCTS.getName(), null);
+		
+		return products;
 	}
-
-	public List<Product> getProductsByFacturer(String facturer) {
-		return productRepository.findByFacturer(facturer);
-	}
-
 }

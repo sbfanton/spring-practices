@@ -4,11 +4,13 @@
       "customerId": "12345678",
       "items": [
         {
+          "productId": 1,
           "name": "Laptop Dell XPS 13",
           "quantity": 1,
           "price": 1200
         },
         {
+          "productId": 14,
           "name": "Mouse Logitech G Pro",
           "quantity": 1,
           "price": 50
@@ -22,11 +24,13 @@
       "customerId": "87654321",
       "items": [
         {
+          "productId": 2,
           "name": "Teclado mecánico Razer",
           "quantity": 1,
           "price": 120
         },
         {
+          "productId": 3,
           "name": "Monitor ASUS 24\"",
           "quantity": 1,
           "price": 200
@@ -40,6 +44,7 @@
       "customerId": "11223344",
       "items": [
         {
+          "productId": 5,
           "name": "GPU NVIDIA RTX 3070",
           "quantity": 1,
           "price": 500
@@ -53,11 +58,13 @@
       "customerId": "55667788",
       "items": [
         {
+          "productId": 7,
           "name": "Disco SSD Samsung 1TB",
           "quantity": 2,
           "price": 100
         },
         {
+          "productId": 4,
           "name": "RAM Corsair Vengeance 16GB",
           "quantity": 1,
           "price": 80
@@ -71,11 +78,13 @@
       "customerId": "99887766",
       "items": [
         {
+          "productId": 8,
           "name": "Monitor",
           "quantity": 1,
           "price": 150
         },
         {
+          "productId": 9,
           "name": "Mouse",
           "quantity": 2,
           "price": 20
