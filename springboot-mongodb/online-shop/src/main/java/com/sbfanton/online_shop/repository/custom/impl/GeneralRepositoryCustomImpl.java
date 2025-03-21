@@ -9,15 +9,15 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
 import com.sbfanton.online_shop.model.Customer;
-import com.sbfanton.online_shop.repository.custom.CustomerRepositoryCustom;
+import com.sbfanton.online_shop.repository.custom.GeneralRepositoryCustom;
 
-public class CustomerRepositoryCustomImpl implements CustomerRepositoryCustom {
+public class GeneralRepositoryCustomImpl implements GeneralRepositoryCustom {
 
 	@Autowired
 	private MongoTemplate mongoTemplate;
 	
 	@Override
-    public List<Customer> searchCustomersFiltered(Map<String, Object> filters) {
+    public List<?> searchDocumentsFiltered(Map<String, Object> filters, Class<?> clazz) {
         Query query = new Query();
 
         for (Map.Entry<String, Object> entry : filters.entrySet()) {

@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public enum ReqParams {
+public enum CustomerReqAllowedParams {
 
 	NAME("name"),
 	AGE("age"),

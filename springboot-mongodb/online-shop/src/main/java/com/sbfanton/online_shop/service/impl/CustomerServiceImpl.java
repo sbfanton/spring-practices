@@ -11,8 +11,10 @@ import com.sbfanton.online_shop.model.Customer;
 import com.sbfanton.online_shop.repository.CustomerRepository;
 import com.sbfanton.online_shop.service.CustomerService;
 
+import utils.EnumUtils;
 import utils.ParamsConverter;
 import utils.ParamsValidator;
+import utils.constants.CustomerReqAllowedParams;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
@@ -52,11 +54,17 @@ public class CustomerServiceImpl implements CustomerService {
         customerRepository.deleteByCustomerId(id);
     }
 
+	@SuppressWarnings("unchecked")
 	public List<Customer> getCustomersFiltered(Map<String, String> filters) throws Exception {
-		ParamsValidator.validateCustomersParams(filters);
+		ParamsValidator.validateParams(
+				filters, 
+				EnumUtils.getEnumPropertyValues(CustomerReqAllowedParams.class, "getParamName"));
 		Map<String, Object> convertedFilters = 
 				ParamsConverter.convertReqParamsMapToGenericMap(filters);
-		return customerRepository.searchCustomersFiltered(convertedFilters);
+		List<Customer> customers = (List<Customer>) customerRepository
+				.searchDocumentsFiltered(convertedFilters, Customer.class);
+		
+		return customers;
 	}
 	
 }

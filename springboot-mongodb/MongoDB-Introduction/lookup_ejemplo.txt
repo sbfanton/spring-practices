@@ -1,0 +1,153 @@
+---
+
+## **¿Qué hace `$lookup`?**  
+La operación `$lookup` actúa como un `LEFT JOIN` en SQL.  
+```json
+{
+  "$lookup": {
+    "from": "customers",
+    "localField": "customerId",
+    "foreignField": "customerId",
+    "as": "customer"
+  }
+}
+```
+- `from: "customers"` → Se une con la colección `customers`.  
+- `localField: "customerId"` → Se usa el campo `customerId` de `orders`.  
+- `foreignField: "customerId"` → Se busca el mismo campo en `customers`.  
+- `as: "customer"` → El resultado de la unión se almacena en un array llamado `customer`.  
+
+🚨 **Después de este paso, la estructura del documento cambia así:**  
+```json
+{
+  "orderId": 3,
+  "customerId": "11223344",
+  "items": [
+    {
+      "name": "GPU NVIDIA RTX 3070",
+      "quantity": 1,
+      "price": 500
+    }
+  ],
+  "total": 500,
+  "status": "Pending",
+  "customer": [
+    {
+      "customerId": "11223344",
+      "name": "Juan Pérez",
+      "email": "juan@example.com"
+    }
+  ]
+}
+```
+📌 **Importante:** `customer` es ahora un **array**, aunque haya solo un cliente.
+
+---
+
+## **¿Por qué `$unwind`?**  
+Como `$lookup` devuelve un **array**, `$unwind` convierte ese array en un objeto plano.  
+```json
+{
+  "$unwind": "$customer"
+}
+```
+🔹 Esto transforma:  
+```json
+{
+  "customer": [
+    {
+      "customerId": "11223344",
+      "name": "Juan Pérez",
+      "email": "juan@example.com"
+    }
+  ]
+}
+```
+➡ **En esto** (sin array):  
+```json
+{
+  "customer": {
+    "customerId": "11223344",
+    "name": "Juan Pérez",
+    "email": "juan@example.com"
+  }
+}
+```
+Esto facilita acceder a los datos directamente en los siguientes pasos.
+
+---
+
+## **¿Qué hace `$project`?**  
+Este paso selecciona los campos que queremos en la salida.  
+```json
+{
+  "$project": { 
+    "_id": 0, 
+    "orderId": 1, 
+    "customer.name": 1, 
+    "customer.email": 1, 
+    "items": 1, 
+    "total": 1
+  }
+}
+```
+- `"_id": 0` → Oculta el campo `_id` por defecto.  
+- `"orderId": 1` → Muestra el `orderId`.  
+- `"customer.name": 1` → Solo mantiene `name` de `customer`.  
+- `"customer.email": 1` → Solo mantiene `email` de `customer`.  
+- `"items": 1, "total": 1` → Mantiene `items` y `total`.  
+
+✏ **Transforma el documento en:**  
+```json
+{
+  "orderId": 3,
+  "customer": {
+    "name": "Juan Pérez",
+    "email": "juan@example.com"
+  },
+  "items": [
+    {
+      "name": "GPU NVIDIA RTX 3070",
+      "quantity": 1,
+      "price": 500
+    }
+  ],
+  "total": 500
+}
+```
+🎯 **Ya no tienes `customerId`, solo el nombre y correo del cliente**.
+
+---
+
+## **Resumen de la Consulta Completa**
+```json
+db.orders.aggregate([
+  { "$match": { "items.name": "GPU NVIDIA RTX 3070" } },
+  { "$lookup": {
+      "from": "customers",
+      "localField": "customerId",
+      "foreignField": "customerId",
+      "as": "customer"
+    }
+  },
+  { "$unwind": "$customer" },
+  { "$project": { 
+      "_id": 0, 
+      "orderId": 1, 
+      "customer.name": 1, 
+      "customer.email": 1, 
+      "items": 1, 
+      "total": 1
+    }
+  }
+])
+```
+
+### **📌 Paso a paso**
+1️⃣ **Filtra** los pedidos con la GPU RTX 3070 (`$match`).  
+2️⃣ **Une** con la colección `customers` (`$lookup`).  
+3️⃣ **Transforma el array `customer` en objeto** (`$unwind`).  
+4️⃣ **Elimina `_id` y selecciona solo los campos necesarios** (`$project`).  
+
+💡 **Ahora puedes ver fácilmente qué clientes compraron la GPU RTX 3070.**  
+**¿Te queda más claro o quieres otro ejemplo?** 🚀

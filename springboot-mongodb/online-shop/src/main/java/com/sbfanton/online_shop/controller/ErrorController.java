@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class ErrorController {
 
-	@ExceptionHandler(Exception.class) 
+	@ExceptionHandler 
     public ResponseEntity<Map<String, Object>> handleGlobalException(Exception ex) {
         Map<String, Object> errorResponse = new HashMap<>();
         errorResponse.put("timestamp", LocalDateTime.now());
