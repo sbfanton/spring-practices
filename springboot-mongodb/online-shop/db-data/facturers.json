@@ -1,6 +1,5 @@
 [
     {
-        "facturerId": 1,
         "name": "ASUS",
         "country": "Taiwan",
         "founded": 1989,
@@ -11,7 +10,6 @@
         "products": ["Laptops", "Motherboards", "Graphics Cards"]
     },
     {
-        "facturerId": 2,
         "name": "Samsung",
         "country": "South Korea",
         "founded": 1938,
@@ -22,7 +20,6 @@
         "products": ["Smartphones", "TVs", "Memory Chips"]
     },
     {
-        "facturerId": 3,
         "name": "Logitech",
         "country": "Switzerland",
         "founded": 1981,
@@ -33,7 +30,6 @@
         "products": ["Keyboards", "Mice", "Webcams"]
     },
     {
-        "facturerId": 4,
         "name": "Intel",
         "country": "United States",
         "founded": 1968,
@@ -44,7 +40,6 @@
         "products": ["Processors", "Chipsets", "SSDs"]
     },
     {
-        "facturerId": 5,
         "name": "Sony",
         "country": "Japan",
         "founded": 1946,

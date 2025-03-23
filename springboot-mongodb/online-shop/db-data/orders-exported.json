@@ -1,0 +1,77 @@
+[{
+  "_id": {
+    "$oid": "67e08a3cdd2a010c4f9ebf80"
+  },
+  "customerId": "67e08832dd2a010c4f9ebf5d",
+  "items": [
+    {
+      "productId": "67e088e0dd2a010c4f9ebf6b",
+      "quantity": 1
+    },
+    {
+      "productId": "67e088e0dd2a010c4f9ebf6e",
+      "quantity": 1
+    }
+  ],
+  "status": "Shipped"
+},{
+  "_id": {
+    "$oid": "67e08a3cdd2a010c4f9ebf81"
+  },
+  "customerId": "67e08832dd2a010c4f9ebf5f",
+  "items": [
+    {
+      "productId": "67e088e0dd2a010c4f9ebf6c",
+      "quantity": 1
+    },
+    {
+      "productId": "67e088e0dd2a010c4f9ebf6d",
+      "quantity": 1
+    }
+  ],
+  "status": "Processing"
+},{
+  "_id": {
+    "$oid": "67e08a3cdd2a010c4f9ebf82"
+  },
+  "customerId": "67e08832dd2a010c4f9ebf5d",
+  "items": [
+    {
+      "productId": "67e088e0dd2a010c4f9ebf70",
+      "quantity": 1
+    }
+  ],
+  "status": "Pending"
+},{
+  "_id": {
+    "$oid": "67e08a3cdd2a010c4f9ebf83"
+  },
+  "customerId": "67e08832dd2a010c4f9ebf61",
+  "items": [
+    {
+      "productId": "67e088e0dd2a010c4f9ebf72",
+      "quantity": 2
+    },
+    {
+      "productId": "67e088e0dd2a010c4f9ebf6f",
+      "quantity": 1
+    }
+  ],
+  "status": "Delivered"
+},{
+  "_id": {
+    "$oid": "67e08a3cdd2a010c4f9ebf84"
+  },
+  "customerId": "67e08832dd2a010c4f9ebf61",
+  "items": [
+    {
+      "productId": "67e088e0dd2a010c4f9ebf73",
+      "quantity": 1
+    },
+    {
+      "productId": "67e088e0dd2a010c4f9ebf74",
+      "quantity": 2
+    }
+  ],
+  "status": "Cancelled"
+}]

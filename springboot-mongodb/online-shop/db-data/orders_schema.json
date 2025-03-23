@@ -1,15 +1,11 @@
 {
     "_id": "ObjectId",
-    "orderId": "int",
     "customerId": "str",
     "items": [
         {
-            "productId": "int",
-            "name": "str",
-            "quantity": "int",
-            "price": "int"
+            "productId": "str",
+            "quantity": "int"
         }
     ],
-    "total": "int",
     "status": "str"
 }

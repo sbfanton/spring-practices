@@ -1,6 +1,5 @@
 {
     "_id": "ObjectId",
-    "facturerId": "int",
     "name": "str",
     "country": "str",
     "founded": "int",

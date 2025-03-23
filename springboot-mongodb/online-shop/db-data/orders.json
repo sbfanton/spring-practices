@@ -1,96 +1,68 @@
 [
     {
-      "orderId": 1,
-      "customerId": "12345678",
+      "customerId": "67e08832dd2a010c4f9ebf5d",
       "items": [
         {
-          "productId": 1,
-          "name": "Laptop Dell XPS 13",
-          "quantity": 1,
-          "price": 1200
+          "productId": "67e088e0dd2a010c4f9ebf6b",
+          "quantity": 1
         },
         {
-          "productId": 14,
-          "name": "Mouse Logitech G Pro",
-          "quantity": 1,
-          "price": 50
+          "productId": "67e088e0dd2a010c4f9ebf6e",
+          "quantity": 1
         }
       ],
-      "total": 1250,
       "status": "Shipped"
     },
     {
-      "orderId": 2,
-      "customerId": "87654321",
+      "customerId": "67e08832dd2a010c4f9ebf5f",
       "items": [
         {
-          "productId": 2,
-          "name": "Teclado mecánico Razer",
-          "quantity": 1,
-          "price": 120
+          "productId": "67e088e0dd2a010c4f9ebf6c",
+          "quantity": 1
         },
         {
-          "productId": 3,
-          "name": "Monitor ASUS 24\"",
-          "quantity": 1,
-          "price": 200
+          "productId": "67e088e0dd2a010c4f9ebf6d",
+          "quantity": 1
         }
       ],
-      "total": 320,
       "status": "Processing"
     },
     {
-      "orderId": 3,
-      "customerId": "11223344",
+      "customerId": "67e08832dd2a010c4f9ebf5d",
       "items": [
         {
-          "productId": 5,
-          "name": "GPU NVIDIA RTX 3070",
-          "quantity": 1,
-          "price": 500
+          "productId": "67e088e0dd2a010c4f9ebf70",
+          "quantity": 1
         }
       ],
-      "total": 500,
       "status": "Pending"
     },
     {
-      "orderId": 4,
-      "customerId": "55667788",
+      "customerId": "67e08832dd2a010c4f9ebf61",
       "items": [
         {
-          "productId": 7,
-          "name": "Disco SSD Samsung 1TB",
-          "quantity": 2,
-          "price": 100
+          "productId": "67e088e0dd2a010c4f9ebf72",
+          "quantity": 2
         },
         {
-          "productId": 4,
-          "name": "RAM Corsair Vengeance 16GB",
-          "quantity": 1,
-          "price": 80
+          "productId": "67e088e0dd2a010c4f9ebf6f",
+          "quantity": 1
         }
       ],
-      "total": 280,
       "status": "Delivered"
     },
     {
-      "orderId": 5,
-      "customerId": "99887766",
+      "customerId": "67e08832dd2a010c4f9ebf61",
       "items": [
         {
-          "productId": 8,
-          "name": "Monitor",
-          "quantity": 1,
-          "price": 150
+          "productId": "67e088e0dd2a010c4f9ebf73",
+          "quantity": 1
         },
         {
-          "productId": 9,
-          "name": "Mouse",
-          "quantity": 2,
-          "price": 20
+          "productId": "67e088e0dd2a010c4f9ebf74",
+          "quantity": 2
         }
       ],
-      "total": 190,
       "status": "Cancelled"
     }
   ]

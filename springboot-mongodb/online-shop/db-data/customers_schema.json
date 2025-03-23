@@ -1,8 +1,7 @@
 {
     "_id": "ObjectId",
-    "customerId": "str",
+    "nationalDocumentId": "str",
     "name": "str",
-    "age": "int",
     "email": "str",
     "phoneNumber": "str",
     "address": {

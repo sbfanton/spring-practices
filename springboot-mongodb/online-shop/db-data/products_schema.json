@@ -1,13 +1,9 @@
 {
     "_id": "ObjectId",
-    "productId": "int",
     "name": "str",
     "description": "str",
     "price": "int",
-    "facturer": {
-        "id": "NoneType",
-        "name": "str"
-    },
+    "facturerId": "str",
     "features": "list[str]",
     "compatibility": "list[str]",
     "includedItems": "list[str]"

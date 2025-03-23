@@ -1,8 +1,7 @@
 [
   {
-      "customerId": "12345678",
+      "nationalDocumentId": "12345678",
       "name": "Juan Pérez",
-      "age": 32,
       "email": "juan.perez@example.com",
       "phoneNumber": "555-1234",
       "address": {
@@ -12,9 +11,8 @@
       }
   },
   {
-      "customerId": "87654321",
+      "nationalDocumentId": "87654321",
       "name": "María López",
-      "age": 28,
       "email": "maria.lopez@example.com",
       "phoneNumber": "555-5678",
       "address": {
@@ -24,9 +22,8 @@
       }
   },
   {
-      "customerId": "11223344",
+      "nationalDocumentId": "11223344",
       "name": "Carlos Rodríguez",
-      "age": 45,
       "email": "carlos.rod@example.com",
       "phoneNumber": "555-8765",
       "address": {
@@ -36,9 +33,8 @@
       }
   },
   {
-      "customerId": "55667788",
+      "nationalDocumentId": "55667788",
       "name": "Ana Martínez",
-      "age": 36,
       "email": "ana.martinez@example.com",
       "phoneNumber": "555-2345",
       "address": {
@@ -48,9 +44,8 @@
       }
   },
   {
-      "customerId": "99887766",
+      "nationalDocumentId": "99887766",
       "name": "Pedro Gómez",
-      "age": 50,
       "email": "pedro.gomez@example.com",
       "phoneNumber": "555-4321",
       "address": {

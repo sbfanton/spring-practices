@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "f6c95c90-eabd-4911-83f2-c9d0106cadcc",
+		"_postman_id": "085f8865-428f-4a75-910a-4ae472697900",
 		"name": "Online_Shop_MongoDB",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -14,7 +14,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{main-path}}/customers?name=Bart",
+							"raw": "{{main-path}}/customers",
 							"host": [
 								"{{main-path}}"
 							],
@@ -24,31 +24,7 @@
 							"query": [
 								{
 									"key": "name",
-									"value": "Bart"
-								},
-								{
-									"key": "age",
-									"value": "10",
-									"disabled": true
-								},
-								{
-									"key": "email",
-									"value": "bart.simpson@example.com",
-									"disabled": true
-								},
-								{
-									"key": "phone",
-									"value": null,
-									"disabled": true
-								},
-								{
-									"key": "addressStreet",
-									"value": null,
-									"disabled": true
-								},
-								{
-									"key": "addressNumber",
-									"value": null,
+									"value": "Bart",
 									"disabled": true
 								},
 								{
@@ -62,7 +38,7 @@
 					"response": []
 				},
 				{
-					"name": "GetCustomerByCustomerId",
+					"name": "GetCustomerByd",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -78,7 +54,7 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": "45678987"
+									"value": "67e08ed9d1dec11953da6056"
 								}
 							]
 						}
@@ -92,7 +68,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"customerId\": \"13678987\",\n    \"name\": \"Bartholomew James\",\n    \"age\": 45,\n    \"email\": \"bartholomew.james@example.com\"\n}",
+							"raw": "{\n\n    \"name\": \"Bartholomew James\",\n    \"nationalDocumentId\": \"CI12345678\",\n    \"email\": \"bartholomew.james@example.com\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -118,7 +94,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"customerId\": \"45678987\",\n    \"name\": \"Bart Simpson\",\n    \"age\": 10,\n    \"email\": \"bart.simpson@example.com\",\n    \"phoneNumber\": \"555-0987\",\n    \"address\": {\n            \"street\": \"Av. Siempre Viva\",\n            \"city\": \"Springfield\",\n            \"number\": 743\n        }\n}",
+							"raw": "{\n    \"nationalDocumentId\": \"11122223\",\n    \"name\": \"Bart Simpson\",\n    \"email\": \"bart.simpson@example.com\",\n    \"phoneNumber\": \"555-0987\",\n    \"address\": {\n            \"street\": \"Av. Siempre Viva\",\n            \"city\": \"Springfield\",\n            \"number\": 743\n        }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -137,7 +113,7 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": "45678987"
+									"value": "67e08ed9d1dec11953da6056"
 								}
 							]
 						}
@@ -161,7 +137,7 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": "45678987"
+									"value": "67e08ed9d1dec11953da6056"
 								}
 							]
 						}
@@ -179,7 +155,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{main-path}}/products?features=LED",
+							"raw": "{{main-path}}/products?compatibility=Windows",
 							"host": [
 								"{{main-path}}"
 							],
@@ -203,18 +179,18 @@
 									"disabled": true
 								},
 								{
-									"key": "facturer",
+									"key": "facturerId",
 									"value": null,
 									"disabled": true
 								},
 								{
 									"key": "features",
-									"value": "LED"
+									"value": "LED",
+									"disabled": true
 								},
 								{
 									"key": "compatibility",
-									"value": "Windows",
-									"disabled": true
+									"value": "Windows"
 								},
 								{
 									"key": "includedItems",
@@ -227,7 +203,7 @@
 					"response": []
 				},
 				{
-					"name": "GetProductId",
+					"name": "GetProductById",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -243,7 +219,7 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": "67ddbe28a90f871e617c503d"
+									"value": "67e088e0dd2a010c4f9ebf74"
 								}
 							]
 						}
@@ -257,7 +233,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"Ergo 80 Genius\",\n  \"description\": \"Mouse Ergonómico\",\n  \"price\": 350.50,\n  \"facturer\": \"Genius\",\n  \"features\": [\n    \"Mouse inalámbrico con tecnología USB 3.0\",\n    \"Formato ergonómico\"\n  ],\n  \"compatibility\": [\n    \"Windows\",\n    \"Mac\",\n    \"Linux\"\n  ]\n}",
+							"raw": "{\n  \"name\": \"MacBook Pro\",\n  \"description\": \"Laptop MacBook Pro uso personal\",\n  \"price\": 1500,\n  \"features\": [\n    \"16GB RAM\",\n    \"10 núcleos\",\n    \"Sistema operativo macOS\"\n  ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -283,7 +259,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"Ergo 80 Genius\",\n  \"description\": \"Mouse Ergonómico\",\n  \"price\": 350.50,\n  \"facturer\": \"Genius\",\n  \"features\": [\n    \"Mouse inalámbrico con tecnología USB 3.0\",\n    \"Formato ergonómico\",\n    \"Colores negro, oro y plata\"\n  ],\n  \"compatibility\": [\n    \"Windows\",\n    \"Mac\",\n    \"Linux\"\n  ],\n  \"includedItems\": [\n      \"Mouse ergonómico\",\n      \"Pila de prueba AA\",\n      \"Conector USB\"   \n  ]\n}",
+							"raw": "{\n    \"id\": \"67e06b43ded1d66760b9ff79\",\n    \"productId\": 15,\n    \"name\": \"MacBook Pro\",\n    \"description\": \"Laptop MacBook Pro uso personal\",\n    \"price\": 1500.0,\n    \"features\": [\n        \"16GB RAM\",\n        \"10 núcleos\",\n        \"Sistema operativo macOS\"\n    ],\n    \"compatibility\": null,\n    \"includedItems\": [\n        \"Laptop\",\n        \"Cable cargador\",\n        \"Protector de pantalla\"\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -302,7 +278,7 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": "67ddbe28a90f871e617c503d"
+									"value": "67e08fafd1dec11953da6057"
 								}
 							]
 						}
@@ -321,6 +297,118 @@
 							],
 							"path": [
 								"products",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "67e08fafd1dec11953da6057"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Orders",
+			"item": [
+				{
+					"name": "GetOrders",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{main-path}}/orders?status=Shipped",
+							"host": [
+								"{{main-path}}"
+							],
+							"path": [
+								"orders"
+							],
+							"query": [
+								{
+									"key": "productId",
+									"value": "67e088e0dd2a010c4f9ebf6b",
+									"disabled": true
+								},
+								{
+									"key": "customerId",
+									"value": "67e08832dd2a010c4f9ebf5d",
+									"disabled": true
+								},
+								{
+									"key": "status",
+									"value": "Shipped"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetOrderById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{main-path}}/orders/:id",
+							"host": [
+								"{{main-path}}"
+							],
+							"path": [
+								"orders",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "67e08a3cdd2a010c4f9ebf83"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateOrder",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{main-path}}/orders",
+							"host": [
+								"{{main-path}}"
+							],
+							"path": [
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteOrderById",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{main-path}}/orders/:id",
+							"host": [
+								"{{main-path}}"
+							],
+							"path": [
+								"orders",
 								":id"
 							],
 							"variable": [
