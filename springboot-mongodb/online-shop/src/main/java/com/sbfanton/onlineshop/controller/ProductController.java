@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sbfanton.onlineshop.model.Product;
+import com.sbfanton.onlineshop.model.dto.ProductDTO;
 import com.sbfanton.onlineshop.service.ProductService;
 
 @RestController
@@ -27,12 +28,9 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping
-    public ResponseEntity<List<Product>> getAllProducts(@RequestParam Map<String, String> filters) throws Exception {
+    public ResponseEntity<List<ProductDTO>> getAllProducts(@RequestParam Map<String, String> filters) throws Exception {
         
-    	if(filters != null) {
-    		return ResponseEntity.ok(productService.getProductsFiltered(filters));
-    	}
-    	return ResponseEntity.ok(productService.getAllProducts());
+    	return ResponseEntity.ok(productService.getProductDTOList(filters));
     }
 
     @GetMapping("/{id}")

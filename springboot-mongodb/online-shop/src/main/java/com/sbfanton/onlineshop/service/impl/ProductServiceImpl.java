@@ -5,13 +5,15 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.apache.commons.lang3.tuple.Triple;
+import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.stereotype.Service;
 
 import com.sbfanton.onlineshop.model.Product;
+import com.sbfanton.onlineshop.model.dto.ProductDTO;
 import com.sbfanton.onlineshop.repository.ProductRepository;
 import com.sbfanton.onlineshop.service.ProductService;
-
 import com.sbfanton.onlineshop.utils.EnumUtils;
 import com.sbfanton.onlineshop.utils.ParamsConverter;
 import com.sbfanton.onlineshop.utils.ParamsValidator;
@@ -55,14 +57,26 @@ public class ProductServiceImpl implements ProductService {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Product> getProductsFiltered(Map<String, String> filters) throws Exception {
+	public List<ProductDTO> getProductDTOList(Map<String, String> filters) throws Exception {
+		
 		ParamsValidator.validateParams(
 				filters, 
 				EnumUtils.getEnumPropertyValues(ProductReqAllowedParams.class, "getParamName"));
+		
 		List<Triple<String, Class<?>, Object>> convertedFilters = 
 				ParamsConverter.convertReqParamsMapToGenericMap(filters, Product.class.getName(), null);
-		List<Product> products = (List<Product>) productRepository
-				.searchDocumentsFiltered(convertedFilters, Product.class, CollectionsNames.PRODUCTS.getName());
+		
+		Document initialMatch = productRepository.getDocumentsFilteredMatch(
+				convertedFilters, 
+				Product.class, 
+				CollectionsNames.PRODUCTS.getName());
+		
+		List<AggregationOperation> aggOpList = productRepository.generateProductAggregationList(initialMatch);
+		
+		List<ProductDTO> products = (List<ProductDTO>) productRepository.getCustomModelListWithAgg(
+				aggOpList, 
+				Product.class, 
+				ProductDTO.class);
 		
 		return products;
 	}

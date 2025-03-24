@@ -2,10 +2,16 @@ package com.sbfanton.onlineshop.repository.custom.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.lang3.tuple.Triple;
+import org.bson.Document;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
+import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
@@ -19,7 +25,7 @@ public class GeneralRepositoryCustomImpl implements GeneralRepositoryCustom {
 	private MongoTemplate mongoTemplate;
 	
 	@Override
-    public List<?> searchDocumentsFiltered(
+    public Document getDocumentsFilteredMatch(
     		List<Triple<String, Class<?>, Object>> filters, 
     		Class<?> entityClass, 
     		String collectionName) throws Exception {
@@ -43,8 +49,10 @@ public class GeneralRepositoryCustomImpl implements GeneralRepositoryCustom {
                 query.addCriteria(Criteria.where(attr).is(value)); // Búsqueda exacta para otros tipos de datos
             }
         }
+        
+        Document matchStage = new Document("$match", query.getQueryObject());
+        return matchStage;
 
-        return mongoTemplate.find(query, entityClass, collectionName);
     }
 
 	private List<Criteria> getCriteriaListForItemInListTypeSearch(String attr, Object value) throws ClassNotFoundException {
@@ -75,5 +83,43 @@ public class GeneralRepositoryCustomImpl implements GeneralRepositoryCustom {
     	}
     	
     	return criterias;
+	}
+
+	@Override
+	public Document getDocumentMatchById(String id) throws Exception {
+		
+		Document doc = new Document("$match",
+		        new Document("_id", new ObjectId(id)) // Convertimos el ID a ObjectId
+			    );
+		
+		return doc;
+	}
+	
+	@Override
+	public Optional<?> getCustomModelByIdWithAgg(
+			List<AggregationOperation> aggregationOperations,
+			Class<?> collectionClass,
+			Class<?> customReturnClass) throws Exception {
+		
+		Aggregation agg = Aggregation.newAggregation(aggregationOperations);
+			AggregationResults<?> results = mongoTemplate.aggregate(
+			    agg, mongoTemplate.getCollectionName(collectionClass), customReturnClass
+			);
+
+			return Optional.ofNullable(results.getUniqueMappedResult());
+	}
+	
+	@Override
+	public List<?> getCustomModelListWithAgg(
+			List<AggregationOperation> aggregationOperations,
+			Class<?> collectionClass,
+			Class<?> customReturnClass) throws Exception {
+		
+		Aggregation agg = Aggregation.newAggregation(aggregationOperations);
+			AggregationResults<?> results = mongoTemplate.aggregate(
+			    agg, mongoTemplate.getCollectionName(collectionClass), customReturnClass
+			);
+
+			return results.getMappedResults();
 	}
 }

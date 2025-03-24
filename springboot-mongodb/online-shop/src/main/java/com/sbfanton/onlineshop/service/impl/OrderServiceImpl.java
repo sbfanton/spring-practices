@@ -2,16 +2,17 @@ package com.sbfanton.onlineshop.service.impl;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.apache.commons.lang3.tuple.Triple;
+import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.stereotype.Service;
 
 import com.sbfanton.onlineshop.model.Order;
+import com.sbfanton.onlineshop.model.dto.OrderDTO;
 import com.sbfanton.onlineshop.repository.OrderRepository;
 import com.sbfanton.onlineshop.service.OrderService;
-
 import com.sbfanton.onlineshop.utils.EnumUtils;
 import com.sbfanton.onlineshop.utils.ParamsConverter;
 import com.sbfanton.onlineshop.utils.ParamsValidator;
@@ -29,9 +30,13 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.findAll();
     }
 
-    public Optional<Order> getOrderById(String id) {
-        return orderRepository.findById(id);
-    }
+	public OrderDTO getOrderDTOById(String id) throws Exception {
+        Document match = orderRepository.getDocumentMatchById(id);
+        List<AggregationOperation> aggOpList = orderRepository.generateOrderAggregationList(match);
+    	return (OrderDTO) orderRepository
+    			.getCustomModelByIdWithAgg(aggOpList, Order.class, OrderDTO.class)
+    	        .orElseThrow(() -> new Exception("Order not found"));
+	}
 
 
     public Order createOrder(Order order) {
@@ -53,7 +58,9 @@ public class OrderServiceImpl implements OrderService {
     }
     
     @SuppressWarnings("unchecked")
-	public List<Order> getOrdersFiltered(Map<String, String> filters) throws Exception {
+	@Override
+	public List<OrderDTO> getOrderDTOList(Map<String, String> filters) throws Exception {
+		
 		ParamsValidator.validateParams(
 				filters, 
 				EnumUtils.getEnumPropertyValues(OrderReqAllowedParams.class, "getParamName"));
@@ -64,13 +71,18 @@ public class OrderServiceImpl implements OrderService {
 						Order.class.getName(),
 						OrderListTypeParamProps.listAttrsTypesMap);
 
-		List<Order> orders = (List<Order>) orderRepository
-				.searchDocumentsFiltered(
+		Document matchStage = orderRepository.getDocumentsFilteredMatch(
 						convertedFilters, 
 						Order.class, 
 						CollectionsNames.ORDERS.getName());
 		
-		return orders;
+		List<AggregationOperation> aggOpList = orderRepository.generateOrderAggregationList(matchStage);
+		
+		return (List<OrderDTO>) orderRepository.
+				getCustomModelListWithAgg(
+						aggOpList, 
+						Order.class,
+						OrderDTO.class);
 	}
 
 }

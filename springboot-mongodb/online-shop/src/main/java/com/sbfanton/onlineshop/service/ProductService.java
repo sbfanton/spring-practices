@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.sbfanton.onlineshop.model.Product;
+import com.sbfanton.onlineshop.model.dto.ProductDTO;
 
 public interface ProductService {
 
@@ -13,5 +14,5 @@ public interface ProductService {
     public Product createProduct(Product product);
     public Product updateProduct(String id, Product productDetails);
     public void deleteProductById(String id);
-    public List<Product> getProductsFiltered(Map<String, String> filters) throws Exception;
+    public List<ProductDTO> getProductDTOList(Map<String, String> filters) throws Exception;
 }

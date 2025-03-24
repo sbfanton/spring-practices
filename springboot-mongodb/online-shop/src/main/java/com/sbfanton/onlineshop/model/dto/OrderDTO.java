@@ -19,7 +19,7 @@ import lombok.Setter;
 public class OrderDTO {
     private String id;
     private Customer customer;
-    //private List<OrderItemDTO> items;
+    private List<OrderItemDTO> items;
     private String status;
 }
 
@@ -30,5 +30,5 @@ public class OrderDTO {
 @NoArgsConstructor
 class OrderItemDTO {
     private Product product;
-    private int quantity;
+    private Integer quantity;
 }

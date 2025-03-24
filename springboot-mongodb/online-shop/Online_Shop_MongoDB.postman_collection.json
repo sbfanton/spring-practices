@@ -54,7 +54,7 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": "67e08ed9d1dec11953da6056"
+									"value": "67e1af577f450b5d6165f465"
 								}
 							]
 						}
@@ -121,7 +121,7 @@
 					"response": []
 				},
 				{
-					"name": "DeleteCustomerByCustomerId",
+					"name": "DeleteCustomerById",
 					"request": {
 						"method": "DELETE",
 						"header": [],
@@ -155,7 +155,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{main-path}}/products?compatibility=Windows",
+							"raw": "{{main-path}}/products",
 							"host": [
 								"{{main-path}}"
 							],
@@ -190,7 +190,8 @@
 								},
 								{
 									"key": "compatibility",
-									"value": "Windows"
+									"value": "Windows",
+									"disabled": true
 								},
 								{
 									"key": "includedItems",
@@ -320,7 +321,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{main-path}}/orders?status=Shipped",
+							"raw": "{{main-path}}/orders",
 							"host": [
 								"{{main-path}}"
 							],
@@ -340,7 +341,8 @@
 								},
 								{
 									"key": "status",
-									"value": "Shipped"
+									"value": "Cancelled",
+									"disabled": true
 								}
 							]
 						}
@@ -401,6 +403,30 @@
 					"name": "DeleteOrderById",
 					"request": {
 						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{main-path}}/orders/:id",
+							"host": [
+								"{{main-path}}"
+							],
+							"path": [
+								"orders",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateOrder",
+					"request": {
+						"method": "PUT",
 						"header": [],
 						"url": {
 							"raw": "{{main-path}}/orders/:id",

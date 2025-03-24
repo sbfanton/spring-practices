@@ -2,7 +2,6 @@ package com.sbfanton.onlineshop.controller;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sbfanton.onlineshop.model.Order;
+import com.sbfanton.onlineshop.model.dto.OrderDTO;
 import com.sbfanton.onlineshop.service.OrderService;
 
 @RestController
@@ -27,19 +27,16 @@ public class OrderController {
 	private OrderService orderService;
 	
 	@GetMapping
-    public ResponseEntity<List<Order>> getOrders (
+    public ResponseEntity<List<OrderDTO>> getOrders (
     		@RequestParam Map<String, String> filters) throws Exception {
         
-    	if(filters != null) {
-    		return ResponseEntity.ok(orderService.getOrdersFiltered(filters));
-    	}
-    	return ResponseEntity.ok(orderService.getAllOrders());
+    	return ResponseEntity.ok(orderService.getOrderDTOList(filters));
     }
 	
 	@GetMapping("/{id}")
-    public ResponseEntity<Order> getOrderById(@PathVariable String id) {
-        Optional<Order> product = orderService.getOrderById(id);
-        return product.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<OrderDTO> getOrderById(@PathVariable String id) throws Exception {
+        OrderDTO order = orderService.getOrderDTOById(id);
+        return ResponseEntity.ok(order);
     }
 
     @PostMapping

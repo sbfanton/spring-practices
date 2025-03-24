@@ -5,8 +5,9 @@ import org.springframework.stereotype.Repository;
 
 import com.sbfanton.onlineshop.model.Order;
 import com.sbfanton.onlineshop.repository.custom.GeneralRepositoryCustom;
+import com.sbfanton.onlineshop.repository.custom.OrderRepositoryCustom;
 
 @Repository
-public interface OrderRepository extends MongoRepository<Order, String>, GeneralRepositoryCustom {
+public interface OrderRepository extends MongoRepository<Order, String>, OrderRepositoryCustom, GeneralRepositoryCustom {
 
 }

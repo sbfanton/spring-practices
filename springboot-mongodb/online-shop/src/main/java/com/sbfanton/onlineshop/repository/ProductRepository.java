@@ -8,9 +8,10 @@ import org.springframework.stereotype.Repository;
 
 import com.sbfanton.onlineshop.model.Product;
 import com.sbfanton.onlineshop.repository.custom.GeneralRepositoryCustom;
+import com.sbfanton.onlineshop.repository.custom.ProductRepositoryCustom;
 
 @Repository
-public interface ProductRepository extends MongoRepository<Product, String>, GeneralRepositoryCustom {
+public interface ProductRepository extends MongoRepository<Product, String>, GeneralRepositoryCustom, ProductRepositoryCustom {
 	
 	@Query("{'name': {'$regex': ?0, '$options': 'i'}}")
     List<Product> findByNameLike(String name);

@@ -5,7 +5,9 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.apache.commons.lang3.tuple.Triple;
+import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.stereotype.Service;
 
 import com.sbfanton.onlineshop.model.Customer;
@@ -63,10 +65,21 @@ public class CustomerServiceImpl implements CustomerService {
 		ParamsValidator.validateParams(
 				filters, 
 				EnumUtils.getEnumPropertyValues(CustomerReqAllowedParams.class, "getParamName"));
+		
 		List<Triple<String, Class<?>, Object>> convertedFilters = 
 				ParamsConverter.convertReqParamsMapToGenericMap(filters, Customer.class.getName(), null);
-		List<Customer> customers = (List<Customer>) customerRepository
-				.searchDocumentsFiltered(convertedFilters, Customer.class, CollectionsNames.CUSTOMERS.getName());
+		
+		Document initialMatch = customerRepository.getDocumentsFilteredMatch(
+				convertedFilters, 
+				Customer.class, 
+				CollectionsNames.CUSTOMERS.getName());
+		
+		List<AggregationOperation> aggOpList = customerRepository.generateCustomerAggregationList(initialMatch);
+		
+		List<Customer> customers = (List<Customer>) customerRepository.getCustomModelListWithAgg(
+				aggOpList, 
+				Customer.class, 
+				Customer.class);
 		
 		return customers;
 	}
