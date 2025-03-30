@@ -4,7 +4,7 @@
     "items": [
         {
             "productId": "str",
-            "quantity": "int"
+            "quantity": "float"
         }
     ],
     "status": "str"

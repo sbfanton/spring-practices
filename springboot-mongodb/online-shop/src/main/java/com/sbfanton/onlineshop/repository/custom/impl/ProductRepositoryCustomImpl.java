@@ -38,6 +38,13 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
 		            ))
 		            .append("as", "facturer")
 		    ));
+		
+		aggregationOperations.add(context -> new Document("$set", 
+				new Document("facturer", 
+						new Document()
+						.append("id", "$facturer._id")
+						.append("name", "$facturer.name")
+		)));
 	
 		aggregationOperations.add(Aggregation.unwind("facturer", true));
 	

@@ -6,6 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.stereotype.Component;
 
 import com.sbfanton.onlineshop.model.Customer;
+import com.sbfanton.onlineshop.model.Facturer;
 import com.sbfanton.onlineshop.model.Product;
 import com.sbfanton.onlineshop.model.Order;
 
@@ -18,6 +19,7 @@ public class GlobalCache {
         GLOBAL_MAP.put(Customer.class.getName(), CustomerReqAllowedParams.values());
         GLOBAL_MAP.put(Product.class.getName(), ProductReqAllowedParams.values());
         GLOBAL_MAP.put(Order.class.getName(), OrderReqAllowedParams.values());
+        GLOBAL_MAP.put(Facturer.class.getName(), FacturerReqAllowedParams.values());
     }
 
     public static Object get(String key) {

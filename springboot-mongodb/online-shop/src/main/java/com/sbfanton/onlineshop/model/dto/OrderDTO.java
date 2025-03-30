@@ -2,9 +2,6 @@ package com.sbfanton.onlineshop.model.dto;
 
 import java.util.List;
 
-import com.sbfanton.onlineshop.model.Customer;
-import com.sbfanton.onlineshop.model.Product;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -18,7 +15,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class OrderDTO {
     private String id;
-    private Customer customer;
+    private OrderCustomerDTO customer;
     private List<OrderItemDTO> items;
     private String status;
 }
@@ -28,7 +25,20 @@ public class OrderDTO {
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+class OrderCustomerDTO {
+    private String id;
+    private String name;
+}
+
+@Data
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 class OrderItemDTO {
-    private Product product;
+	private String prodId;
+    private String name;
+    private String description;
+    private Double price;
     private Integer quantity;
 }

@@ -1,52 +1,111 @@
-[
+[{
+  "_id": "67e0884cdd2a010c4f9ebf64",
+  "name": "ASUS",
+  "country": "Taiwan",
+  "founded": 1989,
+  "branches": [
     {
-        "name": "ASUS",
-        "country": "Taiwan",
-        "founded": 1989,
-        "branches": [
-            { "street": "No. 15, Li-Te Rd.", "number": 15, "city": "Taipei" },
-            { "street": "Science Park Rd.", "number": 20, "city": "Hsinchu" }
-        ],
-        "products": ["Laptops", "Motherboards", "Graphics Cards"]
+      "street": "No. 15, Li-Te Rd.",
+      "number": 15,
+      "city": "Taipei"
     },
     {
-        "name": "Samsung",
-        "country": "South Korea",
-        "founded": 1938,
-        "branches": [
-            { "street": "Samsung-ro", "number": 129, "city": "Suwon" },
-            { "street": "Yeongtong-gu", "number": 33, "city": "Seoul" }
-        ],
-        "products": ["Smartphones", "TVs", "Memory Chips"]
-    },
-    {
-        "name": "Logitech",
-        "country": "Switzerland",
-        "founded": 1981,
-        "branches": [
-            { "street": "Rue du Sablon", "number": 2, "city": "Lausanne" },
-            { "street": "Silicon Valley Ave.", "number": 101, "city": "Newark" }
-        ],
-        "products": ["Keyboards", "Mice", "Webcams"]
-    },
-    {
-        "name": "Intel",
-        "country": "United States",
-        "founded": 1968,
-        "branches": [
-            { "street": "Mission College Blvd.", "number": 2200, "city": "Santa Clara" },
-            { "street": "Jones Farm Rd.", "number": 2111, "city": "Hillsboro" }
-        ],
-        "products": ["Processors", "Chipsets", "SSDs"]
-    },
-    {
-        "name": "Sony",
-        "country": "Japan",
-        "founded": 1946,
-        "branches": [
-            { "street": "1-7-1 Konan", "number": 1, "city": "Tokyo" },
-            { "street": "Midtown Tower", "number": 9, "city": "Minato" }
-        ],
-        "products": ["PlayStation", "Cameras", "Headphones"]
+      "street": "Science Park Rd.",
+      "number": 20,
+      "city": "Hsinchu"
     }
-]
+  ],
+  "products": [
+    "Laptops",
+    "Motherboards",
+    "Graphics Cards"
+  ]
+},{
+  "_id": "67e0884cdd2a010c4f9ebf65",
+  "name": "Samsung",
+  "country": "South Korea",
+  "founded": 1938,
+  "branches": [
+    {
+      "street": "Samsung-ro",
+      "number": 129,
+      "city": "Suwon"
+    },
+    {
+      "street": "Yeongtong-gu",
+      "number": 33,
+      "city": "Seoul"
+    }
+  ],
+  "products": [
+    "Smartphones",
+    "TVs",
+    "Memory Chips"
+  ]
+},{
+  "_id": "67e0884cdd2a010c4f9ebf66",
+  "name": "Logitech",
+  "country": "Switzerland",
+  "founded": 1981,
+  "branches": [
+    {
+      "street": "Rue du Sablon",
+      "number": 2,
+      "city": "Lausanne"
+    },
+    {
+      "street": "Silicon Valley Ave.",
+      "number": 101,
+      "city": "Newark"
+    }
+  ],
+  "products": [
+    "Keyboards",
+    "Mice",
+    "Webcams"
+  ]
+},{
+  "_id": "67e0884cdd2a010c4f9ebf67",
+  "name": "Intel",
+  "country": "United States",
+  "founded": 1968,
+  "branches": [
+    {
+      "street": "Mission College Blvd.",
+      "number": 2200,
+      "city": "Santa Clara"
+    },
+    {
+      "street": "Jones Farm Rd.",
+      "number": 2111,
+      "city": "Hillsboro"
+    }
+  ],
+  "products": [
+    "Processors",
+    "Chipsets",
+    "SSDs"
+  ]
+},{
+  "_id": "67e0884cdd2a010c4f9ebf68",
+  "name": "Sony",
+  "country": "Japan",
+  "founded": 1946,
+  "branches": [
+    {
+      "street": "1-7-1 Konan",
+      "number": 1,
+      "city": "Tokyo"
+    },
+    {
+      "street": "Midtown Tower",
+      "number": 9,
+      "city": "Minato"
+    }
+  ],
+  "products": [
+    "PlayStation",
+    "Cameras",
+    "Headphones"
+  ]
+}]

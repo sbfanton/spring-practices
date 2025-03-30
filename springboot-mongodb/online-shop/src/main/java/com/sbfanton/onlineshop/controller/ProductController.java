@@ -2,7 +2,6 @@ package com.sbfanton.onlineshop.controller;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -34,9 +33,8 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Product> getProductById(@PathVariable String id) {
-        Optional<Product> product = productService.getProductById(id);
-        return product.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<ProductDTO> getProductById(@PathVariable String id) throws Exception {
+    	return ResponseEntity.ok(productService.getProductDTOById(id));
     }
 
     @PostMapping

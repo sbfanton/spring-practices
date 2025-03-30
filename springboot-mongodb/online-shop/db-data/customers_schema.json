@@ -6,7 +6,7 @@
     "phoneNumber": "str",
     "address": {
         "street": "str",
-        "number": "int",
+        "number": "float",
         "city": "str"
     }
 }

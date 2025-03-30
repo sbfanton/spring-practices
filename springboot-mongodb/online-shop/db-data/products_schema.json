@@ -2,7 +2,7 @@
     "_id": "ObjectId",
     "name": "str",
     "description": "str",
-    "price": "int",
+    "price": "float",
     "facturerId": "str",
     "features": "list[str]",
     "compatibility": "list[str]",

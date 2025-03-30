@@ -1,57 +1,56 @@
-[
-  {
-      "nationalDocumentId": "12345678",
-      "name": "Juan Pérez",
-      "email": "juan.perez@example.com",
-      "phoneNumber": "555-1234",
-      "address": {
-          "street": "Av. Siempre Viva",
-          "number": 742,
-          "city": "Springfield"
-      }
-  },
-  {
-      "nationalDocumentId": "87654321",
-      "name": "María López",
-      "email": "maria.lopez@example.com",
-      "phoneNumber": "555-5678",
-      "address": {
-          "street": "street Falsa",
-          "number": 123,
-          "city": "Shelbyville"
-      }
-  },
-  {
-      "nationalDocumentId": "11223344",
-      "name": "Carlos Rodríguez",
-      "email": "carlos.rod@example.com",
-      "phoneNumber": "555-8765",
-      "address": {
-          "street": "Boulevard Central",
-          "number": 456,
-          "city": "Capital City"
-      }
-  },
-  {
-      "nationalDocumentId": "55667788",
-      "name": "Ana Martínez",
-      "email": "ana.martinez@example.com",
-      "phoneNumber": "555-2345",
-      "address": {
-          "street": "Av. Libertador",
-          "number": 789,
-          "city": "Metropolis"
-      }
-  },
-  {
-      "nationalDocumentId": "99887766",
-      "name": "Pedro Gómez",
-      "email": "pedro.gomez@example.com",
-      "phoneNumber": "555-4321",
-      "address": {
-          "street": "street Mayor",
-          "number": 321,
-          "city": "Gotham"
-      }
+[{
+  "_id": "67e08832dd2a010c4f9ebf5d",
+  "nationalDocumentId": "12345678",
+  "name": "Juan Pérez",
+  "email": "juan.perez@example.com",
+  "phoneNumber": "555-1234",
+  "address": {
+    "street": "Av. Siempre Viva",
+    "number": 742,
+    "city": "Springfield"
   }
-]
+},{
+  "_id": "67e08832dd2a010c4f9ebf5e",
+  "nationalDocumentId": "87654321",
+  "name": "María López",
+  "email": "maria.lopez@example.com",
+  "phoneNumber": "555-5678",
+  "address": {
+    "street": "street Falsa",
+    "number": 123,
+    "city": "Shelbyville"
+  }
+},{
+  "_id": "67e08832dd2a010c4f9ebf5f",
+  "nationalDocumentId": "11223344",
+  "name": "Carlos Rodríguez",
+  "email": "carlos.rod@example.com",
+  "phoneNumber": "555-8765",
+  "address": {
+    "street": "Boulevard Central",
+    "number": 456,
+    "city": "Capital City"
+  }
+},{
+  "_id": "67e08832dd2a010c4f9ebf60",
+  "nationalDocumentId": "55667788",
+  "name": "Ana Martínez",
+  "email": "ana.martinez@example.com",
+  "phoneNumber": "555-2345",
+  "address": {
+    "street": "Av. Libertador",
+    "number": 789,
+    "city": "Metropolis"
+  }
+},{
+  "_id": "67e08832dd2a010c4f9ebf61",
+  "nationalDocumentId": "99887766",
+  "name": "Pedro Gómez",
+  "email": "pedro.gomez@example.com",
+  "phoneNumber": "555-4321",
+  "address": {
+    "street": "street Mayor",
+    "number": 321,
+    "city": "Gotham"
+  }
+}]

@@ -2,11 +2,11 @@
     "_id": "ObjectId",
     "name": "str",
     "country": "str",
-    "founded": "int",
+    "founded": "float",
     "branches": [
         {
             "street": "str",
-            "number": "int",
+            "number": "float",
             "city": "str"
         }
     ],

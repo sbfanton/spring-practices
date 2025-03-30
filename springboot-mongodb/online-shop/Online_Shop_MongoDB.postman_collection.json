@@ -14,7 +14,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{main-path}}/customers",
+							"raw": "{{main-path}}/customers?name=Ana",
 							"host": [
 								"{{main-path}}"
 							],
@@ -24,8 +24,7 @@
 							"query": [
 								{
 									"key": "name",
-									"value": "Bart",
-									"disabled": true
+									"value": "Ana"
 								},
 								{
 									"key": "addressCity",
@@ -155,7 +154,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{main-path}}/products",
+							"raw": "{{main-path}}/products?compatibility=Windows",
 							"host": [
 								"{{main-path}}"
 							],
@@ -190,8 +189,7 @@
 								},
 								{
 									"key": "compatibility",
-									"value": "Windows",
-									"disabled": true
+									"value": "Windows"
 								},
 								{
 									"key": "includedItems",
@@ -220,7 +218,7 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": "67e088e0dd2a010c4f9ebf74"
+									"value": "67e088e0dd2a010c4f9ebf6d"
 								}
 							]
 						}
@@ -366,7 +364,7 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": "67e08a3cdd2a010c4f9ebf83"
+									"value": "67e08a3cdd2a010c4f9ebf80"
 								}
 							]
 						}
@@ -441,6 +439,162 @@
 								{
 									"key": "id",
 									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Facturers",
+			"item": [
+				{
+					"name": "GetFacturers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{main-path}}/facturers",
+							"host": [
+								"{{main-path}}"
+							],
+							"path": [
+								"facturers"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "Apple",
+									"disabled": true
+								},
+								{
+									"key": "country",
+									"value": "United States",
+									"disabled": true
+								},
+								{
+									"key": "founded",
+									"value": "1976",
+									"disabled": true
+								},
+								{
+									"key": "product",
+									"value": "Laptops",
+									"disabled": true
+								},
+								{
+									"key": "city",
+									"value": "Cupertino",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetFacturerById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{main-path}}/facturers/:id",
+							"host": [
+								"{{main-path}}"
+							],
+							"path": [
+								"facturers",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "67e0884cdd2a010c4f9ebf67"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateFacturer",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Apple\",\n    \"country\": \"United States\",\n    \"founded\": 1976,\n    \"branches\": [\n        {\n            \"street\": \"1 Apple Park Way\",\n            \"city\": \"Cupertino\",\n            \"number\": 1\n        },\n        {\n            \"street\": \"Fifth Avenue\",\n            \"city\": \"New York\",\n            \"number\": 767\n        }\n    ],\n    \"products\": [\n        \"iPhone\",\n        \"MacBook\",\n        \"iPad\",\n        \"Laptops\"\n    ]\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{main-path}}/facturers",
+							"host": [
+								"{{main-path}}"
+							],
+							"path": [
+								"facturers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateFacturer",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Apple\",\n    \"country\": \"United States\",\n    \"founded\": 1976,\n    \"branches\": [\n        {\n            \"street\": \"Apple Park Way\",\n            \"city\": \"Cupertino\",\n            \"number\": 1\n        },\n        {\n            \"street\": \"Fifth Avenue\",\n            \"city\": \"New York\",\n            \"number\": 767\n        }\n    ],\n    \"products\": [\n        \"iPhone\",\n        \"MacBook\",\n        \"iPad\",\n        \"Laptops\"\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{main-path}}/facturers/:id",
+							"host": [
+								"{{main-path}}"
+							],
+							"path": [
+								"facturers",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "67e9929f1f9495164db04d97"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteFacturer",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{main-path}}/facturers/:id",
+							"host": [
+								"{{main-path}}"
+							],
+							"path": [
+								"facturers",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "67e9929f1f9495164db04d97"
 								}
 							]
 						}

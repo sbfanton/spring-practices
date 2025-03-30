@@ -80,4 +80,13 @@ public class ProductServiceImpl implements ProductService {
 		
 		return products;
 	}
+
+	@Override
+	public ProductDTO getProductDTOById(String id) throws Exception {
+		Document match = productRepository.getDocumentMatchById(id);
+        List<AggregationOperation> aggOpList = productRepository.generateProductAggregationList(match);
+    	return (ProductDTO) productRepository
+    			.getCustomModelByIdWithAgg(aggOpList, Product.class, ProductDTO.class)
+    	        .orElseThrow(() -> new Exception("Product not found"));
+	}
 }

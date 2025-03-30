@@ -41,8 +41,17 @@ public class OrderRepositoryCustomImpl implements OrderRepositoryCustom {
 			            .append("as", "customer")
 			    ));
 		
+		
+		aggregationOperations.add(context -> new Document("$set", 
+				new Document("customer", 
+						new Document()
+						.append("id", "$customer._id")
+						.append("name", "$customer.name")
+		)));
+		
 		// Permite valores nulos en caso de que no haya coincidencia
 		aggregationOperations.add(Aggregation.unwind("customer", true));
+				
 		
 		// Lookup para obtener los productos dentro de Items
 		aggregationOperations.add(context -> new Document("$lookup",
@@ -61,20 +70,34 @@ public class OrderRepositoryCustomImpl implements OrderRepositoryCustom {
 			            ))
 			            .append("as", "products")
 			    ));
+				
 		
 		// Reemplazar los IDs de productos en items con los objetos completos
 		aggregationOperations.add(context -> new Document("$set",
-			        new Document("items", new Document("$map",
-			            new Document("input", "$items")
-			                .append("as", "item")
-			                .append("in", new Document("product", new Document("$arrayElemAt", Arrays.asList(
-			                    "$products", new Document("$indexOfArray", Arrays.asList("$products._id", new Document("$toObjectId", "$$item.productId")))
-			                ))).append("quantity", "$$item.quantity")) // Mantiene la cantidad
-			        ))
-			    ));
+		    new Document("items", new Document("$map",
+		        new Document("input", "$items")
+		            .append("as", "item")
+		            .append("in", new Document()
+		            .append("prodId", new Document("$arrayElemAt", Arrays.asList(
+		                "$products._id", new Document("$indexOfArray", Arrays.asList("$products._id", new Document("$toObjectId", "$$item.productId")))
+		            )))
+		            .append("name", new Document("$arrayElemAt", Arrays.asList(
+		                "$products.name", new Document("$indexOfArray", Arrays.asList("$products._id", new Document("$toObjectId", "$$item.productId")))
+		            )))
+		            .append("description", new Document("$arrayElemAt", Arrays.asList(
+		                "$products.description", new Document("$indexOfArray", Arrays.asList("$products._id", new Document("$toObjectId", "$$item.productId")))
+		            )))
+		            .append("price", new Document("$arrayElemAt", Arrays.asList(
+		                "$products.price", new Document("$indexOfArray", Arrays.asList("$products._id", new Document("$toObjectId", "$$item.productId")))
+		            )))
+		            .append("quantity", "$$item.quantity") // Mantiene la cantidad
+		        ))
+		    )));
+		
 		
 		// Eliminar el array auxiliar "products"
 		aggregationOperations.add(context -> new Document("$unset", "products"));
+				
 		
 		return aggregationOperations;
 	}

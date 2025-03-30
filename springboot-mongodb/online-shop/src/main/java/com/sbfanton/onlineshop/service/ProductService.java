@@ -11,6 +11,7 @@ public interface ProductService {
 
     public List<Product> getAllProducts();
     public Optional<Product> getProductById(String id);
+    public ProductDTO getProductDTOById(String id) throws Exception;
     public Product createProduct(Product product);
     public Product updateProduct(String id, Product productDetails);
     public void deleteProductById(String id);
