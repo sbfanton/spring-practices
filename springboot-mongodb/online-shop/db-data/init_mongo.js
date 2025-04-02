@@ -1,5 +1,19 @@
 // Conectar o crear la base de datos
-db = db.getSiblingDB("online-shop");
+const dbName = "online-shop"
+db = db.getSiblingDB(dbName);
+
+// Crear un nuevo usuario con contraseña
+const username = "user1";
+const password = "1234";
+
+// Crear el usuario
+db.createUser ({
+    user: username,
+    pwd: password,
+    roles: [
+        { role: "readWrite", db: dbName } // Asigna el rol de lectura y escritura en la nueva base de datos
+    ]
+});
 
 // Definir las colecciones
 const collections = [
