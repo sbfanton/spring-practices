@@ -1,0 +1,22 @@
+version: '3.3'
+
+services:
+  mongo:
+    build: ./db-data
+    container_name: mongo_db_online_shop
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/mongo_db_online_shop
+  springboot-app:
+    build: .
+    container_name: springboot_online_shop_app
+    ports:
+      - "9091:9091"
+    stdin_open: true
+    tty: true
+    depends_on:
+      - mongo
+
+volumes:
+  mongo_data:

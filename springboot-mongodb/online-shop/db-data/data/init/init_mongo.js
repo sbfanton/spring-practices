@@ -17,15 +17,16 @@ db.createUser ({
 
 // Definir las colecciones
 const collections = [
-    ["customers", "./customers.json"], 
-    ["products", "./products.json"], 
-    ["orders", "./orders.json"], 
-    ["facturers", "./facturers.json"]
+    ["customers", "/data/init/customers.json"], 
+    ["products", "/data/init/products.json"], 
+    ["orders", "/data/init/orders.json"], 
+    ["facturers", "/data/init/facturers.json"]
 ];
 
 // Función para cargar datos desde archivos JSON
 // Función para cargar datos desde archivos JSON
 function loadJSON(collectionName, filePath) {
+    print("¡Iniciando la ejecución de init_mongo.js!");
     try {
         const data = cat(filePath);
         let jsonData = JSON.parse(data);

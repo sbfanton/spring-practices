@@ -59,6 +59,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
+		<finalName>online-shop</finalName>
 	</build>
 
 </project>
