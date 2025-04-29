@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.sbfanton.onlineshop.model.Order;
 import com.sbfanton.onlineshop.model.dto.OrderDTO;
+import com.sbfanton.onlineshop.model.dto.OrderDTOExtended;
 import com.sbfanton.onlineshop.service.OrderService;
 
 @RestController
@@ -27,27 +27,27 @@ public class OrderController {
 	private OrderService orderService;
 	
 	@GetMapping
-    public ResponseEntity<List<OrderDTO>> getOrders (
+    public ResponseEntity<List<OrderDTOExtended>> getOrders (
     		@RequestParam Map<String, String> filters) throws Exception {
         
     	return ResponseEntity.ok(orderService.getOrderDTOList(filters));
     }
 	
 	@GetMapping("/{id}")
-    public ResponseEntity<OrderDTO> getOrderById(@PathVariable String id) throws Exception {
-        OrderDTO order = orderService.getOrderDTOById(id);
+    public ResponseEntity<OrderDTOExtended> getOrderById(@PathVariable String id) throws Exception {
+        OrderDTOExtended order = orderService.getOrderDTOById(id);
         return ResponseEntity.ok(order);
     }
 
     @PostMapping
-    public Order createOrder(@RequestBody Order order) {
+    public OrderDTO createOrder(@RequestBody OrderDTO order) throws Exception {
         return orderService.createOrder(order);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Order> updateOrder(@PathVariable String id, @RequestBody Order orderDetails) {
+    public ResponseEntity<OrderDTO> updateOrder(@PathVariable String id, @RequestBody OrderDTO orderDetails) throws Exception {
         try {
-            Order updatedOrder = orderService.updateOrder(id, orderDetails);
+            OrderDTO updatedOrder = orderService.updateOrder(id, orderDetails);
             return ResponseEntity.ok(updatedOrder);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();

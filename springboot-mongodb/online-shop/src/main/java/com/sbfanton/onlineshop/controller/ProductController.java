@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.sbfanton.onlineshop.model.Product;
 import com.sbfanton.onlineshop.model.dto.ProductDTO;
+import com.sbfanton.onlineshop.model.dto.ProductDTOExtended;
 import com.sbfanton.onlineshop.service.ProductService;
 
 @RestController
@@ -27,25 +27,25 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping
-    public ResponseEntity<List<ProductDTO>> getAllProducts(@RequestParam Map<String, String> filters) throws Exception {
+    public ResponseEntity<List<ProductDTOExtended>> getAllProducts(@RequestParam Map<String, String> filters) throws Exception {
         
     	return ResponseEntity.ok(productService.getProductDTOList(filters));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProductDTO> getProductById(@PathVariable String id) throws Exception {
+    public ResponseEntity<ProductDTOExtended> getProductById(@PathVariable String id) throws Exception {
     	return ResponseEntity.ok(productService.getProductDTOById(id));
     }
 
     @PostMapping
-    public Product createProduct(@RequestBody Product product) {
+    public ProductDTO createProduct(@RequestBody ProductDTO product) throws Exception {
         return productService.createProduct(product);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Product> updateProduct(@PathVariable String id, @RequestBody Product productDetails) {
+    public ResponseEntity<ProductDTO> updateProduct(@PathVariable String id, @RequestBody ProductDTO productDetails) throws Exception {
         try {
-            Product updatedProduct = productService.updateProduct(id, productDetails);
+            ProductDTO updatedProduct = productService.updateProduct(id, productDetails);
             return ResponseEntity.ok(updatedProduct);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();

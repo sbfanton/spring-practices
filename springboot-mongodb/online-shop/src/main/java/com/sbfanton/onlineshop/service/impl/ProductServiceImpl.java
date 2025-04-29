@@ -2,7 +2,6 @@ package com.sbfanton.onlineshop.service.impl;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.apache.commons.lang3.tuple.Triple;
 import org.bson.Document;
@@ -12,6 +11,8 @@ import org.springframework.stereotype.Service;
 
 import com.sbfanton.onlineshop.model.Product;
 import com.sbfanton.onlineshop.model.dto.ProductDTO;
+import com.sbfanton.onlineshop.model.dto.ProductDTOExtended;
+import com.sbfanton.onlineshop.model.mappers.ProductMapper;
 import com.sbfanton.onlineshop.repository.ProductRepository;
 import com.sbfanton.onlineshop.service.ProductService;
 import com.sbfanton.onlineshop.utils.EnumUtils;
@@ -25,21 +26,14 @@ public class ProductServiceImpl implements ProductService {
 
 	@Autowired
 	private ProductRepository productRepository;
-	
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
+
+    public ProductDTO createProduct(ProductDTO product) throws Exception {
+        Product newProduct = productRepository.save(ProductMapper.toEntity(product));
+        return ProductMapper.toDTO(newProduct);
     }
 
-    public Optional<Product> getProductById(String id) {
-        return productRepository.findById(id);
-    }
-
-    public Product createProduct(Product product) {
-        return productRepository.save(product);
-    }
-
-    public Product updateProduct(String id, Product productDetails) {
-        return productRepository.findById(id).map(product -> {
+    public ProductDTO updateProduct(String id, ProductDTO productDetails) throws Exception {
+        Product prod = productRepository.findById(id).map(product -> {
             product.setName(productDetails.getName());
             product.setDescription(productDetails.getDescription());
             product.setPrice(productDetails.getPrice());
@@ -49,6 +43,7 @@ public class ProductServiceImpl implements ProductService {
             product.setIncludedItems(productDetails.getIncludedItems());
             return productRepository.save(product);
         }).orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+        return ProductMapper.toDTO(prod);
     }
 
     public void deleteProductById(String id) {
@@ -57,7 +52,7 @@ public class ProductServiceImpl implements ProductService {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ProductDTO> getProductDTOList(Map<String, String> filters) throws Exception {
+	public List<ProductDTOExtended> getProductDTOList(Map<String, String> filters) throws Exception {
 		
 		ParamsValidator.validateParams(
 				filters, 
@@ -73,20 +68,20 @@ public class ProductServiceImpl implements ProductService {
 		
 		List<AggregationOperation> aggOpList = productRepository.generateProductAggregationList(initialMatch);
 		
-		List<ProductDTO> products = (List<ProductDTO>) productRepository.getCustomModelListWithAgg(
+		List<ProductDTOExtended> products = (List<ProductDTOExtended>) productRepository.getCustomModelListWithAgg(
 				aggOpList, 
 				Product.class, 
-				ProductDTO.class);
+				ProductDTOExtended.class);
 		
 		return products;
 	}
 
 	@Override
-	public ProductDTO getProductDTOById(String id) throws Exception {
+	public ProductDTOExtended getProductDTOById(String id) throws Exception {
 		Document match = productRepository.getDocumentMatchById(id);
         List<AggregationOperation> aggOpList = productRepository.generateProductAggregationList(match);
-    	return (ProductDTO) productRepository
-    			.getCustomModelByIdWithAgg(aggOpList, Product.class, ProductDTO.class)
+    	return (ProductDTOExtended) productRepository
+    			.getCustomModelByIdWithAgg(aggOpList, Product.class, ProductDTOExtended.class)
     	        .orElseThrow(() -> new Exception("Product not found"));
 	}
 }

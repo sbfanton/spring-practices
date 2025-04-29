@@ -3,6 +3,7 @@ package com.sbfanton.onlineshop.service.impl;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Triple;
 import org.bson.Document;
@@ -11,6 +12,8 @@ import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.stereotype.Service;
 
 import com.sbfanton.onlineshop.model.Facturer;
+import com.sbfanton.onlineshop.model.dto.FacturerDTO;
+import com.sbfanton.onlineshop.model.mappers.FacturerMapper;
 import com.sbfanton.onlineshop.repository.FacturerRepository;
 import com.sbfanton.onlineshop.service.FacturerService;
 import com.sbfanton.onlineshop.utils.EnumUtils;
@@ -27,17 +30,18 @@ public class FacturerServiceImpl implements FacturerService {
 	private FacturerRepository facturerRepository;
 	
 	@Override
-	public Facturer createFacturer(Facturer facturer) throws Exception {
-		return facturerRepository.save(facturer);
+	public FacturerDTO createFacturer(FacturerDTO facturer) throws Exception {
+		return FacturerMapper.toDTO(facturerRepository.save(FacturerMapper.toEntity(facturer)));
 	}
 
 	@Override
-	public Optional<Facturer> getFacturerById(String id) {
-		return facturerRepository.findById(id);
+	public Optional<FacturerDTO> getFacturerById(String id) {
+		return facturerRepository.findById(id)
+				.map(FacturerMapper::toDTO);
 	}
 
 	@Override
-	public Facturer updateFacturer(String id, Facturer updatedFacturer) {
+	public FacturerDTO updateFacturer(String id, FacturerDTO updatedFacturer) {
 		return facturerRepository.findById(id).map(facturer -> {
         	facturer.setName(updatedFacturer.getName());
             facturer.setFounded(updatedFacturer.getFounded());
@@ -45,7 +49,9 @@ public class FacturerServiceImpl implements FacturerService {
             facturer.setBranches(updatedFacturer.getBranches());
             facturer.setProducts(updatedFacturer.getProducts());
             return facturerRepository.save(facturer);
-        }).orElseThrow(() -> new RuntimeException("Fabricante no encontrado"));
+        })
+		.map(FacturerMapper::toDTO)
+		.orElseThrow(() -> new RuntimeException("Fabricante no encontrado"));
 	}
 
 	@Override
@@ -55,7 +61,7 @@ public class FacturerServiceImpl implements FacturerService {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Facturer> getAllFacturers(Map<String, String> filters) throws Exception {
+	public List<FacturerDTO> getAllFacturers(Map<String, String> filters) throws Exception {
 		ParamsValidator.validateParams(
 				filters, 
 				EnumUtils.getEnumPropertyValues(FacturerReqAllowedParams.class, "getParamName"));
@@ -78,6 +84,8 @@ public class FacturerServiceImpl implements FacturerService {
 				Facturer.class, 
 				Facturer.class);
 		
-		return facturers;
+		return facturers.stream()
+				.map(FacturerMapper::toDTO)
+				.collect(Collectors.toList());
 	}
 }

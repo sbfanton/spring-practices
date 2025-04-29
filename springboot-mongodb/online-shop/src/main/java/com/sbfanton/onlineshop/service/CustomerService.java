@@ -4,14 +4,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import com.sbfanton.onlineshop.model.Customer;
+import com.sbfanton.onlineshop.model.dto.CustomerDTO;
 
 public interface CustomerService {
-    public Customer createCustomer(Customer Customer) throws Exception;
-    public List<Customer> getAllCustomers();
-    public Optional<Customer> getCustomerById(String id);
-    public Optional<Customer> getCustomerByEmail(String email);
-    public List<Customer> getCustomersFiltered(Map<String, String> filters) throws Exception;
-    public Customer updateCustomer(String id, Customer updatedCustomer);
+    public CustomerDTO createCustomer(CustomerDTO Customer) throws Exception;
+    public List<CustomerDTO> getAllCustomers();
+    public Optional<CustomerDTO> getCustomerById(String id);
+    public Optional<CustomerDTO> getCustomerByEmail(String email);
+    public List<CustomerDTO> getCustomersFiltered(Map<String, String> filters) throws Exception;
+    public CustomerDTO updateCustomer(String id, CustomerDTO updatedCustomer);
     public void deleteCustomerById(String id);
 }

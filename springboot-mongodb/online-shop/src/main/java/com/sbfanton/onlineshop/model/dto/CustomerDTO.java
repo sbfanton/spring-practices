@@ -1,7 +1,6 @@
-package com.sbfanton.onlineshop.model;
+package com.sbfanton.onlineshop.model.dto;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import com.sbfanton.onlineshop.model.Address;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,21 +15,12 @@ import lombok.Setter;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(collection = "customers")
-//@JsonInclude(JsonInclude.Include.NON_NULL) //para no incluir campos con valores null
-public class Customer {
-    
-	@Id
-    private String id;
-	
-	private String nationalDocumentId;
-	
-    private String name;
-    
-    private String email;
-    
-    private String phoneNumber;
-    
-    private Address address;
+public class CustomerDTO {
 
+	private String id;
+	private String nationalDocumentId;
+    private String name;
+    private String email;
+    private String phoneNumber;
+    private Address address;
 }

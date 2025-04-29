@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 
 import com.sbfanton.onlineshop.model.Order;
 import com.sbfanton.onlineshop.model.dto.OrderDTO;
+import com.sbfanton.onlineshop.model.dto.OrderDTOExtended;
+import com.sbfanton.onlineshop.model.mappers.OrderMapper;
 import com.sbfanton.onlineshop.repository.OrderRepository;
 import com.sbfanton.onlineshop.service.OrderService;
 import com.sbfanton.onlineshop.utils.EnumUtils;
@@ -30,27 +32,29 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.findAll();
     }
 
-	public OrderDTO getOrderDTOById(String id) throws Exception {
+	public OrderDTOExtended getOrderDTOById(String id) throws Exception {
         Document match = orderRepository.getDocumentMatchById(id);
         List<AggregationOperation> aggOpList = orderRepository.generateOrderAggregationList(match);
-    	return (OrderDTO) orderRepository
-    			.getCustomModelByIdWithAgg(aggOpList, Order.class, OrderDTO.class)
+    	return (OrderDTOExtended) orderRepository
+    			.getCustomModelByIdWithAgg(aggOpList, Order.class, OrderDTOExtended.class)
     	        .orElseThrow(() -> new Exception("Order not found"));
 	}
 
 
-    public Order createOrder(Order order) {
-        return orderRepository.save(order);
+    public OrderDTO createOrder(OrderDTO order) throws Exception {
+        Order ord = orderRepository.save(OrderMapper.toEntity(order));
+        return OrderMapper.toDTO(ord);
     }
 
-    public Order updateOrder(String id, Order updatedOrder) {
-        return orderRepository.findById(id)
+    public OrderDTO updateOrder(String id, OrderDTO updatedOrder) throws Exception {
+        Order ord = orderRepository.findById(id)
             .map(order -> {
                 order.setCustomerId(updatedOrder.getCustomerId());
                 order.setItems(updatedOrder.getItems());
                 order.setStatus(updatedOrder.getStatus());
                 return orderRepository.save(order);
             }).orElseThrow(() -> new RuntimeException("Order not found"));
+        return OrderMapper.toDTO(ord);
     }
 
     public void deleteOrderById(String id) {
@@ -59,7 +63,7 @@ public class OrderServiceImpl implements OrderService {
     
     @SuppressWarnings("unchecked")
 	@Override
-	public List<OrderDTO> getOrderDTOList(Map<String, String> filters) throws Exception {
+	public List<OrderDTOExtended> getOrderDTOList(Map<String, String> filters) throws Exception {
 		
 		ParamsValidator.validateParams(
 				filters, 
@@ -78,11 +82,11 @@ public class OrderServiceImpl implements OrderService {
 		
 		List<AggregationOperation> aggOpList = orderRepository.generateOrderAggregationList(matchStage);
 		
-		return (List<OrderDTO>) orderRepository.
+		return (List<OrderDTOExtended>) orderRepository.
 				getCustomModelListWithAgg(
 						aggOpList, 
 						Order.class,
-						OrderDTO.class);
+						OrderDTOExtended.class);
 	}
 
 }

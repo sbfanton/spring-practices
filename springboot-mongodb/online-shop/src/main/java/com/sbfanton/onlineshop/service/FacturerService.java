@@ -4,13 +4,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import com.sbfanton.onlineshop.model.Facturer;
+import com.sbfanton.onlineshop.model.dto.FacturerDTO;
 
 public interface FacturerService {
 
-	public Facturer createFacturer(Facturer facturer) throws Exception;
-    public Optional<Facturer> getFacturerById(String id);
-    public List<Facturer> getAllFacturers(Map<String, String> filters) throws Exception;
-    public Facturer updateFacturer(String id, Facturer updatedFacturer);
+	public FacturerDTO createFacturer(FacturerDTO facturer) throws Exception;
+    public Optional<FacturerDTO> getFacturerById(String id);
+    public List<FacturerDTO> getAllFacturers(Map<String, String> filters) throws Exception;
+    public FacturerDTO updateFacturer(String id, FacturerDTO updatedFacturer);
     public void deleteFacturerById(String id);
 }

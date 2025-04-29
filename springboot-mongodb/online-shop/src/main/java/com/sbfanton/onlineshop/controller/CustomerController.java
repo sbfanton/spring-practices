@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.sbfanton.onlineshop.model.Customer;
+import com.sbfanton.onlineshop.model.dto.CustomerDTO;
 import com.sbfanton.onlineshop.service.CustomerService;
 
 @RestController
@@ -26,12 +26,12 @@ public class CustomerController {
     private CustomerService customerService;
 
     @PostMapping
-    public ResponseEntity<Customer> createCustomer(@RequestBody Customer customer) throws Exception{
+    public ResponseEntity<CustomerDTO> createCustomer(@RequestBody CustomerDTO customer) throws Exception{
         return ResponseEntity.ok(customerService.createCustomer(customer));
     }
 
     @GetMapping
-    public ResponseEntity<List<Customer>> getCustomers (
+    public ResponseEntity<List<CustomerDTO>> getCustomers (
     		@RequestParam Map<String, String> filters) throws Exception {
         
     	if(filters != null) {
@@ -42,14 +42,14 @@ public class CustomerController {
     
 
     @GetMapping("/{id}")
-    public ResponseEntity<Customer> getCustomerByCustomerId(@PathVariable String id) {
+    public ResponseEntity<CustomerDTO> getCustomerByCustomerId(@PathVariable String id) {
         return customerService.getCustomerById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Customer> updateCustomer(@PathVariable String id, @RequestBody Customer customer) {
+    public ResponseEntity<CustomerDTO> updateCustomer(@PathVariable String id, @RequestBody CustomerDTO customer) {
         try {
             return ResponseEntity.ok(customerService.updateCustomer(id, customer));
         } catch (RuntimeException e) {

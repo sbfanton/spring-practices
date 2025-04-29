@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.sbfanton.onlineshop.model.Facturer;
+import com.sbfanton.onlineshop.model.dto.FacturerDTO;
 import com.sbfanton.onlineshop.service.FacturerService;
 
 @RestController
@@ -27,25 +27,25 @@ public class FacturerController {
 	private FacturerService facturerService;
 	
 	@GetMapping
-    public ResponseEntity<List<Facturer>> getAllFacturers(@RequestParam Map<String, String> filters) throws Exception {
+    public ResponseEntity<List<FacturerDTO>> getAllFacturers(@RequestParam Map<String, String> filters) throws Exception {
     	return ResponseEntity.ok(facturerService.getAllFacturers(filters));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Facturer> getFacturerById(@PathVariable String id) {
-        Optional<Facturer> facturer = facturerService.getFacturerById(id);
+    public ResponseEntity<FacturerDTO> getFacturerById(@PathVariable String id) {
+        Optional<FacturerDTO> facturer = facturerService.getFacturerById(id);
         return facturer.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public Facturer createFacturer(@RequestBody Facturer facturer) throws Exception {
+    public FacturerDTO createFacturer(@RequestBody FacturerDTO facturer) throws Exception {
         return facturerService.createFacturer(facturer);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Facturer> updateFacturer(@PathVariable String id, @RequestBody Facturer facturerDetails) {
+    public ResponseEntity<FacturerDTO> updateFacturer(@PathVariable String id, @RequestBody FacturerDTO facturerDetails) {
         try {
-            Facturer updatedFacturer = facturerService.updateFacturer(id, facturerDetails);
+            FacturerDTO updatedFacturer = facturerService.updateFacturer(id, facturerDetails);
             return ResponseEntity.ok(updatedFacturer);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();

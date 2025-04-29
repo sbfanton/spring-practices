@@ -3,6 +3,7 @@ package com.sbfanton.onlineshop.service.impl;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Triple;
 import org.bson.Document;
@@ -11,6 +12,8 @@ import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.stereotype.Service;
 
 import com.sbfanton.onlineshop.model.Customer;
+import com.sbfanton.onlineshop.model.dto.CustomerDTO;
+import com.sbfanton.onlineshop.model.mappers.CustomerMapper;
 import com.sbfanton.onlineshop.repository.CustomerRepository;
 import com.sbfanton.onlineshop.service.CustomerService;
 
@@ -26,26 +29,31 @@ public class CustomerServiceImpl implements CustomerService {
 	@Autowired
     private CustomerRepository customerRepository;
 
-    public Customer createCustomer(Customer customer) throws Exception {
+    public CustomerDTO createCustomer(CustomerDTO customer) throws Exception {
     	if(customer.getNationalDocumentId() == null) {
     		throw new Exception("El nuevo cliente debe contar con un id (asociado a su número de documento correspondiente)");
     	}
-        return customerRepository.save(customer);
+        Customer newCustomer = customerRepository.save(CustomerMapper.toEntity(customer));
+        return CustomerMapper.toDTO(newCustomer);
     }
 
-    public List<Customer> getAllCustomers() {
-        return customerRepository.findAll();
+    public List<CustomerDTO> getAllCustomers() {
+    	return customerRepository.findAll().stream()
+    	        .map(CustomerMapper::toDTO)
+    	        .collect(Collectors.toList());
     }
 
-    public Optional<Customer> getCustomerById(String id) {
-        return customerRepository.findById(id);
+    public Optional<CustomerDTO> getCustomerById(String id) {
+    	return customerRepository.findById(id)
+    			.map(CustomerMapper::toDTO);
     }
 
-    public Optional<Customer> getCustomerByEmail(String email) {
-        return customerRepository.findByEmail(email);
+    public Optional<CustomerDTO> getCustomerByEmail(String email) {
+        return customerRepository.findByEmail(email)
+        		.map(CustomerMapper::toDTO);
     }
 
-    public Customer updateCustomer(String id, Customer updatedCustomer) {
+    public CustomerDTO updateCustomer(String id, CustomerDTO updatedCustomer) {
         return customerRepository.findById(id).map(customer -> {
         	customer.setNationalDocumentId(updatedCustomer.getNationalDocumentId());
             customer.setName(updatedCustomer.getName());
@@ -53,7 +61,9 @@ public class CustomerServiceImpl implements CustomerService {
             customer.setPhoneNumber(updatedCustomer.getPhoneNumber());
             customer.setAddress(updatedCustomer.getAddress());
             return customerRepository.save(customer);
-        }).orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
+        })
+        .map(CustomerMapper::toDTO)
+        .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
     }
 
     public void deleteCustomerById(String id) {
@@ -61,7 +71,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
 	@SuppressWarnings("unchecked")
-	public List<Customer> getCustomersFiltered(Map<String, String> filters) throws Exception {
+	public List<CustomerDTO> getCustomersFiltered(Map<String, String> filters) throws Exception {
 		ParamsValidator.validateParams(
 				filters, 
 				EnumUtils.getEnumPropertyValues(CustomerReqAllowedParams.class, "getParamName"));
@@ -81,7 +91,9 @@ public class CustomerServiceImpl implements CustomerService {
 				Customer.class, 
 				Customer.class);
 		
-		return customers;
+		return customers.stream()
+    	        .map(CustomerMapper::toDTO)
+    	        .collect(Collectors.toList());
 	}
 	
 }
