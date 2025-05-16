@@ -1,0 +1,541 @@
+Keycloak
+
+Video tutorial: https://www.youtube.com/watch?v=_0oXZKr97ro
+
+
+Keycloak local:
+
+*********************
+
+Para iniciar servidor en modo dev:
+./kc.sh start-dev --http-port=8081
+
+Usuario temporario inicial:
+admin
+keyAd6538
+
+Usuario admin permanente:
+admin2
+key7890adlt
+
+*********************
+
+que es un realm en keycloak?
+
+
+ChatGPT dijo:
+En Keycloak, un realm (reino) es una unidad de aislamiento que agrupa todos los recursos de seguridad relacionados: usuarios, roles, clientes, sesiones, políticas de autenticación, etc.
+
+📌 En términos simples:
+Un realm es como un espacio seguro independiente dentro de Keycloak, donde puedes gestionar:
+
+Usuarios
+
+Roles
+
+Aplicaciones (clientes)
+
+Configuraciones de login, flujos de autenticación
+
+Grupos, sesiones, tokens, etc.
+
+🧱 ¿Para qué sirve?
+Los realms permiten que una única instancia de Keycloak pueda servir a múltiples sistemas o clientes aislados entre sí, por ejemplo:
+
+Un realm para la aplicación de RRHH
+
+Otro realm para clientes externos
+
+Otro para pruebas internas
+
+Cada realm tiene su propia base de usuarios, configuración y control de acceso.
+
+🧪 Ejemplo real
+Supongamos que tienes una empresa con:
+
+Una app para empleados internos
+
+Un portal para clientes
+
+Un entorno de pruebas
+
+Puedes tener:
+
+internal-realm → con usuarios internos, autenticación por LDAP, políticas estrictas
+
+customers-realm → con usuarios externos, login con email y contraseña
+
+test-realm → para pruebas y desarrollo
+
+Estos realms son totalmente independientes.
+
+✅ Realm por defecto
+Cuando instalas Keycloak, se crea un realm por defecto llamado master, que es solo para administrar la instancia de Keycloak. Ahí es donde está el primer usuario administrador.
+
+Importante: No se recomienda crear aplicaciones dentro del realm master. Es mejor crear un nuevo realm para tus propios usuarios y aplicaciones.
+
+*********************
+
+En Keycloak, los conceptos de usuario y cliente son fundamentales, pero diferentes:
+
+👤 ¿Qué es un usuario?
+Un usuario representa a una persona (o entidad) que puede autenticarse en Keycloak, como por ejemplo:
+
+Un empleado que entra al sistema interno
+
+Un cliente que inicia sesión en tu app
+
+Un administrador que gestiona Keycloak
+
+Atributos comunes de un usuario:
+Username
+
+Email
+
+Contraseña
+
+Roles
+
+Grupos
+
+Atributos personalizados
+
+Los usuarios existen dentro de un realm, por lo que un mismo nombre de usuario puede existir en distintos realms sin conflicto.
+
+🧩 ¿Qué es un cliente?
+Un cliente en Keycloak representa una aplicación o servicio que quiere usar Keycloak para autenticación y autorización.
+
+Ejemplos de clientes:
+
+Una aplicación web (frontend-app)
+
+Una API (api-backend)
+
+Una app móvil (mobile-app)
+
+Un servicio externo como Grafana, Jenkins, etc.
+
+Un cliente puede:
+Redirigir a los usuarios a Keycloak para login (OIDC/SAML)
+
+Validar tokens JWT emitidos por Keycloak
+
+Solicitar tokens de acceso (con credenciales de cliente)
+
+Tipos comunes de cliente:
+Public (sin secretos, usado en apps frontend o móviles)
+
+Confidential (con secreto, usado en apps backend/servidores)
+
+Bearer-only (no se autentica en Keycloak, pero valida tokens)
+
+🧠 Relación entre usuario y cliente
+Un usuario inicia sesión en un cliente (la app).
+
+El cliente define qué permisos necesita.
+
+Keycloak valida al usuario y genera tokens que el cliente puede usar para acceder a recursos protegidos.
+
+🎯 Ejemplo concreto
+Tienes una app web que usa Keycloak para login:
+
+Realm: mycompany
+
+Cliente: web-portal
+
+Usuario: juan.perez
+
+Juan abre web-portal.
+
+La app redirige a Keycloak (cliente web-portal).
+
+Juan ingresa su usuario y contraseña.
+
+Keycloak valida su identidad y devuelve un token a web-portal.
+
+La app usa ese token para autorizar a Juan.
+
+
+Te explico cómo funciona el flujo OAuth 2.0 en Keycloak usando un cliente (una app) y un usuario.
+
+Primero, recordemos que Keycloak implementa OAuth 2.0 y OpenID Connect (OIDC). Este último es una extensión de OAuth que permite identificar usuarios (no solo autorizar).
+
+🧭 Flujo típico: Authorization Code Flow (el más común con OIDC)
+Este flujo es usado por aplicaciones web del lado del servidor o SPAs (Single Page Applications).
+
+🔄 Paso a paso del flujo OAuth 2.0 (Authorization Code):
+La app redirige al usuario a Keycloak
+Cuando el usuario quiere iniciar sesión, la app lo redirige a Keycloak:
+
+perl
+Copiar
+Editar
+GET https://<keycloak-host>/realms/<realm>/protocol/openid-connect/auth
+    ?client_id=<client-id>
+    &response_type=code
+    &redirect_uri=<url-post-login>
+    &scope=openid
+    &state=<csrf-token>
+El usuario inicia sesión en Keycloak
+En el login de Keycloak, el usuario ingresa su usuario y contraseña.
+
+Keycloak redirige de vuelta a la app con un código
+Si el login fue exitoso, Keycloak redirige a la redirect_uri con un code:
+
+perl
+Copiar
+Editar
+https://app.com/callback?code=abc123&state=<csrf-token>
+La app intercambia el código por un token
+La app hace una petición POST a Keycloak para obtener el token:
+
+perl
+Copiar
+Editar
+POST https://<keycloak-host>/realms/<realm>/protocol/openid-connect/token
+  - Basic Auth: client_id + client_secret
+  - Body:
+      grant_type=authorization_code
+      code=abc123
+      redirect_uri=https://app.com/callback
+Keycloak responde con los tokens:
+
+json
+Copiar
+Editar
+{
+  "access_token": "...",
+  "id_token": "...",
+  "refresh_token": "...",
+  "expires_in": 300,
+  ...
+}
+La app usa el access_token para acceder a APIs protegidas
+El token se manda en la cabecera HTTP:
+
+makefile
+Copiar
+Editar
+Authorization: Bearer <access_token>
+🧾 Tokens que Keycloak emite:
+Access Token: autoriza acceso a recursos (válido por pocos minutos)
+
+ID Token: contiene info del usuario (nombre, email, etc.)
+
+Refresh Token: permite renovar tokens sin volver a loguear
+
+🎯 Ejemplo visual
+css
+Copiar
+Editar
+[Usuario] → (1) → [App cliente] → (2) → [Keycloak login]
+                                         ↓
+                                       (3)
+                                ← redirect con code
+↓
+(4) App intercambia code por token
+↓
+(5) Keycloak entrega access_token / id_token / refresh_token
+↓
+(6) App usa access_token para acceder a APIs
+🔐 ¿Dónde se configura esto?
+En Keycloak:
+
+Crea un cliente.
+
+Define:
+
+Tipo: confidential o public
+
+Valid redirect URIs: URLs válidas donde redirigir tras login
+
+Access type: confidential si tiene secret (como backends)
+
+
+
+
+
+¿Qué es Keycloak?
+Keycloak es una herramienta que permite gestionar usuarios, logins y permisos de forma centralizada. Es como un "guardia de seguridad" que se encarga de:
+
+Mostrar pantallas de login
+
+Validar contraseñas
+
+Generar tokens de acceso
+
+Proteger tus aplicaciones
+
+🔐 ¿Qué es OAuth 2.0?
+OAuth 2.0 es un protocolo que define cómo una app puede obtener permiso para acceder a algo en nombre de un usuario, sin que tenga que guardar la contraseña.
+
+Ejemplo cotidiano:
+Cuando una app pide acceder a tu cuenta de Google sin pedirte tu contraseña, está usando OAuth 2.0.
+
+🤝 ¿Cómo se relacionan Keycloak y OAuth 2.0?
+Keycloak implementa OAuth 2.0 (y OpenID Connect).
+
+Tus aplicaciones pueden usar Keycloak como servidor OAuth.
+
+Keycloak se encarga de hacer login, emitir tokens, y validar acceso a APIs.
+
+🧑‍💻 ¿Qué es un cliente en Keycloak?
+Un cliente en Keycloak representa una aplicación que quiere usar Keycloak para login y seguridad.
+
+Por ejemplo:
+
+Una app web: mi-frontend
+
+Una API backend: mi-api
+
+Un sistema externo: grafana, jenkins, etc.
+
+El cliente define:
+
+Dónde redirigir al usuario después del login
+
+Qué permisos necesita
+
+Si es pública o privada (tiene client_secret o no)
+
+📶 ¿Cómo funciona todo junto? (resumen del flujo)
+El usuario entra a tu aplicación.
+
+La app redirige al login de Keycloak.
+
+El usuario hace login en Keycloak.
+
+Keycloak redirige de vuelta a tu app con un "código".
+
+Tu app pide a Keycloak un token de acceso usando ese código.
+
+Tu app usa el token para acceder a recursos (como APIs).
+
+🎯 ¿Para qué sirve todo esto?
+✅ No tenés que implementar login en cada app.
+
+✅ Podés tener un solo lugar donde manejar usuarios y permisos.
+
+✅ Podés integrar apps externas fácilmente.
+
+✅ Los tokens permiten acceso seguro sin guardar contraseñas.
+
+🧠 En resumen:
+Concepto	Qué es
+Keycloak	Sistema que gestiona login, usuarios, permisos
+OAuth 2.0	Protocolo para autorizar acceso sin compartir contraseñas
+Cliente	Una app que usa Keycloak para login/seguridad
+Usuario	Persona que inicia sesión (por ejemplo, en tu app web)
+Token	Prueba de que el usuario se autenticó correctamente
+
+¿Querés que te muestre un ejemplo real paso a paso con un cliente en Keycloak?
+
+
+*********************************************
+
+Dijiste:
+no entiendo esto: La app redirige al login de Keycloak.
+por que dirige al login de keycloak? 
+suponete que quiero usar oauth2 para acceder a algo de google, ej drive, como se unen estas cosas?
+
+
+ChatGPT dijo:
+Muy buena pregunta. Estás tocando el corazón del funcionamiento de OAuth 2.0. Vamos paso por paso para que se entienda claramente.
+
+🔁 ¿Por qué "la app redirige al login"?
+Porque la aplicación no debería pedir la contraseña directamente.
+
+🛑 Prohibido:
+Tu app NO debería mostrar una pantalla para que el usuario escriba su contraseña de Google o Keycloak directamente.
+
+✅ Correcto:
+Tu app redirige al "servidor de autorización" (como Keycloak o Google), que sí muestra la pantalla de login, y luego vuelve a tu app con un token que prueba que el usuario se autenticó.
+
+🧠 ¿Quién es quién en OAuth 2.0?
+Imaginemos que querés que tu app acceda a Google Drive del usuario:
+
+Rol	Ejemplo
+Usuario	Persona que tiene cuenta de Google
+Tu aplicación (cliente)	Tu app que quiere acceder a Drive del usuario
+Servidor de autorización	Google o Keycloak
+Recurso protegido	Archivos del usuario en Google Drive
+
+🔑 ¿Por qué redirigir?
+Porque Google es el dueño del login, no tu app. Entonces:
+
+Tu app pide permiso al usuario para acceder a su Drive.
+
+Redirige al login de Google con un mensaje como:
+
+css
+Copiar
+Editar
+Hola Google, esta app quiere acceder a los archivos del usuario.
+¿Puede el usuario iniciar sesión y dar permiso?
+Google:
+
+Muestra su pantalla de login.
+
+Le pide al usuario que inicie sesión.
+
+Luego le muestra algo como "¿Esta app puede ver tus archivos en Drive?".
+
+Si el usuario acepta, Google redirige de vuelta a tu app con un "código de autorización".
+
+Tu app intercambia ese código por un token de acceso para usar Drive.
+
+🔗 ¿Cómo se une todo esto?
+🔓 Si usás Google como proveedor OAuth:
+No usás Keycloak.
+
+Tu app es un "cliente OAuth registrado" en Google.
+
+Redirigís al login de Google con una URL especial:
+
+bash
+Copiar
+Editar
+https://accounts.google.com/o/oauth2/v2/auth?
+  client_id=TU_CLIENTE
+  &redirect_uri=TU_CALLBACK
+  &response_type=code
+  &scope=https://www.googleapis.com/auth/drive
+Google hace login → usuario da permiso → Google vuelve a tu app con el código → tu app consigue el token → usa token para acceder a Drive.
+
+*************************
+
+🌐 ¿Por qué la app redirige al login?
+Porque la app no debe pedirle la contraseña al usuario directamente. En lugar de eso, lo redirecciona al servidor de autorización (Keycloak, Google, etc.), que es quien gestiona la identidad.
+
+Así se logra:
+
+✅ Seguridad (la app nunca ve la contraseña)
+
+✅ Centralización (la identidad se gestiona en un solo lugar)
+
+✅ Delegación (una app pide permiso para actuar en nombre del usuario)
+
+📦 ¿Qué rol tiene Keycloak o Google?
+Keycloak o Google actúan como servidor de autorización (authorization server).
+Son quienes:
+
+Autentican al usuario (login)
+
+Piden su consentimiento (en algunos casos)
+
+Devuelven un token de acceso a la app
+
+📌 Caso concreto: acceso a Google Drive con OAuth 2.0
+🎯 Objetivo:
+Tu app quiere acceder a los archivos de Drive del usuario. No debe pedirle su contraseña. Entonces usa OAuth 2.0 con Google.
+
+🧭 Flujo paso a paso:
+Tu app redirige al login de Google con esta URL:
+
+bash
+Copiar
+Editar
+https://accounts.google.com/o/oauth2/v2/auth
+  ?client_id=TU_CLIENT_ID
+  &redirect_uri=URL_DE_TU_APP
+  &response_type=code
+  &scope=https://www.googleapis.com/auth/drive.readonly
+El usuario inicia sesión en Google y acepta los permisos (si es la primera vez).
+
+Google redirige de vuelta a tu app con un code en la URL:
+
+arduino
+Copiar
+Editar
+https://tu-app.com/callback?code=abc123
+Tu app envía ese code a Google (por POST) para pedir un token:
+
+markdown
+Copiar
+Editar
+POST https://oauth2.googleapis.com/token
+  - client_id + client_secret
+  - grant_type=authorization_code
+  - code=abc123
+  - redirect_uri=URL_DE_TU_APP
+Google responde con un token de acceso:
+
+json
+Copiar
+Editar
+{
+  "access_token": "ya29.a0Af...",
+  "expires_in": 3600,
+  "refresh_token": "...",
+  "scope": "...",
+  "token_type": "Bearer"
+}
+Tu app usa el token para acceder a la API de Google Drive:
+
+bash
+Copiar
+Editar
+GET https://www.googleapis.com/drive/v3/files
+Authorization: Bearer ya29.a0Af...
+🤔 ¿Y qué tiene que ver esto con Keycloak?
+Keycloak puede reemplazar a Google como servidor de autorización, pero para tus propias aplicaciones. Es decir:
+
+Google → para acceder a servicios de Google (Drive, Gmail, etc.)
+
+Keycloak → para acceder a tus propias apps (app web, API, etc.)
+
+Ambos hacen lo mismo:
+
+Gestionan la identidad
+
+Emite tokens
+
+Responden a flujos OAuth 2.0
+
+✅ En resumen
+Elemento	Ejemplo con Google	Ejemplo con Keycloak
+¿Quién autentica al usuario?	Google	Keycloak
+¿Quién genera los tokens?	Google OAuth server	Keycloak OAuth server
+¿Qué app quiere el acceso?	Tu app que quiere leer Google Drive	Tu app que quiere acceder a tu API
+¿Qué redirecciona al login?	Tu app redirige al login de Google	Tu app redirige al login de Keycloak
+
+*************************
+
+keycloak sirve para aplicar oauth2 para redes sociales o google?
+
+ChatGPT dijo:
+Sí, Keycloak sirve para aplicar OAuth 2.0 y OpenID Connect (OIDC), y puede integrarse con proveedores de identidad externos como Google, Facebook, Twitter, Microsoft, etc., para permitir inicio de sesión social en tus aplicaciones.
+
+¿Qué hace Keycloak en este contexto?
+Keycloak actúa como un Identity Broker o intermediario de identidad. Esto significa que:
+
+Tus aplicaciones confían en Keycloak para autenticación.
+
+Keycloak puede delegar esa autenticación a otro proveedor de identidad (por ejemplo, Google).
+
+El usuario inicia sesión con Google, y Keycloak recibe la respuesta y genera un token OIDC/OAuth2 para tu aplicación.
+
+¿Cómo integrar redes sociales (como Google) con Keycloak?
+En el panel de administración de Keycloak:
+
+Ve al realm correspondiente.
+
+En el menú lateral, selecciona Identity Providers.
+
+Elige el proveedor (por ejemplo, Google).
+
+Proporciona:
+
+El Client ID y Client Secret que obtuviste al registrar tu aplicación en Google Developer Console.
+
+Configura la URL de redirección que Google usará para devolver el usuario autenticado (por ejemplo, https://tu-dominio.com/auth/realms/mi-realm/broker/google/endpoint).
+
+Guarda los cambios y prueba el login social.
+
+Resultado
+Tu aplicación puede autenticarse con Keycloak usando OAuth 2.0 u OpenID Connect, y los usuarios podrán iniciar sesión usando Google u otras redes sociales, sin que tu aplicación tenga que tratar directamente con estos proveedores.
+
+
+
+
+
