@@ -1,0 +1,154 @@
+OAuth2
+
+🔐 ¿Qué es OAuth2?
+OAuth2 es un protocolo que permite a una aplicación acceder a los recursos protegidos de un usuario en un servicio externo (como Google, GitHub, etc.) sin que el usuario tenga que compartir su contraseña.
+
+🚦 Flujo paso a paso (Authorization Code Flow)
+🎯 Objetivo:
+Permitir que una app cliente acceda a datos de un usuario en otro servicio (API) de forma segura.
+
+1. El usuario intenta acceder a una funcionalidad que requiere autenticación externa
+Por ejemplo: "Inicia sesión con Google".
+
+2. La aplicación redirige al usuario al servidor de autorización (Google, GitHub, etc.)
+http
+Copiar
+Editar
+GET https://provider.com/oauth/authorize?response_type=code
+     &client_id=YOUR_CLIENT_ID
+     &redirect_uri=https://yourapp.com/callback
+     &scope=email profile
+     &state=random_string
+client_id: identificador de tu app
+
+redirect_uri: URL a la que el proveedor redirigirá al usuario después del login
+
+scope: permisos solicitados (e.g. acceso a correo, perfil)
+
+state: valor aleatorio para evitar ataques CSRF
+
+3. El usuario inicia sesión y autoriza los permisos solicitados
+El proveedor (Google, GitHub, etc.) muestra una pantalla de consentimiento al usuario.
+
+4. El proveedor redirige al usuario a la redirect_uri con un "authorization code"
+Ejemplo:
+
+perl
+Copiar
+Editar
+https://yourapp.com/callback?code=abc123&state=random_string
+code: código de autorización (de vida corta)
+
+state: se devuelve para verificar que no hubo manipulación del flujo
+
+5. Tu aplicación (el backend) toma ese code y pide un token de acceso
+Tu servidor hace una petición POST al servidor de tokens:
+
+http
+Copiar
+Editar
+POST https://provider.com/oauth/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=authorization_code
+&code=abc123
+&redirect_uri=https://yourapp.com/callback
+&client_id=YOUR_CLIENT_ID
+&client_secret=YOUR_CLIENT_SECRET
+6. El proveedor responde con un token de acceso (y opcionalmente un token de refresh)
+json
+Copiar
+Editar
+{
+  "access_token": "xyz456",
+  "token_type": "Bearer",
+  "expires_in": 3600,
+  "refresh_token": "refresh789"
+}
+7. Tu app usa el access_token para hacer peticiones en nombre del usuario
+Por ejemplo, para acceder a su perfil:
+
+http
+Copiar
+Editar
+GET https://api.provider.com/user
+Authorization: Bearer xyz456
+8. (Opcional) Cuando el access token expira, puedes usar el refresh token
+Para evitar que el usuario tenga que autorizar de nuevo.
+
+http
+Copiar
+Editar
+POST https://provider.com/oauth/token
+grant_type=refresh_token
+&refresh_token=refresh789
+&client_id=YOUR_CLIENT_ID
+&client_secret=YOUR_CLIENT_SECRET
+🧱 Componentes clave
+Componente	Rol
+Resource Owner	El usuario
+Client (app)	La app que quiere acceder a datos del usuario
+Authorization Server	El servidor que gestiona login y tokens (ej. login de Google)
+Resource Server	La API que tiene los datos del usuario (ej. la API de Google Drive)
+
+🔐 Seguridad
+Usa HTTPS siempre.
+
+Verifica el parámetro state al recibir el callback.
+
+Guarda tus client_secret de forma segura (solo en el backend).
+
+Nunca expongas tokens en el frontend.
+
+
+***********************
+
+
+Authorization URL para Github y Google según doc:
+
+http://localhost:8080/login/oauth2/code/github
+http://localhost:8080/login/oauth2/code/google
+
+localhost:8080 hace referencia a mi aplicación con oauth2 (se debe colocar la url que corresponda a la app)
+
+
+En OAuth2, la "Authorization callback URL" (también llamada redirect URI o redirect URL) es una parte fundamental del flujo de autorización. Te explico qué es y por qué es importante:
+
+🔑 ¿Qué es la Authorization Callback URL?
+Es la URL a la que el servidor de autorización (como Google, GitHub, etc.) redirige al usuario después de que este autoriza (o rechaza) el acceso. En ese redireccionamiento, el servidor de autorización incluirá un código de autorización o un token, dependiendo del tipo de flujo OAuth2 que estés usando.
+
+🧠 ¿Por qué es importante?
+Seguridad: Esta URL debe coincidir exactamente con la que has registrado en tu proveedor OAuth2 (Google, GitHub, etc.), para evitar que el código o token sea interceptado por una aplicación maliciosa.
+
+Finalidad: Es el punto de entrada donde tu aplicación procesa la respuesta del servidor OAuth, incluyendo el token o el código para obtener el token de acceso.
+
+🔁 Flujo resumido con esta URL
+Tu app redirige al usuario a https://provider.com/oauth/authorize?...
+
+El usuario inicia sesión y concede permisos.
+
+El proveedor redirige al usuario a tu callback URL, por ejemplo:
+
+arduino
+Copiar
+Editar
+https://miapp.com/oauth/callback?code=abc123
+Tu servidor usa ese code para pedir un access token.
+
+📌 Ejemplo práctico:
+Si estás usando GitHub como proveedor OAuth2, podrías registrar:
+
+ruby
+Copiar
+Editar
+https://tuapp.com/auth/github/callback
+Y tu servidor deberá escuchar en esa ruta para manejar la respuesta del flujo OAuth.
+
+✅ Buenas prácticas
+Usa HTTPS, no HTTP.
+
+Registra exactamente la misma URL en tu proveedor OAuth.
+
+No incluyas parámetros dinámicos si no es necesario (los proveedores los pueden rechazar).
+
+¿Quieres un ejemplo con código (Node.js, Python, etc.) o estás configurando una app específica como en GitHub, Google o Auth0? Te puedo guiar paso a paso.
