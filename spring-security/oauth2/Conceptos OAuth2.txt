@@ -3,6 +3,12 @@ OAuth2
 🔐 ¿Qué es OAuth2?
 OAuth2 es un protocolo que permite a una aplicación acceder a los recursos protegidos de un usuario en un servicio externo (como Google, GitHub, etc.) sin que el usuario tenga que compartir su contraseña.
 
+Partes intervinientes:
+- Cliente
+- Servidor de autorización
+- Servidor de recursos
+- Propietario de recursos
+
 🚦 Flujo paso a paso (Authorization Code Flow)
 🎯 Objetivo:
 Permitir que una app cliente acceda a datos de un usuario en otro servicio (API) de forma segura.
@@ -41,7 +47,7 @@ code: código de autorización (de vida corta)
 
 state: se devuelve para verificar que no hubo manipulación del flujo
 
-5. Tu aplicación (el backend) toma ese code y pide un token de acceso
+5. Tu aplicación (el backend) toma ese code y pide un token de acceso al servidor de autorización
 Tu servidor hace una petición POST al servidor de tokens:
 
 http
@@ -55,6 +61,7 @@ grant_type=authorization_code
 &redirect_uri=https://yourapp.com/callback
 &client_id=YOUR_CLIENT_ID
 &client_secret=YOUR_CLIENT_SECRET
+
 6. El proveedor responde con un token de acceso (y opcionalmente un token de refresh)
 json
 Copiar
@@ -73,6 +80,7 @@ Copiar
 Editar
 GET https://api.provider.com/user
 Authorization: Bearer xyz456
+
 8. (Opcional) Cuando el access token expira, puedes usar el refresh token
 Para evitar que el usuario tenga que autorizar de nuevo.
 

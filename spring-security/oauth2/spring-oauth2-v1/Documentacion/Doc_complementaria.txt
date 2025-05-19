@@ -1,0 +1,15 @@
+Desde servidor de autorización, entrar a este endpoint para obtener información de endpoints de oauth2:
+http://localhost:9000/.well-known/openid-configuration
+
+Pagina para cliente de pruebas:
+https://oauthdebugger.com/
+
+Pagina para verificar info del token devuelto por servidor de autorización:
+https://jwt.io/
+
+
+Documentación Oficial Spring:
+
+- Servidor de autorización: https://docs.spring.io/spring-authorization-server/reference/configuration-model.html
+
+- Servidor de recursos: https://docs.spring.io/spring-security/reference/servlet/oauth2/resource-server/jwt.html

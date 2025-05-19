@@ -1,0 +1,124 @@
+{
+	"info": {
+		"_postman_id": "0832b6df-2189-4ca5-983a-24a7a7dc6eda",
+		"name": "OAuth2-V1",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "GetToken",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "123456789",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "oidc-client",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "code",
+							"value": "wTRskDE1KTS8F8mMfGDh97urvAzMiCwOV5V3RxQsBeIkooy5AEplXbcJMt1lmFrozcgG-l89BGzOBiegGc8-9kPoKgdB95XisKu-2dN_I1pnJFykpz2n6l24m9QC6Npm",
+							"type": "default"
+						},
+						{
+							"key": "grant_type",
+							"value": "authorization_code",
+							"type": "default"
+						},
+						{
+							"key": "redirect_uri",
+							"value": "https://oauthdebugger.com/debug",
+							"type": "default"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:9000/oauth2/token",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"path": [
+						"oauth2",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetUser",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJraWQiOiI2MmQwYzFiYy02MzA5LTRiYWQtYjg5ZC02NGVjN2YxNTAyYjgiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJpdmEiLCJhdWQiOiJvaWRjLWNsaWVudCIsIm5iZiI6MTc0NzY5NzAyMSwic2NvcGUiOlsicmVhZCJdLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjkwMDAiLCJleHAiOjE3NDc2OTczMjEsImlhdCI6MTc0NzY5NzAyMSwianRpIjoiMjdjZTc3YTUtYTZmZC00NmQ0LTlmYjAtYjVlYzliNjEzMDk1In0.cYcgpgAeFs4AxuV3Qj8bvSB_6qsiMITT73HaBodC9jYJpXEPDyyLZsShlC-WaRsPC_azZg43Pqnypj23D1y--1uuwneP3MukK1sOnlIQ6GCgBDUhr6DhkMwzJZLgEh_I8IDHdR-cvOsZCXLPkUkWUnH90C9OmbjJigAUGwNfnlDCSnIMRc69KjSKHtidu3rL_-OWO04jUf9Lb5HpzJzIhQzyUz96d1Fub5xYt2Bw11ceEgZf-_GQbr7q-j7IIkwSZkv9sONaOMO6NdoZE5Q7cwTa1ODEi_BqSHgplqYSk-h5oPvwrZXRDQhjlnM-hdbSydsLW-CZI1dv0Ha6EdCxKbSiQ7Ti2jjNhh_BEOp_ipn-fWEWFJFDDybEUKXB9_gf97tcUyH5bbVtQ5-Mg3WKWBMCoTAEK8BR1hpK3gIcSGhUBb-sGKqquiprTg196ge3cZgU7gdXBnS4_FSi446pecz-AhNobhOuly03ywyy6pA69xARIuAUufuQyxHOFtZuJpQUqILOtzfTF4L1Pvi0vRwKWAzudNIy-NBKY6kAMF1c_kzbRjNs5K8kIfqDS8N2fP_GKl5taRTASsH28Visv-MbSj4NFwNpo1rt24PUHKaZuVHMBZK3l34Sk0qBTCi3AAZBdZWBCrcDsXdNmbRZ_9IPFegQNF08EPGPA3tGL00",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/resources/user",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"resources",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PostUser",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJraWQiOiI2MmQwYzFiYy02MzA5LTRiYWQtYjg5ZC02NGVjN2YxNTAyYjgiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJpdmEiLCJhdWQiOiJvaWRjLWNsaWVudCIsIm5iZiI6MTc0NzY5NzI3OCwic2NvcGUiOlsid3JpdGUiXSwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo5MDAwIiwiZXhwIjoxNzQ3Njk3NTc4LCJpYXQiOjE3NDc2OTcyNzgsImp0aSI6IjY2Y2VkNjNkLWY0ZGUtNDJmZC1hZGQ5LTYwNzc2MThhNDRhNyJ9.RdMbUF8of0LuZCIaScHWTSAqCtcRYKnY6WEXp5MlXxubjze16ujqywE9cu4ntLLNDc2LgQLul5o-L8DdM6JXfVaEwQo5ZBGvdggJheXlOvb_w8EUcCcMJA0t-3JbK8ujNCnD450V2ExJ3PuOkzdZlGevQ6NcuFzRpNZa-RpZ3UubFp_Vs6x1-QuKah9VyRPY2-D2v6e0oCiXdTe8AJHsOAHgXgxa3xhX5X6j6wIOd4mdKFbcnPCsOBloc7WTBlRx9NdDTF-aBVFYJtAPHHE1Ig7kYfrmIAKHdxGhuLrM-HtmxArP65kY0XkFseiJLAItvIVtxmJooNxLO7RmwiKA6WpfgUni9hd77vkRWFxiwAGLegOsq0aD6C2DoASVhe6uQFql1024QHMIRlm8Fj1hryb1hYKJp04u8-LidchLfoU_W3TPfZBUqyT7ecb0gdr7pzOQgyAX6DRJCKv4CqtISXgq34QyALFWNkWKcszLGKVo5jLHcHrRKoQwxjy5Rn-ZrbpkHk-_JV95W7gLRbMM1VE4sx_X0K69-ekh_DPNXqnuB4qStfrtRPFiC38PSLdC0NsZx89okNhQ7PFhPxkZCFpO_ruKeKfCLBsWX6UYW4ddRaS5A9FuE-8wBuwbyWSb8OtsAm_CqMlDZjcqrW5jh3PtKqUVKTEG9Q3ZhK0WZKM",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/resources/user",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"resources",
+						"user"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
