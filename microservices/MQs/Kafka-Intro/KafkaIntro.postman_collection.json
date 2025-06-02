@@ -1,0 +1,42 @@
+{
+	"info": {
+		"_postman_id": "451fb4a2-924c-4e64-b330-0fcde090b5bc",
+		"name": "KafkaIntro",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "SendMessage",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"message\": \"Hola! Este es mi mensaje\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/messages?topic=ejemplo1-topic",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"messages"
+					],
+					"query": [
+						{
+							"key": "topic",
+							"value": "ejemplo1-topic"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
