@@ -39,7 +39,6 @@ public class JwtService {
 
     private Map<String, Object> generateExtraClaimsMap(User user) {
         Map <String, Object> extraClaims = new HashMap<>();
-        extraClaims.put("userId", user.getUsername());
         extraClaims.put("avatar", user.getAvatarUrl());
         extraClaims.put("web", user.getWeb());
         return extraClaims;
@@ -77,8 +76,8 @@ public class JwtService {
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
-        //String username = getUsernameFromToken(token);
-        return (/*username.equals(userDetails.getUsername()) &&*/ !isTokenExpired(token));
+        String username = getUsernameFromToken(token);
+        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
     private Claims getClaims(String token) {
@@ -105,7 +104,7 @@ public class JwtService {
     }
 
     public User getUserFromToken(String token) {
-        String username = getClaim(token, claims -> claims.get("userId", String.class));
+        String username = getUsernameFromToken(token);
         String avatar = getClaim(token, claims -> claims.get("avatar", String.class));
         String web = getClaim(token, claims -> claims.get("web", String.class));
 

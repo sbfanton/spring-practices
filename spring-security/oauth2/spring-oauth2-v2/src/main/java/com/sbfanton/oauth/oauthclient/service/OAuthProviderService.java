@@ -2,6 +2,7 @@ package com.sbfanton.oauth.oauthclient.service;
 
 import com.sbfanton.oauth.oauthclient.model.OAuthProvider;
 import com.sbfanton.oauth.oauthclient.model.User;
+import com.sbfanton.oauth.oauthclient.utils.constants.AuthProviderType;
 import com.sbfanton.oauth.oauthclient.utils.constants.OAuthConstants;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
@@ -74,6 +75,7 @@ public class OAuthProviderService {
                                                        .username((String) userInfo.get("login"))
                                                        .avatarUrl((String) userInfo.get("avatar_url"))
                                                        .web((String) userInfo.get("html_url"))
+                                                       .provider(AuthProviderType.GITHUB)
                                                        .build();
             default -> null;
         };

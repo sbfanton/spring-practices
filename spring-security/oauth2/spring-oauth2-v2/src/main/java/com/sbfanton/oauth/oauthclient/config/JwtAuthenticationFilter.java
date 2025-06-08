@@ -25,10 +25,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
     @Autowired
     private JwtService jwtService;
 
-    /*
+
     @Autowired
     private UserDetailsService userDetailsService;
-    */
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -41,7 +41,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
             filterChain.doFilter(request, response);
             return;
         }
-/*
+
         final String username = jwtService.getUsernameFromToken(token);
 
         if(username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -58,7 +58,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
             }
         }
-*/
+
         filterChain.doFilter(request, response);
     }
 }

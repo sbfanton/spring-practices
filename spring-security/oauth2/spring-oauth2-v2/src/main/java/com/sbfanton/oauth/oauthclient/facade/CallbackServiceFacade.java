@@ -3,8 +3,10 @@ package com.sbfanton.oauth.oauthclient.facade;
 import com.sbfanton.oauth.oauthclient.exception.ServiceException;
 import com.sbfanton.oauth.oauthclient.model.OAuthProvider;
 import com.sbfanton.oauth.oauthclient.model.User;
+import com.sbfanton.oauth.oauthclient.model.dto.AuthResponseDTO;
 import com.sbfanton.oauth.oauthclient.service.JwtService;
 import com.sbfanton.oauth.oauthclient.service.OAuthProviderService;
+import com.sbfanton.oauth.oauthclient.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -26,6 +28,9 @@ public class CallbackServiceFacade {
     private JwtService jwtService;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
     private RestTemplate restTemplate;
 
     public String processProviderCallbackAndGetToken(String provider, String code) throws Exception {
@@ -37,7 +42,8 @@ public class CallbackServiceFacade {
         String accessToken = getTokenFromAuthServer(code, oAuthProvider, provider);
         ResponseEntity<Map> userInfo = getUserInfoFromAuthServer(accessToken, oAuthProvider);
         User user = oAuthProviderService.getUserByProviderUserInfo(provider, userInfo.getBody());
-        return jwtService.getToken(user, true);
+        AuthResponseDTO authResp = userService.saveUserFromProvider(user);
+        return authResp.getToken();
     }
 
     private String getTokenFromAuthServer(String code, OAuthProvider oAuthProvider, String provider) throws ServiceException {

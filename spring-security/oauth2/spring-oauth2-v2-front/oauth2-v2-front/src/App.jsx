@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard';
 function AppRouter() {
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userData, setUserData] = useState({});
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -30,10 +31,22 @@ function AppRouter() {
           },
         });
 
-        if (!response.ok) throw new Error('Token inválido');
+        if (!response.ok) {
+          localStorage.removeItem("token");
+          throw new Error('Token inválido');
+        }
 
         const data = await response.json();
-        setIsAuthenticated(data.authenticated); // se espera { authenticated: true } del backend
+        if(data.token != null) {
+          let user = {
+            username: data.username,
+            avatarUrl: data.avatarUrl,
+            web: data.web
+          };
+          localStorage.setItem("token", data.token)
+          setUserData(user);
+          setIsAuthenticated(true);
+        }
       } catch (error) {
         setIsAuthenticated(false);
       } finally {
@@ -47,11 +60,13 @@ function AppRouter() {
   if (loading) return <div>Cargando...</div>;
 
   return (
-    <Routes>
-      <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard" /> : <Login />} />
-      <Route path="/dashboard" element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" />} />
-      <Route path="/" element={<Navigate to={isAuthenticated ? "/dashboard" : "/login"} />} />
-    </Routes>
+    <div style={styles.centeredContainer}>
+      <Routes>
+        <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard" /> : <Login />} />
+        <Route path="/dashboard" element={isAuthenticated ? <Dashboard user={userData}/> : <Navigate to="/login" />} />
+        <Route path="/" element={<Navigate to={isAuthenticated ? "/dashboard" : "/login"} />} />
+      </Routes>
+    </div>
   );
 }
 
@@ -62,3 +77,15 @@ export default function App() {
     </Router>
   );
 }
+
+const styles = {
+  centeredContainer: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#f5f5f5",
+    flexDirection: "column",
+    width: "100vw",
+    height: "100vh"
+  },
+};
