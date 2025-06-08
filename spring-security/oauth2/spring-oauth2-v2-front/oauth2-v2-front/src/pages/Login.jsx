@@ -1,22 +1,61 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom'; // si usás React Router
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGithub } from '@fortawesome/free-brands-svg-icons';
 import '../css/Login.css';
+import showAlert from '../helpers/alertService';
+import { useAuth } from '../context/AuthContext';
 
 function Login() {
+  const { login } = useAuth();
   const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    username: "",
+    password: ""
+  });
 
-  const handleLogin = (e) => {
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleLogin = async (e) => {
     e.preventDefault();
-    // Lógica de login...
-    console.log('Iniciando sesión...');
+
+    try {
+      const response = await fetch('http://localhost:8080/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+      });
+
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.message || "Error desconocido");
+      }
+
+      await login(data.token);
+      navigate('/dashboard');
+
+    } catch (error) {
+      showAlert({
+        title: 'Error de inicio de sesión',
+        text: error.message,
+        icon: 'error',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: "Aceptar"
+      });
+    }
   };
 
   const redirectToRegister = () => {
-    //navigate('/register');
-    // Lógica de login...
-    console.log('Registrando usuario...');
+    navigate('/register');
   };
 
   const handleGitHubLogin = () => {
@@ -34,6 +73,8 @@ function Login() {
           placeholder="Usuario"
           required
           className="input"
+          value={formData.username}
+          onChange={handleChange}
         />
         <input
           type="password"
@@ -41,6 +82,8 @@ function Login() {
           placeholder="Contraseña"
           required
           className="input"
+          value={formData.password}
+          onChange={handleChange}
         />
         <button type="submit" className="signin-button">Entrar</button>
       </form>

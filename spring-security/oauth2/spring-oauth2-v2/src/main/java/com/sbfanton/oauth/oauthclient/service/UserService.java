@@ -9,6 +9,7 @@ import com.sbfanton.oauth.oauthclient.utils.constants.AuthProviderType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -42,9 +43,19 @@ public class UserService {
     }
 
     public AuthResponseDTO login(LoginDTO loginDTO) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword()));
-        User user = userRepository.findByUsername(loginDTO.getUsername()).orElseThrow();
+        User user = userRepository.findByUsername(loginDTO.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        if (user.getProvider() != null && !user.getProvider().equals(AuthProviderType.LOCAL) && user.getPassword() == null) {
+            throw new RuntimeException("Este usuario inició sesión con un proveedor externo. No tiene contraseña configurada.");
+        }
+
+        if (user.getPassword() != null) {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword())
+            );
+        }
+
         return AuthResponseDTO.builder()
                 .token(jwtService.getToken(user, false))
                 .build();

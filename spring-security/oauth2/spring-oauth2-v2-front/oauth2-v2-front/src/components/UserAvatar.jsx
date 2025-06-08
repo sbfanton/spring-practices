@@ -7,7 +7,7 @@ function UserAvatar({ url, alt }) {
       <img
         src={imgSrc}
         alt={alt}
-        onError={() => setImgSrc('/default-avatar.png')}
+        onError={() => setImgSrc('/default-avatar.jpg')}
         style={{ width: '250px', height: '250px', borderRadius: '50%', objectFit: 'cover' }}
       />
     );
