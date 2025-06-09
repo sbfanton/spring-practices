@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import '../css/Register.css'; 
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import IconButton from '../components/IconButton';
 
 function Registro() {
 
@@ -38,6 +40,18 @@ function Registro() {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
+  const clearFromData = () => {
+    let form = {
+      username: '',
+      email: '',
+      web: '',
+      password: '',
+      confirmPassword: ''
+    }
+
+    setFormData(form);
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     let errs = {};
@@ -60,7 +74,7 @@ function Registro() {
         username: formData.username,
         password: formData.password,
         email: formData.email,
-        web: formData.email,
+        web: formData.web,
         avatarUrl: ""
     }
 
@@ -93,8 +107,13 @@ function Registro() {
     }
   }
 
+  const goToLogin = () => {
+    navigate('/login');
+  }
+
   return (
     <div className="registro-container">
+      <IconButton handlerClick={goToLogin} faIcon={faArrowLeft} classNameStyle='go-to-login' />
       <h2>Registro</h2>
       <form onSubmit={handleSubmit} noValidate>
         <div className="form-group">
@@ -152,8 +171,10 @@ function Registro() {
           {errors.confirmPassword && <p className="error">{errors.confirmPassword}</p>}
         </div>
 
-        <button type="submit">Registrar</button>
+        <button className='register-button' type="submit">Registrar</button>
       </form>
+
+      <button onClick={clearFromData} className='clear-button'>Limpiar</button>
     </div>
   );
 }

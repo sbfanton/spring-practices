@@ -8,7 +8,7 @@ function UserAvatar({ url, alt }) {
         src={imgSrc}
         alt={alt}
         onError={() => setImgSrc('/default-avatar.jpg')}
-        style={{ width: '250px', height: '250px', borderRadius: '50%', objectFit: 'cover' }}
+        style={{ width: '9rem', height: '9rem', borderRadius: '50%', objectFit: 'cover' }}
       />
     );
   }

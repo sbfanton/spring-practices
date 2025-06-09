@@ -4,7 +4,7 @@
     margin: 60px auto;
     padding: 30px;
     background-color: #ffffff;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
     border-radius: 12px;
     text-align: center;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -43,5 +43,13 @@
   
   .dashboard-link a:hover {
     color: #0056b3;
+  }
+
+  nav {
+    gap: 5rem;
+    margin-top: 3rem;
+    display: flex;
+    justifyContent: space-between; 
+    alignItems: center;
   }
   

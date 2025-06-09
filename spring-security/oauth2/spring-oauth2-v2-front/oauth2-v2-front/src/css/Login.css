@@ -6,6 +6,12 @@
     border-radius: 8px;
     text-align: center;
     font-family: sans-serif;
+    background: #ffffff;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  }
+
+  h2 {
+    color: #1f1f1f;
   }
 
   .form {
@@ -15,9 +21,21 @@
     margin-bottom: 16px;
   }
 
-  .input {
-    padding: 10px;
-    font-size: 16px;
+  input {
+    width: 100%;
+    padding: 0.5rem;
+    font-size: 1rem;
+    box-sizing: border-box;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+    color: #1f1f1f;
+    background-color: #ebebebca;
+    border: solid 1px #d1d1d1ca;
+  }
+
+  input:hover {
+    background-color: #cbe2fb;
   }
 
   .signin-button {
@@ -26,15 +44,15 @@
     cursor: pointer;
     background-color: #007bff;
     color: #fff;
+    font-weight: bold;
     border: none;
     border-radius: 4px;
     border: solid 1px #007bff;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: background-color 0.3s ease;
   }
 
   .signin-button:hover {
-    background-color: #fff;
-    color: #007bff;
+    background-color: #0e56ff;
   }
 
   .link-button {
@@ -42,6 +60,7 @@
     background: none;
     border: none;
     color: #007bff;
+    font-weight: bold;
     cursor: pointer;
     text-decoration: underline;
   }
@@ -57,6 +76,7 @@
     padding: 10px;
     border-radius: 4px;
     font-size: 16px;
+    font-weight: bold;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -68,5 +88,6 @@
 
   .github-button:hover {
     background-color: rgb(201, 201, 201);
+    border: solid 1px #333;
     color: #333;
   }

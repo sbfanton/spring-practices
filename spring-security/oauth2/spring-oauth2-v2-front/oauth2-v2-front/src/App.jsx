@@ -4,6 +4,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
+import './css/App.css';
 
 function AppRoutes() {
   const { isAuthenticated, loading } = useAuth();
