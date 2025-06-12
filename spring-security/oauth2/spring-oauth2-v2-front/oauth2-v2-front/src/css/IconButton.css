@@ -1,21 +1,58 @@
-.nav-button {
+.icon-button-wrapper {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 0.5rem;
+  }
+  
+  .nav-button {
     cursor: pointer;
     font-weight: bold;
     border-radius: 50%;
-    padding: 1rem 1rem;
-    background-color:#70777F;
+    padding: 1rem;
+    background-color: #70777F;
     border: solid 1px #70777F;
-    transition: background-color 0.5s ease;
-}
-
-.nav-button:hover {
+    transition: background-color 0.5s ease, transform 0.3s ease;
+  }
+  
+  .nav-button:hover {
     background-color: #0e56ff;
-}
+    transform: translateY(-5px);
+  }
+  
+  .tooltip {
+    position: absolute;
+    top: 100%;
+    margin-top: 3px;
+    color: #0e56ff;
+    font-size: 15px;
+    font-weight: bold;
+    padding: 4px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    opacity: 0;
+    transform: translateY(5px);
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    z-index: 10;
+  }
+  
+  .icon-button-wrapper:hover .tooltip {
+    opacity: 1;
+    transform: translateY(0);
+  }
 
-.go-to-login {
+  .go-to-back {
     cursor: pointer;
     padding: 1rem 1rem;
     background-color: rgba(0,0,0,0);
     font-weight: bold;
     color: #0F56FF;
-}
+    display: block;
+    text-align: left;
+    margin-left: 0;
+    align-self: flex-start;
+  }
+  
+  

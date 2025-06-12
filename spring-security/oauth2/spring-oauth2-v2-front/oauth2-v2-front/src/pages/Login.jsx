@@ -5,6 +5,7 @@ import { faGithub } from '@fortawesome/free-brands-svg-icons';
 import '../css/Login.css';
 import showAlert from '../helpers/alertService';
 import { useAuth } from '../context/AuthContext';
+import Container from "../components/Container";
 
 function Login() {
   const { login } = useAuth();
@@ -44,6 +45,10 @@ function Login() {
       navigate('/dashboard');
 
     } catch (error) {
+      setFormData({
+        username: "",
+        password: ""
+      });
       showAlert({
         title: 'Error de inicio de sesión',
         text: error.message,
@@ -63,7 +68,7 @@ function Login() {
   };
 
   return (
-    <div className="container">
+    <Container className='container'>
       <h2>Iniciar sesión</h2>
 
       <form onSubmit={handleLogin} className="form">
@@ -88,17 +93,17 @@ function Login() {
         <button type="submit" className="signin-button">Entrar</button>
       </form>
 
-      <button onClick={redirectToRegister} className="link-button">
-        ¿No tenés cuenta? Registrate
+      <button onClick={handleGitHubLogin} className="social-button">
+        <FontAwesomeIcon icon={faGithub} style={{ marginRight: '8px' }} />
+        Iniciar sesión con GitHub
       </button>
 
       <hr className="separator" />
 
-      <button onClick={handleGitHubLogin} className="github-button">
-        <FontAwesomeIcon icon={faGithub} style={{ marginRight: '8px' }} />
-        Iniciar sesión con GitHub
+      <button onClick={redirectToRegister} className="link-button">
+        ¿No tenés cuenta? Registrate
       </button>
-    </div>
+    </Container>
   );
 }
 

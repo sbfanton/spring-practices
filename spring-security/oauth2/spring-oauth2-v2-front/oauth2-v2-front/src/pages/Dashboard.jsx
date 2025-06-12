@@ -4,8 +4,9 @@ import IconButton from '../components/IconButton';
 import { useAuth } from '../context/AuthContext';
 import '../css/Dashboard.css';
 import defaultAvatar from '../assets/default-avatar.jpg';
-import { faHome, faGlobe, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+import { faHome, faGlobe, faRightFromBracket, faUserEdit } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
+import Container from '../components/Container';
 
 function Dashboard() {
 
@@ -16,22 +17,34 @@ function Dashboard() {
 
   const goToWeb = () => window.open(userData.web, '_blank', 'noopener,noreferrer');
   const goToHome = () => navigate('/');
+  const goToEditUser = () => navigate('/editUser');
+
+  const avatarStyle = {
+    width: '5rem', 
+    height: '5rem', 
+    borderRadius: '50%', 
+    objectFit: 'cover'
+  }
 
   return (
-    <div className="dashboard-container">
-      <UserAvatar
-        url={userData.avatarUrl ? userData.avatarUrl : defaultAvatar}
-        alt="Avatar de usuario"
-      />
-      <h1 className="dashboard-title">¡Bienvenido!</h1>
-      <p className="dashboard-welcome"><strong>{userData.username}</strong>
-      </p>
-      <nav>
-        <IconButton handlerClick={goToHome} faIcon={faHome} classNameStyle='nav-button' />
-        <IconButton handlerClick={goToWeb} faIcon={faGlobe} classNameStyle='nav-button' />
-        <IconButton handlerClick={logout} faIcon={faRightFromBracket} classNameStyle='nav-button' />
-      </nav>
-    </div>
+    <Container className='container-dashboard'>
+      <div className='dashboard-header'>
+        <div className='profile'>
+          <UserAvatar
+            url={userData.avatarUrl ? userData.avatarUrl : defaultAvatar}
+            alt="Avatar de usuario"
+            styles={avatarStyle}
+          />
+          <h1 className="dashboard-title"><strong>{userData.username}</strong></h1>
+        </div>
+        <nav>
+          <IconButton handlerClick={goToHome} faIcon={faHome} classNameStyle='nav-button' label='Inicio' />
+          <IconButton handlerClick={goToEditUser} faIcon={faUserEdit} classNameStyle='nav-button' label='Editar perfil' />
+          <IconButton handlerClick={goToWeb} faIcon={faGlobe} classNameStyle='nav-button' label='Web' />
+          <IconButton handlerClick={logout} faIcon={faRightFromBracket} classNameStyle='nav-button' label='Cerrar sesión' />
+        </nav>
+      </div>
+    </Container>
   );
 }
 

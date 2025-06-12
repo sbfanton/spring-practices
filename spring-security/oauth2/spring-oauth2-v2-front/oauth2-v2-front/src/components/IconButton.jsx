@@ -1,12 +1,15 @@
-import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React from 'react';
 import '../css/IconButton.css';
 
-function IconButton({ handlerClick, faIcon, classNameStyle = 'icon-button' }) {
+function IconButton({ handlerClick, faIcon, classNameStyle = 'nav-button', label }) {
   return (
-    <button onClick={handlerClick} className={classNameStyle} >
-      <FontAwesomeIcon icon={faIcon} />
-    </button>
+    <div className="icon-button-wrapper">
+      <button onClick={handlerClick} className={classNameStyle}>
+        <FontAwesomeIcon icon={faIcon} />
+      </button>
+      {label && <span className="tooltip">{label}</span>}
+    </div>
   );
 }
 

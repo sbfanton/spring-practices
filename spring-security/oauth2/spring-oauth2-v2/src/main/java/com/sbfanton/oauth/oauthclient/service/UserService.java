@@ -1,5 +1,6 @@
 package com.sbfanton.oauth.oauthclient.service;
 
+import com.sbfanton.oauth.oauthclient.exception.ServiceException;
 import com.sbfanton.oauth.oauthclient.model.User;
 import com.sbfanton.oauth.oauthclient.model.dto.AuthResponseDTO;
 import com.sbfanton.oauth.oauthclient.model.dto.LoginDTO;
@@ -61,7 +62,14 @@ public class UserService {
                 .build();
     }
 
-    public AuthResponseDTO register(RegisterDTO registerDTO) {
+    public AuthResponseDTO register(RegisterDTO registerDTO) throws ServiceException {
+
+        User userExists = userRepository.findByUsername(registerDTO.getUsername())
+                .orElse(null);
+
+        if(userExists != null)
+            throw new ServiceException("El nombre de usuario ya existe");
+
         User user = User.builder()
                 .username(registerDTO.getUsername())
                 .password(passwordEncoder.encode(registerDTO.getPassword()))

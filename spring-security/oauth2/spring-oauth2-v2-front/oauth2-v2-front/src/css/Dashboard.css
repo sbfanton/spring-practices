@@ -1,29 +1,22 @@
-.dashboard-container {
-    width: 75vw;
-    height: 75vh;
-    margin: 60px auto;
-    padding: 30px;
-    background-color: #ffffff;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-    border-radius: 12px;
-    text-align: center;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+  margin-top: 1rem
+}
+
+.profile {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
   
   .dashboard-title {
     font-size: 28px;
     color: #333;
     margin-bottom: 10px;
-  }
-  
-  .dashboard-welcome {
-    font-size: 24px;
-    color: #555;
-    margin-bottom: 20px;
+    margin-left: 2rem;
   }
   
   .dashboard-link {
@@ -46,10 +39,9 @@
   }
 
   nav {
-    gap: 5rem;
-    margin-top: 3rem;
     display: flex;
-    justifyContent: space-between; 
-    alignItems: center;
-  }
+    gap: 2rem;
+    justify-content: space-between;
+    align-items: center;
+  }  
   

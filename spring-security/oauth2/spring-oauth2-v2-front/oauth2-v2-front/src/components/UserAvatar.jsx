@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-function UserAvatar({ url, alt }) {
+function UserAvatar({ url, alt, styles }) {
     const [imgSrc, setImgSrc] = useState(url);
   
     return (
@@ -8,7 +8,7 @@ function UserAvatar({ url, alt }) {
         src={imgSrc}
         alt={alt}
         onError={() => setImgSrc('/default-avatar.jpg')}
-        style={{ width: '9rem', height: '9rem', borderRadius: '50%', objectFit: 'cover' }}
+        style={styles}
       />
     );
   }

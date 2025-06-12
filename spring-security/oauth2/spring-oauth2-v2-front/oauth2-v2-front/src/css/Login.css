@@ -1,41 +1,8 @@
-.container {
-    width: 50vw;
-    margin: 50px auto;
-    padding: 30px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    text-align: center;
-    font-family: sans-serif;
-    background: #ffffff;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  }
-
-  h2 {
-    color: #1f1f1f;
-  }
-
   .form {
     display: flex;
     flex-direction: column;
     gap: 12px;
     margin-bottom: 16px;
-  }
-
-  input {
-    width: 100%;
-    padding: 0.5rem;
-    font-size: 1rem;
-    box-sizing: border-box;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-    transition: border-color 0.3s ease, background-color 0.3s ease;
-    color: #1f1f1f;
-    background-color: #ebebebca;
-    border: solid 1px #d1d1d1ca;
-  }
-
-  input:hover {
-    background-color: #cbe2fb;
   }
 
   .signin-button {
@@ -63,13 +30,19 @@
     font-weight: bold;
     cursor: pointer;
     text-decoration: underline;
+    width: 100%;
+    outline: none;
+  }
+
+  .link-button:focus {
+    outline: none;
   }
 
   .separator {
     margin: 20px 0;
   }
 
-  .github-button {
+  .social-button {
     background-color: #333;
     color: #fff;
     border: none;
@@ -86,7 +59,7 @@
     transition: background-color 0.3s ease, color 0.3s ease;
   }
 
-  .github-button:hover {
+  .social-button:hover {
     background-color: rgb(201, 201, 201);
     border: solid 1px #333;
     color: #333;

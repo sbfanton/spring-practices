@@ -41,3 +41,11 @@
 .read-the-docs {
   color: #888;
 }
+
+input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px #EFEFEF inset !important; /* cambia "white" si usás otro fondo */
+  box-shadow: 0 0 0 1000px #EFEFEF inset !important;
+  -webkit-text-fill-color: #000 !important; /* el color que vos usás */
+  transition: background-color 0s ease-in-out 9999s;
+}
+

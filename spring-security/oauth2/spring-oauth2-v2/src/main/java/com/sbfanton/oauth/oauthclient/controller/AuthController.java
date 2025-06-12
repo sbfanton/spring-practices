@@ -1,5 +1,6 @@
 package com.sbfanton.oauth.oauthclient.controller;
 
+import com.sbfanton.oauth.oauthclient.exception.ServiceException;
 import com.sbfanton.oauth.oauthclient.model.dto.AuthResponseDTO;
 import com.sbfanton.oauth.oauthclient.model.dto.LoginDTO;
 import com.sbfanton.oauth.oauthclient.model.dto.RegisterDTO;
@@ -19,13 +20,13 @@ public class AuthController {
     private UserService userService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginDTO loginDTO) {
+    public ResponseEntity<?> login(@RequestBody LoginDTO loginDTO) throws Exception {
         AuthResponseDTO authResponseDTO = userService.login(loginDTO);
         return ResponseEntity.ok(authResponseDTO);
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> login(@RequestBody RegisterDTO registerDTO) {
+    public ResponseEntity<?> login(@RequestBody RegisterDTO registerDTO) throws Exception {
         AuthResponseDTO authResponseDTO = userService.register(registerDTO);
         return ResponseEntity.ok(authResponseDTO);
     }

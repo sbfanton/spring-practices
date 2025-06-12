@@ -4,6 +4,9 @@ import { useAuth } from '../context/AuthContext';
 import '../css/Register.css'; 
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import IconButton from '../components/IconButton';
+import showAlert from '../helpers/alertService';
+import Container from '../components/Container';
+import { isStrongPassword, isValidEmail, isValidURL } from '../helpers/validation';
 
 function Registro() {
 
@@ -20,22 +23,6 @@ function Registro() {
 
   const [errors, setErrors] = useState({});
 
-  const isStrongPassword = (password) => {
-    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
-    return regex.test(password);
-  };
-
-  const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-
-  const isValidURL = (url) => {
-    try {
-      new URL(url);
-      return true;
-    } catch {
-      return false;
-    }
-  };
-
   const handleChange = (e) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
@@ -50,6 +37,7 @@ function Registro() {
     }
 
     setFormData(form);
+    setErrors({});
   }
 
   const handleSubmit = async (e) => {
@@ -57,7 +45,7 @@ function Registro() {
     let errs = {};
 
     if (!formData.username) errs.username = 'El nombre de usuario es obligatorio.';
-    if (!formData.email || !isValidEmail(formData.email)) errs.email = 'Email inválido.';
+    if (formData.email && !isValidEmail(formData.email)) errs.email = 'Email inválido.';
     if (formData.web && !isValidURL(formData.web)) errs.web = 'URL inválida.';
     if (!isStrongPassword(formData.password)) errs.password = 'Contraseña débil. Debe tener mínimo 8 caracteres, mayúscula, minúscula, número y carácter especial.';
     if (formData.password !== formData.confirmPassword) errs.confirmPassword = 'Las contraseñas no coinciden.';
@@ -112,12 +100,12 @@ function Registro() {
   }
 
   return (
-    <div className="registro-container">
-      <IconButton handlerClick={goToLogin} faIcon={faArrowLeft} classNameStyle='go-to-login' />
+    <Container className='container'>
+      <IconButton handlerClick={goToLogin} faIcon={faArrowLeft} classNameStyle='go-to-back' />
       <h2>Registro</h2>
       <form onSubmit={handleSubmit} noValidate>
         <div className="form-group">
-          <label>Nombre de usuario</label><br />
+          <label>Nombre de usuario *</label><br />
           <input
             type="text"
             name="username"
@@ -150,7 +138,7 @@ function Registro() {
         </div>
 
         <div className="form-group">
-          <label>Contraseña</label><br />
+          <label>Contraseña *</label><br />
           <input
             type="password"
             name="password"
@@ -161,7 +149,7 @@ function Registro() {
         </div>
 
         <div className="form-group">
-          <label>Confirmar contraseña</label><br />
+          <label>Confirmar contraseña *</label><br />
           <input
             type="password"
             name="confirmPassword"
@@ -171,11 +159,13 @@ function Registro() {
           {errors.confirmPassword && <p className="error">{errors.confirmPassword}</p>}
         </div>
 
+        <p style={{fontSize: '0.8rem', marginBottom: '0.3rem'}}>(*) Campos obligatorios</p>
+
         <button className='register-button' type="submit">Registrar</button>
       </form>
 
       <button onClick={clearFromData} className='clear-button'>Limpiar</button>
-    </div>
+    </Container>
   );
 }
 
