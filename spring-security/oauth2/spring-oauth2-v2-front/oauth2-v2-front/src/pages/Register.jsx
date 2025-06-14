@@ -4,11 +4,11 @@ import { useAuth } from '../context/AuthContext';
 import '../css/Register.css'; 
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import IconButton from '../components/IconButton';
-import showAlert from '../helpers/alertService';
 import Container from '../components/Container';
 import { isStrongPassword, isValidEmail, isValidURL } from '../helpers/validation';
+import { registerUser } from "../services/UserService.js";
 
-function Registro() {
+function Register() {
 
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -65,33 +65,10 @@ function Registro() {
         web: formData.web,
         avatarUrl: ""
     }
-
-    try {
-      const response = await fetch('http://localhost:8080/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(registerData)
-      });
-
-      const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.message || "Error desconocido");
-      }
-
+    const data = await registerUser(registerData);
+    if(data.token) {
       await login(data.token);
       navigate('/dashboard');
-
-    } catch (error) {
-      showAlert({
-        title: 'Error de registro',
-        text: error.message,
-        icon: 'error',
-        confirmButtonColor: '#3085d6',
-        confirmButtonText: "Aceptar"
-      });
     }
   }
 
@@ -169,4 +146,4 @@ function Registro() {
   );
 }
 
-export default Registro;
+export default Register;

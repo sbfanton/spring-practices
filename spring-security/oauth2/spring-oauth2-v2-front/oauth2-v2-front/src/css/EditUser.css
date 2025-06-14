@@ -28,3 +28,9 @@
     margin-top: 2rem;
     margin-bottom: 1rem;
   }
+
+    .error {
+        color: #d33;
+        font-size: 0.875rem;
+        margin-top: 0.3rem;
+    }

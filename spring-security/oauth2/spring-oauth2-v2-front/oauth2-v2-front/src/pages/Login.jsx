@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGithub } from '@fortawesome/free-brands-svg-icons';
 import '../css/Login.css';
-import showAlert from '../helpers/alertService';
 import { useAuth } from '../context/AuthContext';
 import Container from "../components/Container";
+import { handleSocialLogin, loginUser } from "../services/UserService.js";
 
 function Login() {
   const { login } = useAuth();
@@ -25,46 +25,21 @@ function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
-    try {
-      const response = await fetch('http://localhost:8080/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData)
-      });
-
-      const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.message || "Error desconocido");
-      }
-
+    const data = await loginUser(formData.username, formData.password);
+    if(data.token) {
       await login(data.token);
       navigate('/dashboard');
-
-    } catch (error) {
-      setFormData({
+    }
+    else {
+    setFormData({
         username: "",
         password: ""
-      });
-      showAlert({
-        title: 'Error de inicio de sesión',
-        text: error.message,
-        icon: 'error',
-        confirmButtonColor: '#3085d6',
-        confirmButtonText: "Aceptar"
       });
     }
   };
 
   const redirectToRegister = () => {
     navigate('/register');
-  };
-
-  const handleGitHubLogin = () => {
-    window.location.href = 'http://localhost:8080/oauth2/login?provider=github';
   };
 
   return (
@@ -93,7 +68,7 @@ function Login() {
         <button type="submit" className="signin-button">Entrar</button>
       </form>
 
-      <button onClick={handleGitHubLogin} className="social-button">
+      <button onClick={() => handleSocialLogin("github")} className="social-button">
         <FontAwesomeIcon icon={faGithub} style={{ marginRight: '8px' }} />
         Iniciar sesión con GitHub
       </button>

@@ -20,8 +20,8 @@ function Dashboard() {
   const goToEditUser = () => navigate('/editUser');
 
   const avatarStyle = {
-    width: '5rem', 
-    height: '5rem', 
+    width: '6rem',
+    height: '6rem',
     borderRadius: '50%', 
     objectFit: 'cover'
   }
@@ -33,7 +33,7 @@ function Dashboard() {
           <UserAvatar
             url={userData.avatarUrl ? userData.avatarUrl : defaultAvatar}
             alt="Avatar de usuario"
-            styles={avatarStyle}
+            style={avatarStyle}
           />
           <h1 className="dashboard-title"><strong>{userData.username}</strong></h1>
         </div>

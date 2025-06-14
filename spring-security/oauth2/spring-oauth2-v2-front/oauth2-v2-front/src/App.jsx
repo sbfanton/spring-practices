@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import {BrowserRouter as Router, Routes, Route, Navigate, useNavigate} from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -11,6 +11,7 @@ import './css/AnimatedBackground.css';
 
 function AppRoutes() {
   const { isAuthenticated, loading } = useAuth();
+  const navigate = useNavigate();
 
   if (loading) return <p>Cargando...</p>;
 
@@ -22,7 +23,9 @@ function AppRoutes() {
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/editUser" element={<EditUser />} />
+            <Route path="/editUser" element={
+                isAuthenticated ? <EditUser /> : <Navigate to="/login" />
+            } />
             <Route path="/dashboard" element={
               isAuthenticated ? <Dashboard /> : <Navigate to="/login" />
             } />

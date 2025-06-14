@@ -1,21 +1,20 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../css/EditUser.css'; 
 import { isStrongPassword, isValidEmail, isValidURL } from '../helpers/validation';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import Container from '../components/Container';
 import IconButton from '../components/IconButton';
-import UserAvatar from '../components/UserAvatar';
+import EditableAvatar from "../components/EditableAvatar.jsx";
 import defaultAvatar from '../assets/default-avatar.jpg';
+import { changePassword, getUserInfo } from "../services/UserService.js";
+import alertService from "../helpers/alertService.js";
 
 export default function EditUser() {
 
   const navigate = useNavigate();
 
-  const [avatarFile, setAvatarFile] = useState(null);
-  const [avatarUrl, setAvatarUrl] = useState(null);
-
-  const [generalData, setGeneralData] = useState({
+ const [generalData, setGeneralData] = useState({
     email: '',
     website: '',
   });
@@ -31,18 +30,6 @@ export default function EditUser() {
   const handleGeneralChange = (e) => {
     const { name, value } = e.target;
     setGeneralData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleAvatarChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setAvatarFile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setAvatarPreview(reader.result); // Base64 para mostrar
-      };
-      reader.readAsDataURL(file);
-    }
   };
 
   const handlePasswordChange = (e) => {
@@ -61,17 +48,11 @@ export default function EditUser() {
     setErrors(errs);
 
     if (Object.keys(errs).length === 0) {
-        const formData = new FormData();
-        formData.append('email', generalData.email);
-        formData.append('website', generalData.website);
-        if (avatarFile) {
-            formData.append('avatar', avatarFile);
-        }
-        console.log('Datos a enviar:', formData);
+        console.log('Datos a enviar:', generalData);
     }
   };
 
-  const handlePasswordSubmit = (e) => {
+  const handlePasswordSubmit = async (e) => {
     e.preventDefault();
 
     let errs = {};
@@ -80,8 +61,24 @@ export default function EditUser() {
     if (!isStrongPassword(passwordData.newPassword)) errs.newPassword = 'Contraseña débil. Debe tener mínimo 8 caracteres, mayúscula, minúscula, número y carácter especial.';
     if (passwordData.newPassword !== passwordData.confirmPassword) errs.confirmPassword = 'Las contraseñas no coinciden.';
 
+    setErrors(errs);
+
     if (Object.keys(errs).length === 0) {
-        console.log('Contraseña cambiada:', passwordData);
+        const data = await changePassword(passwordData);
+        if(data.message) {
+          setPasswordData({
+            currentPassword: '',
+            newPassword: '',
+            confirmPassword: ''
+          })
+          alertService({
+            title: "Cambio de contraseña",
+            text: data.message,
+            icon: "success",
+            confirmButtonText: "Aceptar",
+            confirmButtonColor: "#098e00"
+          })
+        }
     }
   };
 
@@ -96,28 +93,37 @@ export default function EditUser() {
     objectFit: 'cover'
   }
 
+  const avatarUrl = "";
+
+  useEffect( () => {
+    async function fetchData() {
+      const data = await getUserInfo();
+    }
+    fetchData();
+  }, []);
+
   return (
     <Container className='container'>
         <IconButton handlerClick={goToDashboard} faIcon={faArrowLeft} classNameStyle='go-to-back' />
         <div className="edit-user-container">
         <h2>Editar Perfil</h2>
 
+          {/* Avatar editable */}
+          <div className='profile-avatar-container'>
+            <EditableAvatar
+                initialUrl={avatarUrl || defaultAvatar}
+                style={{width: '9rem', height: '9rem'}}
+                onUploadSuccess={(data) => {
+                  // Si el backend responde con la nueva URL del avatar:
+                  if (data.avatarUrl) {
+                    setAvatarUrl(data.avatarUrl);
+                  }
+                }}
+            />
+          </div>
+
         {/* Formulario de datos generales */}
         <form onSubmit={handleGeneralSubmit} noValidate>
-            
-            <div className='profile-avatar-container'>
-                <UserAvatar
-                    url={avatarUrl ? avatarUrl : defaultAvatar}
-                    alt="Avatar de usuario"
-                    styles={avatarStyle}
-                />
-            </div>
-
-            <div className="form-group">
-                <label>Avatar</label><br />
-                <input type="file" accept="image/*" onChange={handleAvatarChange} />
-            </div>
-
             <div className="form-group">
             <label>Email</label>
             <input

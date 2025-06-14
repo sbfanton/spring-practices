@@ -71,7 +71,7 @@ public class UserService {
 
     public AuthResponseDTO register(RegisterDTO registerDTO) throws ServiceException {
 
-        User userExists = userRepository.findByUsername(registerDTO.getUsername())
+        User userExists = getUserByUsername(registerDTO.getUsername())
                 .orElse(null);
 
         if(userExists != null)
@@ -86,16 +86,15 @@ public class UserService {
                 .provider(AuthProviderType.LOCAL)
                 .build();
 
-        userRepository.save(user);
+        saveUser(user);
 
         return AuthResponseDTO.builder()
                 .token(jwtService.getToken(user, false))
                 .build();
     }
 
-    public UserDTO getUserDTO() throws Exception {
-        String username = authService.getAuthenticatedUsername();
-        User user = userRepository.findByUsername(username)
+    public UserDTO getUserDTO(String username) throws Exception {
+        User user = getUserByUsername(username)
                 .orElse(null);
 
         if(user == null)
@@ -105,19 +104,18 @@ public class UserService {
     }
 
     public AuthResponseDTO saveUserFromProvider(User user) {
-        User userExists = userRepository.findByUsername(user.getUsername())
+        User userExists = getUserByUsername(user.getUsername())
                 .orElse(null);
         if(userExists == null)
-            userRepository.save(user);
+            saveUser(user);
 
         return AuthResponseDTO.builder()
                 .token(jwtService.getToken(user, false))
                 .build();
     }
 
-    public StatusDTO changeUser(UserDTO userDTO) throws Exception {
-        String username = authService.getAuthenticatedUsername();
-        User user = userRepository.findByUsername(username)
+    public StatusDTO changeUser(String username, UserDTO userDTO) throws Exception {
+        User user = getUserByUsername(username)
                 .orElse(null);
 
         if(user == null)
@@ -125,7 +123,7 @@ public class UserService {
 
         user.setWeb(userDTO.getWeb());
         user.setEmail(userDTO.getEmail());
-        userRepository.save(user);
+        saveUser(user);
 
         return StatusDTO.builder()
                 .message("Usuario editado correctamente")
@@ -133,18 +131,17 @@ public class UserService {
                 .build();
     }
 
-    public StatusDTO changePassword(PasswordEditDTO passwordEditDTO) throws Exception {
-        String username = authService.getAuthenticatedUsername();
+    public StatusDTO changePassword(String username, PasswordEditDTO passwordEditDTO) throws Exception {
         User user = checkAuthUser(username, passwordEditDTO.getCurrentPassword());
         user.setPassword(passwordEditDTO.getNewPassword());
-        userRepository.save(user);
+        saveUser(user);
         return StatusDTO.builder()
                 .message("Contraseña cambiada correctamente.")
                 .code(CodeTypes.SUCCESS.name())
                 .build();
     }
 
-    public StatusDTO changeAvatar(MultipartFile file) throws Exception {
+    public StatusDTO changeAvatar(String username, MultipartFile file) throws Exception {
         if (file.isEmpty()) {
             return StatusDTO.builder()
                     .message("Archivo vacío")
@@ -162,14 +159,13 @@ public class UserService {
 
         Files.copy(file.getInputStream(), filepath, StandardCopyOption.REPLACE_EXISTING);
 
-        String username = authService.getAuthenticatedUsername();
-        User user = userRepository.findByUsername(username)
+        User user = getUserByUsername(username)
                 .orElse(null);
         if (user == null)
             throw new ServiceException("El usuario al que se le quiere cambiar el avatar no existe");
 
         user.setAvatarUrl(filepath.toString());
-        userRepository.save(user);
+        saveUser(user);
 
         return StatusDTO.builder()
                 .message("Avatar guardado correctamente")
@@ -201,7 +197,7 @@ public class UserService {
     }
 
     private User checkAuthUser(String username, String password) throws Exception {
-        User user = userRepository.findByUsername(username)
+        User user = getUserByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
 
         if (user.getProvider() != null && !user.getProvider().equals(AuthProviderType.LOCAL) && user.getPassword() == null) {

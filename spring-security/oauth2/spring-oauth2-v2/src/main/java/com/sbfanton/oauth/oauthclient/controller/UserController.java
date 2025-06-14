@@ -14,6 +14,7 @@ import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,29 +25,25 @@ import java.util.Map;
 public class UserController {
 
     @Autowired
-    private CallbackServiceFacade callbackServiceFacade;
-
-    @Autowired
     private UserService userService;
 
-    /*
-    @GetMapping("/me/post-callback-info")
-    public ResponseEntity<?> getUserInfoAfterCallback(HttpServletRequest request) {
-        return ResponseEntity.ok().body(
-                callbackServiceFacade.processUserAfterCallback(request));
-    }
-     */
+    @Autowired
+    private CallbackServiceFacade callbackServiceFacade;
 
     @GetMapping("/me")
-    public ResponseEntity<?> getUser()
+    public ResponseEntity<?> getUser(@AuthenticationPrincipal User user)
         throws Exception {
-        return ResponseEntity.ok().body(userService.getUserDTO());
+        return ResponseEntity.ok().body(
+                userService.getUserDTO(user.getUsername()));
     }
 
     @PostMapping("/me")
-    public ResponseEntity<?> editUser(@RequestBody UserDTO userDTO)
+    public ResponseEntity<?> editUser(
+            @AuthenticationPrincipal User user,
+            @RequestBody UserDTO userDTO)
             throws Exception {
-        return ResponseEntity.ok().body(userService.changeUser(userDTO));
+        return ResponseEntity.ok().body(
+                userService.changeUser(user.getUsername(), userDTO));
     }
 
     @GetMapping("/me/avatar/{filename}")
@@ -59,16 +56,27 @@ public class UserController {
     }
 
     @PostMapping("/me/avatar")
-    public ResponseEntity<?> editAvatar(@RequestParam("avatar") MultipartFile file)
+    public ResponseEntity<?> editAvatar(
+            @AuthenticationPrincipal User user,
+            @RequestParam("avatar") MultipartFile file)
             throws Exception {
-        return ResponseEntity.ok().body(userService.changeAvatar(file));
+        return ResponseEntity.ok().body(
+                userService.changeAvatar(user.getUsername(), file));
     }
 
     @PostMapping("/me/password")
-    public ResponseEntity<?> changePassword(@RequestBody PasswordEditDTO passwordEditDTO)
+    public ResponseEntity<?> changePassword(
+            @AuthenticationPrincipal User user,
+            @RequestBody PasswordEditDTO passwordEditDTO)
                     throws Exception{
-        return ResponseEntity.ok().body(userService.changePassword(passwordEditDTO));
+        return ResponseEntity.ok().body(
+                userService.changePassword(user.getUsername(), passwordEditDTO));
     }
 
-
+    @GetMapping("/me/post-callback")
+    public ResponseEntity<?> getUserInfoAfterCallback(
+            @AuthenticationPrincipal User user) {
+        return ResponseEntity.ok().body(
+                callbackServiceFacade.processAfterCallback(user));
+    }
 }

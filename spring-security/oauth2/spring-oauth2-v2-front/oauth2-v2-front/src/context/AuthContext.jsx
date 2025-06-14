@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { getUserInfo, postCallbackReq } from "../services/UserService.js";
 
 const AuthContext = createContext();
 
@@ -21,29 +22,19 @@ export function AuthProvider({ children }) {
     }
 
     try {
-      let token = tokenLocal || paramToken;
-      const response = await fetch('http://localhost:8080/users/me', {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error('Token inválido');
+      if(paramToken) {
+        await postCallbackReq(paramToken);
       }
-
-      const data = await response.json();
-      setUserData({
-        username: data.username,
-        avatarUrl: data.avatarUrl,
-        web: data.web,
-        email: data.email
-      });
-
-      /*if (data.token) localStorage.setItem("token", data.token);*/
-
-      setIsAuthenticated(true);
+      if(tokenLocal || paramToken) {
+        const data = await getUserInfo();
+        setUserData({
+          username: data.username,
+          avatarUrl: data.avatarUrl,
+          web: data.web,
+          email: data.email
+        });
+        setIsAuthenticated(true);
+      }
     } catch (error) {
       localStorage.removeItem("token");
       setIsAuthenticated(false);
@@ -64,7 +55,7 @@ export function AuthProvider({ children }) {
     setUserData(null);
   };
 
-  useEffect(() => {
+  useEffect( () => {
     checkAuth();
   }, []);
 

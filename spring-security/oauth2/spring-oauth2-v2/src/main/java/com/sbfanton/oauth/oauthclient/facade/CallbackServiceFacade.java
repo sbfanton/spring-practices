@@ -53,14 +53,11 @@ public class CallbackServiceFacade {
         return authResp.getToken();
     }
 
-    public Map<String, Object> processUserAfterCallback(HttpServletRequest request) {
-        String token = jwtService.getTokenFromRequest(request);
-        User user = jwtService.getUserFromToken(token);
-        UserDTO userDTO = userMapper.userToUserDTO(user);
+    public AuthResponseDTO processAfterCallback(User user) {
         String newToken = jwtService.getToken(user, false);
-        Map<String, Object> response = GenericMapper.convertToMap(userDTO);
-        response.put("token", newToken);
-        return response;
+        return AuthResponseDTO.builder()
+                .token(newToken)
+                .build();
     }
 
     private String getTokenFromAuthServer(String code, OAuthProvider oAuthProvider, String provider) throws ServiceException {

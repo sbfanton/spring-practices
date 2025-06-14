@@ -2,12 +2,15 @@ package com.sbfanton.oauth.oauthclient.controller;
 
 import com.sbfanton.oauth.oauthclient.facade.CallbackServiceFacade;
 import com.sbfanton.oauth.oauthclient.model.OAuthProvider;
+import com.sbfanton.oauth.oauthclient.model.User;
 import com.sbfanton.oauth.oauthclient.service.JwtService;
 import com.sbfanton.oauth.oauthclient.service.OAuthProviderService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
