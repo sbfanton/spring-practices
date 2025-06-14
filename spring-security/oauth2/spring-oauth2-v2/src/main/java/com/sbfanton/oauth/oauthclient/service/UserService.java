@@ -2,22 +2,35 @@ package com.sbfanton.oauth.oauthclient.service;
 
 import com.sbfanton.oauth.oauthclient.exception.ServiceException;
 import com.sbfanton.oauth.oauthclient.model.User;
-import com.sbfanton.oauth.oauthclient.model.dto.AuthResponseDTO;
-import com.sbfanton.oauth.oauthclient.model.dto.LoginDTO;
-import com.sbfanton.oauth.oauthclient.model.dto.RegisterDTO;
+import com.sbfanton.oauth.oauthclient.model.dto.*;
+import com.sbfanton.oauth.oauthclient.model.mapper.UserMapper;
 import com.sbfanton.oauth.oauthclient.repository.UserRepository;
 import com.sbfanton.oauth.oauthclient.utils.constants.AuthProviderType;
+import com.sbfanton.oauth.oauthclient.utils.constants.CodeTypes;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class UserService {
+
+    @Value("${uploads.path}")
+    private String uploadsPath;
 
     @Autowired
     private UserRepository userRepository;
@@ -31,6 +44,12 @@ public class UserService {
     @Autowired
     private JwtService jwtService;
 
+    @Autowired
+    private AuthService authService;
+
+    @Autowired
+    private UserMapper userMapper;
+
     public Optional<User> getUserByUsername(String username) {
         return userRepository.findByUsername(username);
     }
@@ -43,20 +62,8 @@ public class UserService {
         userRepository.deleteByUsername(username);
     }
 
-    public AuthResponseDTO login(LoginDTO loginDTO) {
-        User user = userRepository.findByUsername(loginDTO.getUsername())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-
-        if (user.getProvider() != null && !user.getProvider().equals(AuthProviderType.LOCAL) && user.getPassword() == null) {
-            throw new RuntimeException("Este usuario inició sesión con un proveedor externo. No tiene contraseña configurada.");
-        }
-
-        if (user.getPassword() != null) {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword())
-            );
-        }
-
+    public AuthResponseDTO login(LoginDTO loginDTO) throws Exception {
+        User user = checkAuthUser(loginDTO.getUsername(), loginDTO.getPassword());
         return AuthResponseDTO.builder()
                 .token(jwtService.getToken(user, false))
                 .build();
@@ -86,11 +93,127 @@ public class UserService {
                 .build();
     }
 
+    public UserDTO getUserDTO() throws Exception {
+        String username = authService.getAuthenticatedUsername();
+        User user = userRepository.findByUsername(username)
+                .orElse(null);
+
+        if(user == null)
+            throw new ServiceException("Usuario no encontrado");
+
+        return userMapper.userToUserDTO(user);
+    }
+
     public AuthResponseDTO saveUserFromProvider(User user) {
-        userRepository.save(user);
+        User userExists = userRepository.findByUsername(user.getUsername())
+                .orElse(null);
+        if(userExists == null)
+            userRepository.save(user);
 
         return AuthResponseDTO.builder()
                 .token(jwtService.getToken(user, false))
                 .build();
+    }
+
+    public StatusDTO changeUser(UserDTO userDTO) throws Exception {
+        String username = authService.getAuthenticatedUsername();
+        User user = userRepository.findByUsername(username)
+                .orElse(null);
+
+        if(user == null)
+            throw new ServiceException("El usuario al que se le quiere editar atributos no existe.");
+
+        user.setWeb(userDTO.getWeb());
+        user.setEmail(userDTO.getEmail());
+        userRepository.save(user);
+
+        return StatusDTO.builder()
+                .message("Usuario editado correctamente")
+                .code(CodeTypes.SUCCESS.name())
+                .build();
+    }
+
+    public StatusDTO changePassword(PasswordEditDTO passwordEditDTO) throws Exception {
+        String username = authService.getAuthenticatedUsername();
+        User user = checkAuthUser(username, passwordEditDTO.getCurrentPassword());
+        user.setPassword(passwordEditDTO.getNewPassword());
+        userRepository.save(user);
+        return StatusDTO.builder()
+                .message("Contraseña cambiada correctamente.")
+                .code(CodeTypes.SUCCESS.name())
+                .build();
+    }
+
+    public StatusDTO changeAvatar(MultipartFile file) throws Exception {
+        if (file.isEmpty()) {
+            return StatusDTO.builder()
+                    .message("Archivo vacío")
+                    .code(CodeTypes.ERROR.name())
+                    .build();
+        }
+
+        File directory = new File(uploadsPath);
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+
+        String filename = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+        Path filepath = Paths.get(uploadsPath, filename);
+
+        Files.copy(file.getInputStream(), filepath, StandardCopyOption.REPLACE_EXISTING);
+
+        String username = authService.getAuthenticatedUsername();
+        User user = userRepository.findByUsername(username)
+                .orElse(null);
+        if (user == null)
+            throw new ServiceException("El usuario al que se le quiere cambiar el avatar no existe");
+
+        user.setAvatarUrl(filepath.toString());
+        userRepository.save(user);
+
+        return StatusDTO.builder()
+                .message("Avatar guardado correctamente")
+                .code(CodeTypes.SUCCESS.name())
+                .build();
+    }
+
+    public FileDTO getAvatar(String filename) throws Exception {
+        if (filename.contains("..")) {
+            throw new ServiceException("Nombre de archivo no válido");
+        }
+
+        Path filePath = Paths.get(uploadsPath).resolve(filename).normalize();
+
+        Resource resource = new UrlResource(filePath.toUri());
+        if (!resource.exists()) {
+            throw new ServiceException("Avatar no encontrado");
+        }
+
+        String contentType = Files.probeContentType(filePath);
+        if (contentType == null) {
+            contentType = "application/octet-stream";
+        }
+
+        return FileDTO.builder()
+                .resource(resource)
+                .contentType(contentType)
+                .build();
+    }
+
+    private User checkAuthUser(String username, String password) throws Exception {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+
+        if (user.getProvider() != null && !user.getProvider().equals(AuthProviderType.LOCAL) && user.getPassword() == null) {
+            throw new ServiceException("Este usuario inició sesión con un proveedor externo. No tiene contraseña configurada.");
+        }
+
+        if (user.getPassword() != null) {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(username, password)
+            );
+        }
+
+        return user;
     }
 }

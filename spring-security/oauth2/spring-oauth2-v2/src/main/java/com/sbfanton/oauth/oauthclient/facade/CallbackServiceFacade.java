@@ -4,9 +4,13 @@ import com.sbfanton.oauth.oauthclient.exception.ServiceException;
 import com.sbfanton.oauth.oauthclient.model.OAuthProvider;
 import com.sbfanton.oauth.oauthclient.model.User;
 import com.sbfanton.oauth.oauthclient.model.dto.AuthResponseDTO;
+import com.sbfanton.oauth.oauthclient.model.dto.UserDTO;
+import com.sbfanton.oauth.oauthclient.model.mapper.UserMapper;
 import com.sbfanton.oauth.oauthclient.service.JwtService;
 import com.sbfanton.oauth.oauthclient.service.OAuthProviderService;
 import com.sbfanton.oauth.oauthclient.service.UserService;
+import com.sbfanton.oauth.oauthclient.utils.GenericMapper;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -33,6 +37,9 @@ public class CallbackServiceFacade {
     @Autowired
     private RestTemplate restTemplate;
 
+    @Autowired
+    private UserMapper userMapper;
+
     public String processProviderCallbackAndGetToken(String provider, String code) throws Exception {
         OAuthProvider oAuthProvider = oAuthProviderService.getProvider(provider);
         if(oAuthProvider == null) {
@@ -44,6 +51,16 @@ public class CallbackServiceFacade {
         User user = oAuthProviderService.getUserByProviderUserInfo(provider, userInfo.getBody());
         AuthResponseDTO authResp = userService.saveUserFromProvider(user);
         return authResp.getToken();
+    }
+
+    public Map<String, Object> processUserAfterCallback(HttpServletRequest request) {
+        String token = jwtService.getTokenFromRequest(request);
+        User user = jwtService.getUserFromToken(token);
+        UserDTO userDTO = userMapper.userToUserDTO(user);
+        String newToken = jwtService.getToken(user, false);
+        Map<String, Object> response = GenericMapper.convertToMap(userDTO);
+        response.put("token", newToken);
+        return response;
     }
 
     private String getTokenFromAuthServer(String code, OAuthProvider oAuthProvider, String provider) throws ServiceException {

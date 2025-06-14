@@ -22,7 +22,7 @@ export function AuthProvider({ children }) {
 
     try {
       let token = tokenLocal || paramToken;
-      const response = await fetch('http://localhost:8080/user-info', {
+      const response = await fetch('http://localhost:8080/users/me', {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -41,7 +41,7 @@ export function AuthProvider({ children }) {
         email: data.email
       });
 
-      if (data.token) localStorage.setItem("token", data.token);
+      /*if (data.token) localStorage.setItem("token", data.token);*/
 
       setIsAuthenticated(true);
     } catch (error) {
