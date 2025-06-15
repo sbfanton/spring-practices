@@ -55,10 +55,10 @@ public class UserController {
                 .body(fileDTO.getResource());
     }
 
-    @PostMapping("/me/avatar")
+    @PostMapping(value = "/me/avatar", consumes = "multipart/form-data")
     public ResponseEntity<?> editAvatar(
             @AuthenticationPrincipal User user,
-            @RequestParam("avatar") MultipartFile file)
+            @RequestParam("file") MultipartFile file)
             throws Exception {
         return ResponseEntity.ok().body(
                 userService.changeAvatar(user.getUsername(), file));

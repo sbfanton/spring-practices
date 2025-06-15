@@ -26,10 +26,6 @@
 
 .edit-avatar-icon svg {
     height: 1.5rem;
-    color: #0048ff;
+    color: rgba(112, 119, 127, 0.6);
     font-size: 14px;
-}
-
-.edit-avatar-icon svg:hover {
-    color: #0048FFFF;
 }

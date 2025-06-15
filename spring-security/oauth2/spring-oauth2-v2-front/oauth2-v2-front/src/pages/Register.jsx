@@ -99,6 +99,7 @@ function Register() {
             name="email"
             value={formData.email}
             onChange={handleChange}
+            placeholder="ejemplo@correo.com"
           />
           {errors.email && <p className="error">{errors.email}</p>}
         </div>
@@ -110,6 +111,7 @@ function Register() {
             name="web"
             value={formData.web}
             onChange={handleChange}
+            placeholder="www.mi-web.com"
           />
           {errors.web && <p className="error">{errors.web}</p>}
         </div>

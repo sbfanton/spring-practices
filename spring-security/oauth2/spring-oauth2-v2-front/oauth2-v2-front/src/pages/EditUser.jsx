@@ -7,16 +7,18 @@ import Container from '../components/Container';
 import IconButton from '../components/IconButton';
 import EditableAvatar from "../components/EditableAvatar.jsx";
 import defaultAvatar from '../assets/default-avatar.jpg';
-import { changePassword, getUserInfo } from "../services/UserService.js";
+import { changePassword, getUserInfo, changeUserInfo } from "../services/UserService.js";
 import alertService from "../helpers/alertService.js";
+import { useAuth } from "../context/AuthContext.jsx";
 
 export default function EditUser() {
 
   const navigate = useNavigate();
+  const { userData, setUserData } = useAuth();
 
  const [generalData, setGeneralData] = useState({
-    email: '',
-    website: '',
+    email: userData.email,
+    website: userData.web,
   });
 
   const [passwordData, setPasswordData] = useState({
@@ -37,7 +39,7 @@ export default function EditUser() {
     setPasswordData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleGeneralSubmit = (e) => {
+  const handleGeneralSubmit = async (e) => {
     e.preventDefault();
 
     let errs = {};
@@ -48,7 +50,12 @@ export default function EditUser() {
     setErrors(errs);
 
     if (Object.keys(errs).length === 0) {
-        console.log('Datos a enviar:', generalData);
+      await changeUserInfo(generalData);
+      setUserData(prev => ({
+        ...prev,
+        email: generalData.email,
+        web: generalData.website
+      }));
     }
   };
 
@@ -111,14 +118,7 @@ export default function EditUser() {
           {/* Avatar editable */}
           <div className='profile-avatar-container'>
             <EditableAvatar
-                initialUrl={avatarUrl || defaultAvatar}
                 style={{width: '9rem', height: '9rem'}}
-                onUploadSuccess={(data) => {
-                  // Si el backend responde con la nueva URL del avatar:
-                  if (data.avatarUrl) {
-                    setAvatarUrl(data.avatarUrl);
-                  }
-                }}
             />
           </div>
 
@@ -131,6 +131,7 @@ export default function EditUser() {
                 name="email"
                 value={generalData.email}
                 onChange={handleGeneralChange}
+                placeholder="ejemplo@correo.com"
             />
             {errors.email && <p className="error">{errors.email}</p>}
             </div>
@@ -142,6 +143,7 @@ export default function EditUser() {
                 name="website"
                 value={generalData.website}
                 onChange={handleGeneralChange}
+                placeholder="www.mi-web.com"
             />
             </div>
 

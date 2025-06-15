@@ -7,10 +7,12 @@ import com.sbfanton.oauth.oauthclient.model.mapper.UserMapper;
 import com.sbfanton.oauth.oauthclient.repository.UserRepository;
 import com.sbfanton.oauth.oauthclient.utils.constants.AuthProviderType;
 import com.sbfanton.oauth.oauthclient.utils.constants.CodeTypes;
+import com.sbfanton.oauth.oauthclient.utils.constants.DateFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -23,6 +25,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -128,6 +131,7 @@ public class UserService {
         return StatusDTO.builder()
                 .message("Usuario editado correctamente")
                 .code(CodeTypes.SUCCESS.name())
+                .timestamp(DateFormatter.basicFormatter(DateFormatter.BASIC_FORMATTER))
                 .build();
     }
 
@@ -138,15 +142,23 @@ public class UserService {
         return StatusDTO.builder()
                 .message("Contraseña cambiada correctamente.")
                 .code(CodeTypes.SUCCESS.name())
+                .timestamp(DateFormatter.basicFormatter(DateFormatter.BASIC_FORMATTER))
                 .build();
     }
 
     public StatusDTO changeAvatar(String username, MultipartFile file) throws Exception {
         if (file.isEmpty()) {
-            return StatusDTO.builder()
-                    .message("Archivo vacío")
-                    .code(CodeTypes.ERROR.name())
-                    .build();
+            throw new ServiceException("Archivo vacío.");
+        }
+
+        String contentType = file.getContentType();
+        List<String> allowedTypes = List.of("image/jpeg", "image/jpg", "image/png");
+        Boolean isAllowed = allowedTypes.contains(contentType);
+
+        if(!isAllowed) {
+            throw new ServiceException(
+                    "Tipo de archivo no soportado para el avatar.",
+                    HttpStatus.UNSUPPORTED_MEDIA_TYPE);
         }
 
         File directory = new File(uploadsPath);
@@ -154,9 +166,15 @@ public class UserService {
             directory.mkdirs();
         }
 
-        String filename = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
-        Path filepath = Paths.get(uploadsPath, filename);
+        String originalFilename = file.getOriginalFilename();
+        String extension = "";
 
+        if (originalFilename.contains(".")) {
+            extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+        }
+
+        String filename = username + "_avatar" + extension;
+        Path filepath = Paths.get(uploadsPath, filename);
         Files.copy(file.getInputStream(), filepath, StandardCopyOption.REPLACE_EXISTING);
 
         User user = getUserByUsername(username)
@@ -164,12 +182,13 @@ public class UserService {
         if (user == null)
             throw new ServiceException("El usuario al que se le quiere cambiar el avatar no existe");
 
-        user.setAvatarUrl(filepath.toString());
+        user.setAvatarUrl(filename);
         saveUser(user);
 
         return StatusDTO.builder()
-                .message("Avatar guardado correctamente")
+                .message(filename)
                 .code(CodeTypes.SUCCESS.name())
+                .timestamp(DateFormatter.basicFormatter(DateFormatter.BASIC_FORMATTER))
                 .build();
     }
 

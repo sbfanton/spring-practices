@@ -1,6 +1,7 @@
 import React from 'react';
 import {BrowserRouter as Router, Routes, Route, Navigate, useNavigate} from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { AvatarProvider } from "./context/AvatarContext.jsx";
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
@@ -30,7 +31,7 @@ function AppRoutes() {
               isAuthenticated ? <Dashboard /> : <Navigate to="/login" />
             } />
             <Route path="/" element={
-              <Navigate to={isAuthenticated ? "/dashboard" : "/login"} />
+              isAuthenticated ? <Dashboard /> : <Navigate to="/login" />
             } />
           </Routes>
         </div>
@@ -43,7 +44,9 @@ export default function App() {
   return (
     <Router>
       <AuthProvider>
-        <AppRoutes />
+        <AvatarProvider>
+          <AppRoutes />
+        </AvatarProvider>
       </AuthProvider>
     </Router>
   );

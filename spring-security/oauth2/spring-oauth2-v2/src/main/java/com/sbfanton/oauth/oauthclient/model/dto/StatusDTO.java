@@ -13,4 +13,5 @@ public class StatusDTO {
 
     private String message;
     private String code;
+    private String timestamp;
 }

@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
 import { getUserInfo, postCallbackReq } from "../services/UserService.js";
 
 const AuthContext = createContext();
@@ -9,6 +10,7 @@ export function AuthProvider({ children }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   const checkAuth = async () => {
     const tokenLocal = localStorage.getItem('token');
@@ -29,9 +31,9 @@ export function AuthProvider({ children }) {
         const data = await getUserInfo();
         setUserData({
           username: data.username,
-          avatarUrl: data.avatarUrl,
-          web: data.web,
-          email: data.email
+          avatarUrl: data.avatarUrl ? data.avatarUrl : "",
+          web: data.web ? data.web : "",
+          email: data.email ? data.email : ""
         });
         setIsAuthenticated(true);
       }
@@ -64,6 +66,7 @@ export function AuthProvider({ children }) {
       isAuthenticated,
       userData,
       loading,
+      setUserData,
       login,
       logout
     }}>

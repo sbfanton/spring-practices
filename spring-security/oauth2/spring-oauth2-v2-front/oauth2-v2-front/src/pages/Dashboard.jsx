@@ -7,10 +7,12 @@ import defaultAvatar from '../assets/default-avatar.jpg';
 import { faHome, faGlobe, faRightFromBracket, faUserEdit } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 import Container from '../components/Container';
+import { useAvatar } from "../context/AvatarContext.jsx";
 
 function Dashboard() {
 
   const { userData, logout } = useAuth();
+  const { avatarUrl } = useAvatar();
   const navigate = useNavigate();
 
   if (!userData) return <p>Cargando datos del usuario...</p>;
@@ -31,7 +33,7 @@ function Dashboard() {
       <div className='dashboard-header'>
         <div className='profile'>
           <UserAvatar
-            url={userData.avatarUrl ? userData.avatarUrl : defaultAvatar}
+            url={avatarUrl ? avatarUrl : defaultAvatar}
             alt="Avatar de usuario"
             style={avatarStyle}
           />
