@@ -17,7 +17,7 @@ public class OAuthProvider {
     private String clientSecret;
     private String authorizationUri;
     private String tokenUri;
-    private String userInfoUri;
+    private List<OAuthEndpoint> userInfoUris;
     private String redirectUri;
     private String grantType;
     private List<String> userInfoFields;

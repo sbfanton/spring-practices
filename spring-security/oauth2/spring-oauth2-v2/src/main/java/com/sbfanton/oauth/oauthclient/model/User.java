@@ -38,6 +38,9 @@ public class User implements UserDetails{
     @Column(name = "provider")
     private AuthProviderType provider;
 
+    @Column(name = "provider_id")
+    private String provider_id;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;

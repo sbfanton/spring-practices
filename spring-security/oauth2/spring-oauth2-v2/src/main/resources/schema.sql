@@ -1,11 +1,13 @@
 CREATE DATABASE IF NOT EXISTS oauth2_v2_db;
 
-create table if not exists users (
-    username varchar(255) not null,
-    password varchar(255),
-    email varchar(255),
-    avatar_url varchar(500),
-    web varchar(500),
-    provider varchar(20),
-    primary key (username)
+CREATE TABLE IF NOT EXISTS users (
+    username VARCHAR(255) NOT NULL,
+    password VARCHAR(255),
+    email VARCHAR(255) NOT NULL,
+    avatar_url VARCHAR(500),
+    web VARCHAR(500),
+    provider VARCHAR(20) NOT NULL,
+    provider_id VARCHAR(500) NOT NULL,
+    PRIMARY KEY (username),
+    UNIQUE (provider, provider_id)
 );

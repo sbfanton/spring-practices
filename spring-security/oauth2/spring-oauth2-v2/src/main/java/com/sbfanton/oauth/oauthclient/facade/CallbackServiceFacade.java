@@ -1,6 +1,7 @@
 package com.sbfanton.oauth.oauthclient.facade;
 
 import com.sbfanton.oauth.oauthclient.exception.ServiceException;
+import com.sbfanton.oauth.oauthclient.model.OAuthEndpoint;
 import com.sbfanton.oauth.oauthclient.model.OAuthProvider;
 import com.sbfanton.oauth.oauthclient.model.User;
 import com.sbfanton.oauth.oauthclient.model.dto.AuthResponseDTO;
@@ -12,6 +13,7 @@ import com.sbfanton.oauth.oauthclient.service.UserService;
 import com.sbfanton.oauth.oauthclient.utils.GenericMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -47,8 +49,8 @@ public class CallbackServiceFacade {
         }
 
         String accessToken = getTokenFromAuthServer(code, oAuthProvider, provider);
-        ResponseEntity<Map> userInfo = getUserInfoFromAuthServer(accessToken, oAuthProvider);
-        User user = oAuthProviderService.getUserByProviderUserInfo(provider, userInfo.getBody());
+        Map userInfo = getUserInfoFromAuthServer(accessToken, oAuthProvider);
+        User user = oAuthProviderService.getUserByProviderUserInfo(provider, userInfo);
         AuthResponseDTO authResp = userService.saveUserFromProvider(user);
         return authResp.getToken();
     }
@@ -87,7 +89,7 @@ public class CallbackServiceFacade {
         return oAuthProviderService.extractTokenFromResponse(provider, tokenResponse.getBody());
     }
 
-    private ResponseEntity<Map> getUserInfoFromAuthServer(String token, OAuthProvider oAuthProvider) throws ServiceException {
+    private Map getUserInfoFromAuthServer(String token, OAuthProvider oAuthProvider) throws ServiceException {
 
         // Obtener info del usuario
         HttpHeaders userHeaders = new HttpHeaders();
@@ -96,18 +98,40 @@ public class CallbackServiceFacade {
         userHeaders.set("User-Agent", "OAuth2-V2-app");
 
         HttpEntity<Void> userRequest = new HttpEntity<>(userHeaders);
+        Map<String, Object> response = new HashMap<>();
 
-        ResponseEntity<Map> userResponse = restTemplate.exchange(
-                oAuthProvider.getUserInfoUri(),
-                HttpMethod.GET,
-                userRequest,
-                Map.class
-        );
+        for (OAuthEndpoint endpoint : oAuthProvider.getUserInfoUris()) {
+            if (endpoint.isReturnsList()) {
+                ResponseEntity<List<Map<String, Object>>> listResponse = restTemplate.exchange(
+                        endpoint.getUrl(),
+                        HttpMethod.GET,
+                        userRequest,
+                        new ParameterizedTypeReference<>() {}
+                );
 
-        if (!userResponse.getStatusCode().is2xxSuccessful()) {
-            throw new ServiceException("Error al obtener datos del usuario");
+                if (!listResponse.getStatusCode().is2xxSuccessful()) {
+                    throw new ServiceException("Error en endpoint (lista)");
+                }
+
+                response.put(endpoint.getUrl(), listResponse.getBody());
+
+            } else {
+                // Procesar como objeto
+                ResponseEntity<Map<String, Object>> objectResponse = restTemplate.exchange(
+                        endpoint.getUrl(),
+                        HttpMethod.GET,
+                        userRequest,
+                        new ParameterizedTypeReference<>() {}
+                );
+
+                if (!objectResponse.getStatusCode().is2xxSuccessful()) {
+                    throw new ServiceException("Error en endpoint (objeto)");
+                }
+
+                response.putAll(objectResponse.getBody());
+            }
+
         }
-
-        return userResponse;
+        return response;
     }
 }

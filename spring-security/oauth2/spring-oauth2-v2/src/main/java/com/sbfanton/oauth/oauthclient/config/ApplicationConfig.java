@@ -1,6 +1,7 @@
 package com.sbfanton.oauth.oauthclient.config;
 
 import com.sbfanton.oauth.oauthclient.repository.UserRepository;
+import net.datafaker.Faker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -48,5 +49,10 @@ public class ApplicationConfig {
     public UserDetailsService userDetailsService() {
         return username -> userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    }
+
+    @Bean
+    public Faker faker() {
+        return new Faker();
     }
 }

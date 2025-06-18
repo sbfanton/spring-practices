@@ -29,8 +29,8 @@ public class OAuth2ClientConfig {
     @Value("${oauth2.github.token-uri}")
     private String tokenUri;
 
-    @Value("${oauth2.github.user-info-uri}")
-    private String userInfoUri;
+    @Value("${oauth2.github.user-info-uri-1}")
+    private String userInfoUri1;
 
     @Value("${oauth2.github.redirect-uri}")
     private String redirectUri;
@@ -54,7 +54,7 @@ public class OAuth2ClientConfig {
             .scope("read:user", "user:email")
             .authorizationUri(authorizationUri)
             .tokenUri(tokenUri)
-            .userInfoUri(userInfoUri)
+            .userInfoUri(userInfoUri1)
             .userNameAttributeName("id")
             .clientName("GitHub")
             .build();

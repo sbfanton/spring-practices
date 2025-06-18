@@ -8,6 +8,7 @@ import com.sbfanton.oauth.oauthclient.repository.UserRepository;
 import com.sbfanton.oauth.oauthclient.utils.constants.AuthProviderType;
 import com.sbfanton.oauth.oauthclient.utils.constants.CodeTypes;
 import com.sbfanton.oauth.oauthclient.utils.constants.DateFormatter;
+import net.datafaker.Faker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -52,6 +53,9 @@ public class UserService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private Faker faker;
 
     public Optional<User> getUserByUsername(String username) {
         return userRepository.findByUsername(username);
@@ -106,14 +110,25 @@ public class UserService {
         return userMapper.userToUserDTO(user);
     }
 
-    public AuthResponseDTO saveUserFromProvider(User user) {
-        User userExists = getUserByUsername(user.getUsername())
+    public AuthResponseDTO saveUserFromProvider(User user) throws Exception{
+
+        User usr = userRepository.findByProviderAndProviderId(
+                user.getProvider(), user.getProvider_id())
                 .orElse(null);
-        if(userExists == null)
+
+        if (usr == null) {
+            String username = user.getUsername() + "_" + faker.number().numberBetween(1, 1000);
+
+            while(getUserByUsername(username).orElse(null) != null) {
+                username = user.getUsername() + "_" + faker.number().numberBetween(1, 1000);
+            }
+            user.setUsername(username);
             saveUser(user);
+        }
+
 
         return AuthResponseDTO.builder()
-                .token(jwtService.getToken(user, false))
+                .token(jwtService.getToken(usr != null ? usr : user, false))
                 .build();
     }
 
