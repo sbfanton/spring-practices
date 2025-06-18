@@ -34,7 +34,7 @@ public class UserController {
     public ResponseEntity<?> getUser(@AuthenticationPrincipal User user)
         throws Exception {
         return ResponseEntity.ok().body(
-                userService.getUserDTO(user.getUsername()));
+                userService.getUserDTO(user.getId()));
     }
 
     @PostMapping("/me")
@@ -43,7 +43,7 @@ public class UserController {
             @RequestBody UserDTO userDTO)
             throws Exception {
         return ResponseEntity.ok().body(
-                userService.changeUser(user.getUsername(), userDTO));
+                userService.changeUser(user.getId(), userDTO));
     }
 
     @GetMapping("/me/avatar/{filename}")
@@ -61,7 +61,7 @@ public class UserController {
             @RequestParam("file") MultipartFile file)
             throws Exception {
         return ResponseEntity.ok().body(
-                userService.changeAvatar(user.getUsername(), file));
+                userService.changeAvatar(user.getId(), file));
     }
 
     @PostMapping("/me/password")
@@ -70,7 +70,7 @@ public class UserController {
             @RequestBody PasswordEditDTO passwordEditDTO)
                     throws Exception{
         return ResponseEntity.ok().body(
-                userService.changePassword(user.getUsername(), passwordEditDTO));
+                userService.changePassword(user.getId(), passwordEditDTO));
     }
 
     @GetMapping("/me/post-callback")

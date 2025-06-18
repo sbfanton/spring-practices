@@ -1,7 +1,6 @@
 package com.sbfanton.oauth.oauthclient.service;
 
 import com.sbfanton.oauth.oauthclient.model.User;
-import com.sbfanton.oauth.oauthclient.model.dto.UserDTO;
 import com.sbfanton.oauth.oauthclient.utils.RandomKeyGen;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -10,7 +9,6 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpHeaders;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -18,6 +16,7 @@ import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Function;
 
 @Service
@@ -39,6 +38,7 @@ public class JwtService {
 
     private Map<String, Object> generateExtraClaimsMap(User user) {
         Map <String, Object> extraClaims = new HashMap<>();
+        extraClaims.put("username", user.getUsername());
         extraClaims.put("avatar", user.getAvatarUrl());
         extraClaims.put("web", user.getWeb());
         return extraClaims;
@@ -48,12 +48,13 @@ public class JwtService {
     private String generateToken(Map<String, Object> extraClaims, User user, Boolean isTemporary) {
         return Jwts.builder()
                 .claims(extraClaims)
-                .subject(user.getUsername())
+                .subject(String.valueOf(user.getId()))
                 .issuedAt(new Date(System.currentTimeMillis())) //fecha de creacion
                 .expiration(
-                                isTemporary ?
-                                new Date(System.currentTimeMillis() + 1000*120) :
-                                new Date(System.currentTimeMillis() + 1000*60*24)) //fecha de expiracion
+                        isTemporary ?
+                                new Date(System.currentTimeMillis() + 1000 * 120) :
+                                new Date(System.currentTimeMillis() + 1000 * 60 * 24))
+                .id(UUID.randomUUID().toString())
                 .signWith(getKey(), Jwts.SIG.HS256)
                 .compact();
     }
@@ -63,7 +64,7 @@ public class JwtService {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String getUsernameFromToken(String token) {
+    public String getUserIdFromToken(String token) {
         return getClaim(token, Claims::getSubject);
     }
 
@@ -75,9 +76,9 @@ public class JwtService {
         return getExpirationDate(token).before(new Date(System.currentTimeMillis()));
     }
 
-    public boolean isTokenValid(String token, UserDetails userDetails) {
-        String username = getUsernameFromToken(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    public boolean isTokenValid(String token, User user) {
+        String userId = getUserIdFromToken(token);
+        return (userId.equals(String.valueOf(user.getId())) && !isTokenExpired(token));
     }
 
     private Claims getClaims(String token) {
@@ -104,11 +105,13 @@ public class JwtService {
     }
 
     public User getUserFromToken(String token) {
-        String username = getUsernameFromToken(token);
+        String userId = getUserIdFromToken(token);
+        String username = getClaim(token, claims -> claims.get("username", String.class));
         String avatar = getClaim(token, claims -> claims.get("avatar", String.class));
         String web = getClaim(token, claims -> claims.get("web", String.class));
 
         return User.builder()
+                .id(Long.parseLong(userId))
                 .username(username)
                 .avatarUrl(avatar)
                 .web(web)

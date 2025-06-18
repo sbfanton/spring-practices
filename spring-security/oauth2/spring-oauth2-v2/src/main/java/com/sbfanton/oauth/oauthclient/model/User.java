@@ -19,6 +19,9 @@ import java.util.Collection;
 public class User implements UserDetails{
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     @Column(name = "username")
     private String username;
 
@@ -39,7 +42,7 @@ public class User implements UserDetails{
     private AuthProviderType provider;
 
     @Column(name = "provider_id")
-    private String provider_id;
+    private String providerId;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

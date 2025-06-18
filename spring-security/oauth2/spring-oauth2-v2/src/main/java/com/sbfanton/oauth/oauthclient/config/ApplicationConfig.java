@@ -1,6 +1,7 @@
 package com.sbfanton.oauth.oauthclient.config;
 
 import com.sbfanton.oauth.oauthclient.repository.UserRepository;
+import com.sbfanton.oauth.oauthclient.service.UserService;
 import net.datafaker.Faker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -32,6 +33,7 @@ public class ApplicationConfig {
         return config.getAuthenticationManager();
     }
 
+
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
@@ -40,10 +42,12 @@ public class ApplicationConfig {
         return daoAuthenticationProvider;
     }
 
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
 
     @Bean
     public UserDetailsService userDetailsService() {

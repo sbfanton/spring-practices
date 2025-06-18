@@ -92,7 +92,7 @@ public class OAuthProviderService {
                 .getUserInfoUris().stream()
                 .filter(OAuthEndpoint::isReturnsList)
                 .map(OAuthEndpoint::getUrl)
-                .collect(Collectors.toList());
+                .toList();
 
         String email = ((List<Map>)userInfo.get(listEndpoints.get(0)))
                 .stream()
@@ -106,7 +106,7 @@ public class OAuthProviderService {
                 .avatarUrl((String) userInfo.get("avatar_url"))
                 .web((String) userInfo.get("html_url"))
                 .provider(AuthProviderType.GITHUB)
-                .provider_id(String.valueOf((Integer)userInfo.get("id")))
+                .providerId(String.valueOf((Integer)userInfo.get("id")))
                 .email(email)
                 .build();
     }

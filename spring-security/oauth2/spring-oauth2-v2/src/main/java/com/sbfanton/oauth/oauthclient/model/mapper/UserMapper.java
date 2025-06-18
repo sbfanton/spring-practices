@@ -9,6 +9,7 @@ public class UserMapper {
 
     public UserDTO userToUserDTO(User user) {
         return UserDTO.builder()
+                .id(user.getId())
                 .username(user.getUsername())
                 .avatarUrl(user.getAvatarUrl())
                 .web(user.getWeb())

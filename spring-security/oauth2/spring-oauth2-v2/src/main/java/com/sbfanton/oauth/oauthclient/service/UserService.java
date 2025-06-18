@@ -57,6 +57,8 @@ public class UserService {
     @Autowired
     private Faker faker;
 
+    public Optional<User> getById(Long id) { return userRepository.findById(id); }
+
     public Optional<User> getUserByUsername(String username) {
         return userRepository.findByUsername(username);
     }
@@ -77,7 +79,6 @@ public class UserService {
     }
 
     public AuthResponseDTO register(RegisterDTO registerDTO) throws ServiceException {
-
         User userExists = getUserByUsername(registerDTO.getUsername())
                 .orElse(null);
 
@@ -100,8 +101,8 @@ public class UserService {
                 .build();
     }
 
-    public UserDTO getUserDTO(String username) throws Exception {
-        User user = getUserByUsername(username)
+    public UserDTO getUserDTO(Long id) throws Exception {
+        User user = getById(id)
                 .orElse(null);
 
         if(user == null)
@@ -113,7 +114,7 @@ public class UserService {
     public AuthResponseDTO saveUserFromProvider(User user) throws Exception{
 
         User usr = userRepository.findByProviderAndProviderId(
-                user.getProvider(), user.getProvider_id())
+                user.getProvider(), user.getProviderId())
                 .orElse(null);
 
         if (usr == null) {
@@ -132,8 +133,8 @@ public class UserService {
                 .build();
     }
 
-    public StatusDTO changeUser(String username, UserDTO userDTO) throws Exception {
-        User user = getUserByUsername(username)
+    public StatusDTO changeUser(Long id, UserDTO userDTO) throws Exception {
+        User user = getById(id)
                 .orElse(null);
 
         if(user == null)
@@ -150,8 +151,11 @@ public class UserService {
                 .build();
     }
 
-    public StatusDTO changePassword(String username, PasswordEditDTO passwordEditDTO) throws Exception {
-        User user = checkAuthUser(username, passwordEditDTO.getCurrentPassword());
+    public StatusDTO changePassword(Long id, PasswordEditDTO passwordEditDTO) throws Exception {
+        User user = getById(id).orElse(null);
+        if(user == null)
+            throw new ServiceException("Usuario no encontrado");
+        checkAuthUser(user.getUsername(), passwordEditDTO.getCurrentPassword());
         user.setPassword(passwordEditDTO.getNewPassword());
         saveUser(user);
         return StatusDTO.builder()
@@ -161,7 +165,7 @@ public class UserService {
                 .build();
     }
 
-    public StatusDTO changeAvatar(String username, MultipartFile file) throws Exception {
+    public StatusDTO changeAvatar(Long id, MultipartFile file) throws Exception {
         if (file.isEmpty()) {
             throw new ServiceException("Archivo vacío.");
         }
@@ -188,14 +192,14 @@ public class UserService {
             extension = originalFilename.substring(originalFilename.lastIndexOf("."));
         }
 
+        User user = getById(id).orElse(null);
+        if(user == null)
+            throw new ServiceException("El usuario no existe");
+
+        String username = user.getUsername();
         String filename = username + "_avatar" + extension;
         Path filepath = Paths.get(uploadsPath, filename);
         Files.copy(file.getInputStream(), filepath, StandardCopyOption.REPLACE_EXISTING);
-
-        User user = getUserByUsername(username)
-                .orElse(null);
-        if (user == null)
-            throw new ServiceException("El usuario al que se le quiere cambiar el avatar no existe");
 
         user.setAvatarUrl(filename);
         saveUser(user);
