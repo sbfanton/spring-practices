@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faGithub } from '@fortawesome/free-brands-svg-icons';
+import { faGithub, faGoogle } from '@fortawesome/free-brands-svg-icons';
 import '../css/Login.css';
 import { useAuth } from '../context/AuthContext';
 import Container from "../components/Container";
@@ -72,6 +72,11 @@ function Login() {
         <FontAwesomeIcon icon={faGithub} style={{ marginRight: '8px' }} />
         Iniciar sesión con GitHub
       </button>
+
+        <button onClick={() => handleSocialLogin("google")} className="social-button">
+            <FontAwesomeIcon icon={faGoogle} style={{ marginRight: '8px' }} />
+            Iniciar sesión con Google
+        </button>
 
       <hr className="separator" />
 

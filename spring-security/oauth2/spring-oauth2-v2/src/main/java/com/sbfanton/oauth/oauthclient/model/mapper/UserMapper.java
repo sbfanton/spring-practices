@@ -14,6 +14,8 @@ public class UserMapper {
                 .avatarUrl(user.getAvatarUrl())
                 .web(user.getWeb())
                 .email(user.getEmail())
+                .isEmailVerified(user.getIsEmailVerified())
+                .provider(user.getProvider().name())
                 .build();
     }
 }

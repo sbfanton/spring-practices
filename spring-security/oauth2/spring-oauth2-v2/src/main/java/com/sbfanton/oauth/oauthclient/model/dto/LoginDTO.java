@@ -12,8 +12,8 @@ import lombok.NoArgsConstructor;
 @Builder
 public class LoginDTO {
 
-    @NotBlank
-    private String username;
-    @NotBlank
+    @NotBlank(message = "No ha enviado un nombre de usuario o email")
+    private String identifier;
+    @NotBlank(message = "No ha enviado la contraseña")
     private String password;
 }

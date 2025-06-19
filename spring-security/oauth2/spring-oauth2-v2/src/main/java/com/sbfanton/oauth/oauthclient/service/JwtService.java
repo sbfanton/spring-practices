@@ -39,7 +39,6 @@ public class JwtService {
     private Map<String, Object> generateExtraClaimsMap(User user) {
         Map <String, Object> extraClaims = new HashMap<>();
         extraClaims.put("username", user.getUsername());
-        extraClaims.put("avatar", user.getAvatarUrl());
         extraClaims.put("web", user.getWeb());
         return extraClaims;
     }
@@ -107,13 +106,11 @@ public class JwtService {
     public User getUserFromToken(String token) {
         String userId = getUserIdFromToken(token);
         String username = getClaim(token, claims -> claims.get("username", String.class));
-        String avatar = getClaim(token, claims -> claims.get("avatar", String.class));
         String web = getClaim(token, claims -> claims.get("web", String.class));
 
         return User.builder()
                 .id(Long.parseLong(userId))
                 .username(username)
-                .avatarUrl(avatar)
                 .web(web)
                 .build();
     }

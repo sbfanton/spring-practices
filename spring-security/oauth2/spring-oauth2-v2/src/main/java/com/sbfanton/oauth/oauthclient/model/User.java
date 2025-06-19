@@ -31,6 +31,9 @@ public class User implements UserDetails{
     @Column(name = "email")
     private String email;
 
+    @Column(name = "is_email_verified")
+    private Boolean isEmailVerified;
+
     @Column(name = "avatar_url")
     private String avatarUrl;
 

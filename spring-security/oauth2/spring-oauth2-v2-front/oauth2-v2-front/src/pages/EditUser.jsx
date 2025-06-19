@@ -17,6 +17,7 @@ export default function EditUser() {
   const { userData, setUserData } = useAuth();
 
  const [generalData, setGeneralData] = useState({
+     username: userData.username,
     email: userData.email,
     website: userData.web,
   });
@@ -44,7 +45,8 @@ export default function EditUser() {
 
     let errs = {};
 
-    if (generalData.email && !isValidEmail(generalData.email)) errs.email = 'Email inválido.';
+    if (!generalData.username || !isValidUsername(generalData.username)) errs.username = "Usuario inválido";
+    if (!generalData.email || !isValidEmail(generalData.email)) errs.email = 'Email inválido.';
     if (generalData.web && !isValidURL(generalData.web)) errs.web = 'URL inválida.';
 
     setErrors(errs);
@@ -53,11 +55,17 @@ export default function EditUser() {
       await changeUserInfo(generalData);
       setUserData(prev => ({
         ...prev,
+          username: generalData.username,
         email: generalData.email,
         web: generalData.website
       }));
     }
   };
+
+    const isValidUsername = (text) => {
+        const regex = /^[A-Za-z0-9_]+$/;
+        return regex.test(text);
+    }
 
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
@@ -124,6 +132,18 @@ export default function EditUser() {
 
         {/* Formulario de datos generales */}
         <form onSubmit={handleGeneralSubmit} noValidate>
+            <div className="form-group">
+                <label>Nombre de usuario</label>
+                <input
+                    type="text"
+                    name="username"
+                    value={generalData.username}
+                    onChange={handleGeneralChange}
+                    placeholder="Tu nombre de usuario"
+                />
+                {errors.username && <p className="error">{errors.username}</p>}
+            </div>
+
             <div className="form-group">
             <label>Email</label>
             <input

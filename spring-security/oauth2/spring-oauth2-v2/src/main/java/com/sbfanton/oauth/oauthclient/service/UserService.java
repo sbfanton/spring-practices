@@ -63,6 +63,14 @@ public class UserService {
         return userRepository.findByUsername(username);
     }
 
+    public Optional<User> getUserByEmail(String email) {
+        return userRepository.findByUsername(email);
+    }
+
+    public boolean existsByEmail(String email) { return userRepository.existsByEmail(email); }
+
+    public boolean existsByUsername(String username) { return userRepository.existsByUsername(username); }
+
     public User saveUser(User user) {
         return userRepository.save(user);
     }
@@ -72,26 +80,27 @@ public class UserService {
     }
 
     public AuthResponseDTO login(LoginDTO loginDTO) throws Exception {
-        User user = checkAuthUser(loginDTO.getUsername(), loginDTO.getPassword());
+        User user = checkAuthUser(loginDTO.getIdentifier(), loginDTO.getPassword());
         return AuthResponseDTO.builder()
                 .token(jwtService.getToken(user, false))
                 .build();
     }
 
     public AuthResponseDTO register(RegisterDTO registerDTO) throws ServiceException {
-        User userExists = getUserByUsername(registerDTO.getUsername())
-                .orElse(null);
-
-        if(userExists != null)
+        if(existsByUsername(registerDTO.getUsername()))
             throw new ServiceException("El nombre de usuario ya existe");
+        if(existsByEmail(registerDTO.getEmail()))
+            throw new ServiceException("El email ya existe");
 
         User user = User.builder()
                 .username(registerDTO.getUsername())
                 .password(passwordEncoder.encode(registerDTO.getPassword()))
                 .email(registerDTO.getEmail())
+                .isEmailVerified(false)
                 .avatarUrl(registerDTO.getAvatarUrl())
                 .web(registerDTO.getWeb())
                 .provider(AuthProviderType.LOCAL)
+                .providerId(String.valueOf(faker.number().randomNumber()))
                 .build();
 
         saveUser(user);
@@ -140,6 +149,12 @@ public class UserService {
         if(user == null)
             throw new ServiceException("El usuario al que se le quiere editar atributos no existe.");
 
+        if(!user.getUsername().equals(userDTO.getUsername()) && existsByUsername(userDTO.getUsername()))
+            throw new ServiceException("El nombre de usuario ya existe");
+        if(!user.getEmail().equals(userDTO.getEmail()) && existsByEmail(userDTO.getEmail()))
+            throw new ServiceException("El email ya existe");
+
+        user.setUsername(userDTO.getUsername());
         user.setWeb(userDTO.getWeb());
         user.setEmail(userDTO.getEmail());
         saveUser(user);
@@ -234,8 +249,9 @@ public class UserService {
                 .build();
     }
 
-    private User checkAuthUser(String username, String password) throws Exception {
-        User user = getUserByUsername(username)
+    private User checkAuthUser(String identifier, String password) throws Exception {
+        User user = getUserByUsername(identifier)
+                .or(() -> getUserByEmail(identifier))
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
 
         if (user.getProvider() != null && !user.getProvider().equals(AuthProviderType.LOCAL) && user.getPassword() == null) {
@@ -244,7 +260,7 @@ public class UserService {
 
         if (user.getPassword() != null) {
             authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(username, password)
+                    new UsernamePasswordAuthenticationToken(user, password)
             );
         }
 

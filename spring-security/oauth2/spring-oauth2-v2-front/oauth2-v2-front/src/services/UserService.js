@@ -74,8 +74,8 @@ export const changeUserInfo = async(userData) => {
     const token = localStorage.getItem('token');
     try {
         const info = {
-            username: '',
-            web: userData.web,
+            username: userData.username,
+            web: userData.website,
             email: userData.email,
             avatarUrl: ''
         }

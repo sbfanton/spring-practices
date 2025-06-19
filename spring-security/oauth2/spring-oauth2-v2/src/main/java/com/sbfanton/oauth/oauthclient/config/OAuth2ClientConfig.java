@@ -18,27 +18,51 @@ public class OAuth2ClientConfig {
     private String baseUrl;
 
     @Value("${oauth2.github.client-id}")
-    private String clientId;
+    private String githubClientId;
 
     @Value("${oauth2.github.client-secret}")
-    private String clientSecret;
+    private String githubClientSecret;
 
     @Value("${oauth2.github.authorization-uri}")
-    private String authorizationUri;
+    private String githubAuthorizationUri;
 
     @Value("${oauth2.github.token-uri}")
-    private String tokenUri;
+    private String githubTokenUri;
 
     @Value("${oauth2.github.user-info-uri-1}")
-    private String userInfoUri1;
+    private String githubUserInfoUri1;
 
     @Value("${oauth2.github.redirect-uri}")
-    private String redirectUri;
+    private String githubRedirectUri;
+
+    @Value("${oauth2.github.user-name-attribute-name}")
+    private String githubUserNameAttributeName;
+
+    @Value("${oauth2.google.client-id}")
+    private String googleClientId;
+
+    @Value("${oauth2.google.client-secret}")
+    private String googleClientSecret;
+
+    @Value("${oauth2.google.authorization-uri}")
+    private String googleAuthorizationUri;
+
+    @Value("${oauth2.google.token-uri}")
+    private String googleTokenUri;
+
+    @Value("${oauth2.google.user-info-uri-1}")
+    private String googleUserInfoUri1;
+
+    @Value("${oauth2.google.redirect-uri}")
+    private String googleRedirectUri;
+
+    @Value("${oauth2.google.user-name-attribute-name}")
+    private String googleUserNameAttributeName;
 
     @Bean
     public ClientRegistrationRepository clientRegistrationRepository() {
         List<ClientRegistration> clientRegistrationList = List.of(
-            githubClientRegistration()
+            githubClientRegistration(), googleClientRegistration()
         );
 
         return new InMemoryClientRegistrationRepository(clientRegistrationList);
@@ -46,17 +70,33 @@ public class OAuth2ClientConfig {
 
 	private ClientRegistration githubClientRegistration() {
         return ClientRegistration.withRegistrationId("github-client")
-            .clientId(clientId)
-            .clientSecret(clientSecret)
+            .clientId(githubClientId)
+            .clientSecret(githubClientSecret)
             .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
             .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-            .redirectUri(baseUrl + redirectUri)
+            .redirectUri(baseUrl + githubRedirectUri)
             .scope("read:user", "user:email")
-            .authorizationUri(authorizationUri)
-            .tokenUri(tokenUri)
-            .userInfoUri(userInfoUri1)
-            .userNameAttributeName("id")
+            .authorizationUri(githubAuthorizationUri)
+            .tokenUri(githubTokenUri)
+            .userInfoUri(githubUserInfoUri1)
+            .userNameAttributeName(githubUserNameAttributeName)
             .clientName("GitHub")
             .build();
+    }
+
+    private ClientRegistration googleClientRegistration() {
+        return ClientRegistration.withRegistrationId("google-client")
+                .clientId(googleClientId)
+                .clientSecret(googleClientSecret)
+                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+                .redirectUri(baseUrl + googleRedirectUri)
+                .scope("openid", "profile", "email")
+                .authorizationUri(googleAuthorizationUri)
+                .tokenUri(googleTokenUri)
+                .userInfoUri(googleUserInfoUri1)
+                .userNameAttributeName(googleUserNameAttributeName)
+                .clientName("Google")
+                .build();
     }
 }

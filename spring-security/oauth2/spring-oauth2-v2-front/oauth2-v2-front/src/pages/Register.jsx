@@ -45,7 +45,8 @@ function Register() {
     let errs = {};
 
     if (!formData.username) errs.username = 'El nombre de usuario es obligatorio.';
-    if (formData.email && !isValidEmail(formData.email)) errs.email = 'Email inválido.';
+    if (!formData.email) errs.email = 'El email es obligatorio';
+    if(formData.email && !isValidEmail(formData.email)) errs.email = 'Email inválido.';
     if (formData.web && !isValidURL(formData.web)) errs.web = 'URL inválida.';
     if (!isStrongPassword(formData.password)) errs.password = 'Contraseña débil. Debe tener mínimo 8 caracteres, mayúscula, minúscula, número y carácter especial.';
     if (formData.password !== formData.confirmPassword) errs.confirmPassword = 'Las contraseñas no coinciden.';
@@ -93,7 +94,7 @@ function Register() {
         </div>
 
         <div className="form-group">
-          <label>Email</label><br />
+          <label>Email *</label><br />
           <input
             type="email"
             name="email"

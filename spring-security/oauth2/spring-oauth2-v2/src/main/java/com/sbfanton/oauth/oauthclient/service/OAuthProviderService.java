@@ -40,6 +40,24 @@ public class OAuthProviderService {
     @Value("${oauth2.github.user-info-uri-2}")
     private String userInfoUriGithub2;
 
+    @Value("${oauth2.google.client-id}")
+    private String clientIdGoogle;
+
+    @Value("${oauth2.google.client-secret}")
+    private String clientSecretGoogle;
+
+    @Value("${oauth2.google.redirect-uri}")
+    private String redirectUriGoogle;
+
+    @Value("${oauth2.google.token-uri}")
+    private String tokenUriGoogle;
+
+    @Value("${oauth2.google.authorization-uri}")
+    private String authorizationUriGoogle;
+
+    @Value("${oauth2.google.user-info-uri-1}")
+    private String userInfoUriGoogle1;
+
     @Value("${base.url}")
     private String baseUrl;
 
@@ -50,6 +68,9 @@ public class OAuthProviderService {
         List<OAuthEndpoint> githubUserInfoUris = new ArrayList<>();
         githubUserInfoUris.add(new OAuthEndpoint(userInfoUriGithub1, false));
         githubUserInfoUris.add(new OAuthEndpoint(userInfoUriGithub2, true));
+
+        List<OAuthEndpoint> googleUserInfoUris = new ArrayList<>();
+        googleUserInfoUris.add(new OAuthEndpoint(userInfoUriGoogle1, false));
 
         providers = Map.of(
                 OAuthConstants.GITHUB_PROVIDER,
@@ -65,6 +86,23 @@ public class OAuthProviderService {
                         .tokenUri(tokenUriGithub)
                         .userInfoFields(List.of("login", "avatar_url", "html_url", "token", "email", "primary", "verified"))
                         .build()
+                ,
+                OAuthConstants.GOOGLE_PROVIDER,
+                OAuthProvider.builder()
+                        .clientId(clientIdGoogle)
+                        .clientSecret(clientSecretGoogle)
+                        .authorizationUri(authorizationUriGoogle
+                                + "?client_id=" + clientIdGoogle
+                                + "&redirect_uri=" + URLEncoder.encode(redirectUriGoogle, StandardCharsets.UTF_8)
+                                + "&response_type=code"
+                                + "&scope=openid%20profile%20email"
+                                + "&state=XYZ123")
+                        .userInfoUris(googleUserInfoUris)
+                        .redirectUri(redirectUriGoogle)
+                        .tokenUri(tokenUriGoogle)
+                        .userInfoFields(List.of("email", "email_verified", "picture"))
+                        .grantType("authorization_code")
+                        .build()
         );
     }
 
@@ -74,7 +112,7 @@ public class OAuthProviderService {
 
     public String extractTokenFromResponse(String provider, Map body) {
         return switch (provider) {
-            case OAuthConstants.GITHUB_PROVIDER -> (String) body.get("access_token");
+            case OAuthConstants.GITHUB_PROVIDER, OAuthConstants.GOOGLE_PROVIDER -> (String) body.get("access_token");
             default -> null;
         };
     }
@@ -82,6 +120,7 @@ public class OAuthProviderService {
     public User getUserByProviderUserInfo(String provider, Map<String, Object> userInfo) {
         return switch(provider) {
             case OAuthConstants.GITHUB_PROVIDER -> getGithubUser(userInfo);
+            case OAuthConstants.GOOGLE_PROVIDER -> getGoogleUser(userInfo);
             default -> null;
         };
     }
@@ -101,13 +140,37 @@ public class OAuthProviderService {
                 .findFirst()
                 .orElse("No hay mail registrado");
 
+        boolean isEmailVerified = ((List<Map>)userInfo.get(listEndpoints.get(0)))
+                            .stream()
+                            .filter(e -> Boolean.TRUE.equals(e.get("primary")))
+                            .map(e -> Boolean.TRUE.equals(e.get("verified")))
+                            .findFirst()
+                            .orElse(false);
+
         return User.builder()
                 .username((String) userInfo.get("login"))
                 .avatarUrl((String) userInfo.get("avatar_url"))
                 .web((String) userInfo.get("html_url"))
                 .provider(AuthProviderType.GITHUB)
-                .providerId(String.valueOf((Integer)userInfo.get("id")))
+                .providerId(String.valueOf(userInfo.get("id")))
                 .email(email)
+                .isEmailVerified(isEmailVerified)
+                .build();
+    }
+
+    private User getGoogleUser(Map<String, Object> userInfo) {
+        boolean isEmailVerified = Boolean.TRUE.equals(userInfo.get("email_verified"));
+        String email =  isEmailVerified ?
+                       (String) userInfo.get("email") :
+                        "No hay mail registrado";
+        return User.builder()
+                .username((String)userInfo.get("given_name") + (String) userInfo.get("family_name"))
+                .avatarUrl((String) userInfo.get("picture"))
+                .web(null)
+                .provider(AuthProviderType.GOOGLE)
+                .providerId(String.valueOf(userInfo.get("sub")))
+                .email(email)
+                .isEmailVerified(isEmailVerified)
                 .build();
     }
 }
