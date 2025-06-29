@@ -5,13 +5,12 @@ export const handleSocialLogin = (provider) => {
         `http://localhost:8080/oauth2/login?provider=${provider}`;
 }
 
-export const postCallbackReq = async (token) => {
+export const postCallbackReq = async () => {
+    console.log('postCallbackReq fue llamado');
     try {
         const response = await fetch('http://localhost:8080/users/me/post-callback', {
             method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
+            credentials: 'include'
         });
 
         const data = await response.json();
@@ -20,8 +19,10 @@ export const postCallbackReq = async (token) => {
             throw new Error(data.message);
         }
 
-        if (data.token)
+        if (data.token) {
             localStorage.setItem("token", data.token);
+            return data.token;
+        }
     }
     catch(err) {
         showAlert({

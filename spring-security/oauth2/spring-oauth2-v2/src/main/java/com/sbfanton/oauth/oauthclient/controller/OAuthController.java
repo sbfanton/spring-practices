@@ -5,6 +5,7 @@ import com.sbfanton.oauth.oauthclient.model.OAuthProvider;
 import com.sbfanton.oauth.oauthclient.model.User;
 import com.sbfanton.oauth.oauthclient.service.JwtService;
 import com.sbfanton.oauth.oauthclient.service.OAuthProviderService;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +54,14 @@ public class OAuthController {
                                HttpServletResponse response)
     throws Exception {
         String token = callbackServiceFacade.processProviderCallbackAndGetToken(provider, code);
-        response.sendRedirect(frontUrl + "?token=" + token);
+
+        Cookie cookie = new Cookie("auth_token", token);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(60 * 60);
+        response.addCookie(cookie);
+
+        response.sendRedirect(frontUrl + "/auth/callback");
     }
 }
 

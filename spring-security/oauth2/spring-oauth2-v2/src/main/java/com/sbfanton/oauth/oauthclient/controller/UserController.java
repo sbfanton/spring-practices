@@ -9,7 +9,9 @@ import com.sbfanton.oauth.oauthclient.model.mapper.UserMapper;
 import com.sbfanton.oauth.oauthclient.service.JwtService;
 import com.sbfanton.oauth.oauthclient.service.UserService;
 import com.sbfanton.oauth.oauthclient.utils.GenericMapper;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -75,8 +77,17 @@ public class UserController {
 
     @GetMapping("/me/post-callback")
     public ResponseEntity<?> getUserInfoAfterCallback(
-            @AuthenticationPrincipal User user) {
-        return ResponseEntity.ok().body(
-                callbackServiceFacade.processAfterCallback(user));
+            @AuthenticationPrincipal User user,
+            HttpServletResponse response) {
+
+        Cookie deleteCookie = new Cookie("auth_token", null);
+        deleteCookie.setHttpOnly(true);
+        deleteCookie.setPath("/");
+        deleteCookie.setMaxAge(0);
+
+        response.addCookie(deleteCookie);
+
+        Object result = callbackServiceFacade.processAfterCallback(user);
+        return ResponseEntity.ok(result);
     }
 }

@@ -6,6 +6,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import EditUser from './pages/EditUser';
+import Callback from "./pages/Callback";
 import ParticlesBackground from './components/ParticlesBackground';
 import './css/App.css';
 import './css/AnimatedBackground.css';
@@ -30,6 +31,7 @@ function AppRoutes() {
             <Route path="/dashboard" element={
               isAuthenticated ? <Dashboard /> : <Navigate to="/login" />
             } />
+            <Route path="/auth/callback" element={<Callback />} />
             <Route path="/" element={
               isAuthenticated ? <Dashboard /> : <Navigate to="/login" />
             } />

@@ -14,20 +14,15 @@ export function AuthProvider({ children }) {
 
   const checkAuth = async () => {
     const tokenLocal = localStorage.getItem('token');
-    const params = new URLSearchParams(window.location.search);
-    const paramToken = params.get("token");
 
-    if (!tokenLocal && !paramToken) {
+    if (!tokenLocal) {
       setIsAuthenticated(false);
       setLoading(false);
       return;
     }
 
     try {
-      if(paramToken) {
-        await postCallbackReq(paramToken);
-      }
-      if(tokenLocal || paramToken) {
+      if(tokenLocal) {
         const data = await getUserInfo();
         setUserData({
           username: data.username,

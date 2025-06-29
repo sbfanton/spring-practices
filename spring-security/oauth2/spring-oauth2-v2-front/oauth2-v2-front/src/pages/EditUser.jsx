@@ -6,7 +6,6 @@ import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import Container from '../components/Container';
 import IconButton from '../components/IconButton';
 import EditableAvatar from "../components/EditableAvatar.jsx";
-import defaultAvatar from '../assets/default-avatar.jpg';
 import { changePassword, getUserInfo, changeUserInfo } from "../services/UserService.js";
 import alertService from "../helpers/alertService.js";
 import { useAuth } from "../context/AuthContext.jsx";
