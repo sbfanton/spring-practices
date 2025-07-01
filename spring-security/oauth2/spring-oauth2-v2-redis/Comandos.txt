@@ -1,0 +1,9 @@
+docker-compose up -d # crear y levantar el contenedor
+
+docker exec -it redis redis-cli # ingresar a la terminal de redis
+
+ping # deberia contestar PONG
+
+set prueba "Hola Redis" # guarda la clave prueva y el valor "Hola Redis"
+
+get prueba # devuelve el valor de la clave prueba

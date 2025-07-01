@@ -1,0 +1,17 @@
+version: '3.3'
+services:
+  redis:
+    container_name: redis
+    image: redis:7.0.10
+    command: ["redis-server", "--appendonly", "yes"]
+    sysctls:
+      net.core.somaxconn: 511
+    volumes:
+      - redis-data:/data
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+
+volumes:
+  redis-data:
+    driver: local
