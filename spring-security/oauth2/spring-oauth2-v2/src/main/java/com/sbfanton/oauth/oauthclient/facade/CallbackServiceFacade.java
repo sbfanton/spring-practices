@@ -9,6 +9,7 @@ import com.sbfanton.oauth.oauthclient.model.mapper.UserMapper;
 import com.sbfanton.oauth.oauthclient.service.JwtService;
 import com.sbfanton.oauth.oauthclient.service.OAuthProviderService;
 import com.sbfanton.oauth.oauthclient.service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
@@ -39,7 +40,7 @@ public class CallbackServiceFacade {
     @Autowired
     private UserMapper userMapper;
 
-    public String processProviderCallbackAndGetToken(String provider, String code) throws Exception {
+    public void processProviderCallbackAndGetToken(String provider, String code, HttpServletResponse response) throws Exception {
         OAuthProvider oAuthProvider = oAuthProviderService.getProvider(provider);
         if(oAuthProvider == null) {
             throw new ServiceException("Provider no soportado: " + provider);
@@ -49,14 +50,11 @@ public class CallbackServiceFacade {
         Map userInfo = getUserInfoFromAuthServer(accessToken, oAuthProvider);
         User user = oAuthProviderService.getUserByProviderUserInfo(provider, userInfo);
         AuthResponseDTO authResp = userService.saveUserFromProvider(user);
-        return authResp.getToken();
-    }
-
-    public AuthResponseDTO processAfterCallback(User user) {
-        String newToken = jwtService.getToken(user, false);
-        return AuthResponseDTO.builder()
-                .token(newToken)
-                .build();
+        Map<String, ResponseCookie> cookiesMap = jwtService.generateTokenCookies(authResp);
+        for (Map.Entry<String, ResponseCookie> entry : cookiesMap.entrySet()) {
+            ResponseCookie cookie = entry.getValue();
+            response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        }
     }
 
     private String getTokenFromAuthServer(String code, OAuthProvider oAuthProvider, String provider) throws ServiceException {

@@ -1,6 +1,7 @@
 package com.sbfanton.oauth.oauthclient.service;
 
 import com.sbfanton.oauth.oauthclient.model.User;
+import com.sbfanton.oauth.oauthclient.model.dto.AuthResponseDTO;
 import com.sbfanton.oauth.oauthclient.utils.RandomKeyGen;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -9,11 +10,14 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.crypto.SecretKey;
+import java.time.Duration;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,9 +35,9 @@ public class JwtService {
     }
 
 
-    public String getToken(User user, Boolean isTemporary) {
+    public String getToken(User user, Long seconds) {
         Map<String, Object> extraClaims = generateExtraClaimsMap(user);
-        return generateToken(extraClaims, user, isTemporary);
+        return generateToken(extraClaims, user, seconds);
     }
 
 
@@ -45,15 +49,12 @@ public class JwtService {
     }
 
 
-    private String generateToken(Map<String, Object> extraClaims, User user, Boolean isTemporary) {
+    private String generateToken(Map<String, Object> extraClaims, User user, Long seconds) {
         return Jwts.builder()
                 .claims(extraClaims)
                 .subject(String.valueOf(user.getId()))
                 .issuedAt(new Date(System.currentTimeMillis())) //fecha de creacion
-                .expiration(
-                        isTemporary ?
-                                new Date(System.currentTimeMillis() + 1000 * 120) :
-                                new Date(System.currentTimeMillis() + 1000 * 60 * 24))
+                .expiration(new Date(System.currentTimeMillis() + seconds))
                 .id(UUID.randomUUID().toString())
                 .signWith(getKey(), Jwts.SIG.HS256)
                 .compact();
@@ -104,7 +105,7 @@ public class JwtService {
 
         if (request.getCookies() != null) {
             for (Cookie cookie : request.getCookies()) {
-                if ("auth_token".equals(cookie.getName())) {
+                if ("access_token".equals(cookie.getName())) {
                     return cookie.getValue();
                 }
             }
@@ -123,5 +124,47 @@ public class JwtService {
                 .username(username)
                 .web(web)
                 .build();
+    }
+
+    public Map<String, ResponseCookie> generateTokenCookies(AuthResponseDTO authResponseDTO) {
+        ResponseCookie accessTokenCookie = ResponseCookie.from("access_token", authResponseDTO.getAccessToken())
+                .httpOnly(true)
+                .path("/")
+                .maxAge(Duration.ofHours(1))
+                .sameSite("Lax")
+                .build();
+
+        ResponseCookie refreshTokenCookie = ResponseCookie.from("refresh_token", authResponseDTO.getRefreshToken())
+                .httpOnly(true)
+                .path("/")
+                .maxAge(Duration.ofHours(1))
+                .sameSite("Lax")
+                .build();
+
+        Map<String, ResponseCookie> cookiesMap = new HashMap<>();
+        cookiesMap.put("access_token", accessTokenCookie);
+        cookiesMap.put("refresh_token", refreshTokenCookie);
+        return cookiesMap;
+    }
+
+    public HttpServletResponse invalidateTokenCookies(HttpServletResponse response) {
+        ResponseCookie accessCookie = ResponseCookie.from("access_token", "")
+                .httpOnly(true)
+                .path("/")
+                .maxAge(0)
+                .sameSite("Lax")
+                .build();
+
+        ResponseCookie refreshCookie = ResponseCookie.from("refresh_token", "")
+                .httpOnly(true)
+                .path("/")
+                .maxAge(0)
+                .sameSite("Lax")
+                .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
+
+        return response;
     }
 }

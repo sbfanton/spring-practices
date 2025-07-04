@@ -5,48 +5,34 @@ export const handleSocialLogin = (provider) => {
         `http://localhost:8080/oauth2/login?provider=${provider}`;
 }
 
-export const postCallbackReq = async () => {
-    console.log('postCallbackReq fue llamado');
+export const logoutUser = async() => {
     try {
-        const response = await fetch('http://localhost:8080/users/me/post-callback', {
+        const response = await fetch('http://localhost:8080/auth/logout', {
             method: 'GET',
             credentials: 'include'
         });
 
-        const data = await response.json();
-
         if (!response.ok) {
             throw new Error(data.message);
-        }
-
-        if (data.token) {
-            localStorage.setItem("token", data.token);
-            return data.token;
         }
     }
     catch(err) {
         showAlert({
-            title: 'Error de inicio de sesión con red social',
+            title: 'Error al obtener datos de usuario',
             text: err.message,
             icon: 'error',
             confirmButtonColor: '#3085d6',
             confirmButtonText: "Aceptar"
         });
     }
-
 }
 
 export const getUserInfo = async () => {
-    const token = localStorage.getItem('token');
     try {
         const response = await fetch('http://localhost:8080/users/me', {
             method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
+            credentials: 'include'
         });
-
-        const data = await response.json();
 
         if (!response.ok) {
             if(response.status === 403) {
@@ -55,19 +41,20 @@ export const getUserInfo = async () => {
             throw new Error(data.message);
         }
 
+        const data = await response.json();
         return data;
     }
     catch(err) {
         if(err.message == "redirect")
             console.log(err.message)
         else
-        showAlert({
-            title: 'Error al obtener datos de usuario',
-            text: err.message,
-            icon: 'error',
-            confirmButtonColor: '#3085d6',
-            confirmButtonText: "Aceptar"
-        });
+            showAlert({
+                title: 'Error al obtener datos de usuario',
+                text: err.message,
+                icon: 'error',
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: "Aceptar"
+            });
     }
 }
 
@@ -82,9 +69,9 @@ export const changeUserInfo = async(userData) => {
         }
             const response = await fetch('http://localhost:8080/users/me', {
                 method: 'POST',
+                credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify(info)
             });
@@ -113,19 +100,19 @@ export const loginUser = async (username, password) => {
     try {
         const response = await fetch('http://localhost:8080/auth/login', {
             method: 'POST',
+            credentials: 'include',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({username, password})
+            body: JSON.stringify({
+                identifier: username,
+                password})
         });
 
-        const data = await response.json();
-
         if (!response.ok) {
+            let data = await response.json();
             throw new Error(data.message || "Error desconocido");
         }
-
-        return data;
     }
     catch (err) {
         showAlert({
@@ -143,6 +130,7 @@ export const registerUser = async (registerData) => {
     try {
         const response = await fetch('http://localhost:8080/auth/register', {
             method: 'POST',
+            credentials: 'include',
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -154,8 +142,6 @@ export const registerUser = async (registerData) => {
         if (!response.ok) {
             throw new Error(data.message || "Error desconocido");
         }
-
-        return data;
     }
     catch (err) {
         showAlert({
@@ -175,9 +161,9 @@ export const changePassword = async (passwordData) => {
     try {
         const response = await fetch('http://localhost:8080/users/me/password', {
             method: 'POST',
+            credentials: 'include',
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify({
                 currentPassword: passwordData.currentPassword,
@@ -211,9 +197,7 @@ export const changeAvatar = async (file) => {
     try {
         const response = await fetch('http://localhost:8080/users/me/avatar', {
             method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            },
+            credentials: 'include',
             body: formData,
         });
 
@@ -240,9 +224,7 @@ export const getAvatar = async (filename) => {
         try {
             const response = await fetch(`http://localhost:8080/users/me/avatar/${filename}`, {
                 method: "GET",
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
+                credentials: 'include'
             });
             if (response.ok) {
                 const imageBlob = await response.blob();

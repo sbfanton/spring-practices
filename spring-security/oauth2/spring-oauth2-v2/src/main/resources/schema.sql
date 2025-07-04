@@ -11,7 +11,6 @@ CREATE TABLE IF NOT EXISTS users (
     provider VARCHAR(20) NOT NULL,
     provider_id VARCHAR(500) NOT NULL,
     UNIQUE (username),
-    UNIQUE (email),
-    UNIQUE (provider, provider_id)
+    UNIQUE (email, provider, provider_id)
 );
 

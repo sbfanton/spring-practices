@@ -25,17 +25,9 @@ function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    const data = await loginUser(formData.username, formData.password);
-    if(data.token) {
-      await login(data.token);
-      navigate('/dashboard');
-    }
-    else {
-    setFormData({
-        username: "",
-        password: ""
-      });
-    }
+    await loginUser(formData.username, formData.password);
+    await login();
+    navigate('/dashboard');
   };
 
   const redirectToRegister = () => {

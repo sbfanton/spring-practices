@@ -74,20 +74,4 @@ public class UserController {
         return ResponseEntity.ok().body(
                 userService.changePassword(user.getId(), passwordEditDTO));
     }
-
-    @GetMapping("/me/post-callback")
-    public ResponseEntity<?> getUserInfoAfterCallback(
-            @AuthenticationPrincipal User user,
-            HttpServletResponse response) {
-
-        Cookie deleteCookie = new Cookie("auth_token", null);
-        deleteCookie.setHttpOnly(true);
-        deleteCookie.setPath("/");
-        deleteCookie.setMaxAge(0);
-
-        response.addCookie(deleteCookie);
-
-        Object result = callbackServiceFacade.processAfterCallback(user);
-        return ResponseEntity.ok(result);
-    }
 }

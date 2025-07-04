@@ -66,9 +66,9 @@ function Register() {
         web: formData.web,
         avatarUrl: ""
     }
-    const data = await registerUser(registerData);
-    if(data.token) {
-      await login(data.token);
+    const resul = await registerUser(registerData);
+    if(resul != "error") {
+      await login();
       navigate('/dashboard');
     }
   }

@@ -3,6 +3,7 @@ package com.sbfanton.oauth.oauthclient.controller;
 import com.sbfanton.oauth.oauthclient.facade.CallbackServiceFacade;
 import com.sbfanton.oauth.oauthclient.model.OAuthProvider;
 import com.sbfanton.oauth.oauthclient.model.User;
+import com.sbfanton.oauth.oauthclient.model.dto.AuthResponseDTO;
 import com.sbfanton.oauth.oauthclient.service.JwtService;
 import com.sbfanton.oauth.oauthclient.service.OAuthProviderService;
 import jakarta.servlet.http.Cookie;
@@ -53,14 +54,7 @@ public class OAuthController {
                                @RequestParam(required = true) String provider,
                                HttpServletResponse response)
     throws Exception {
-        String token = callbackServiceFacade.processProviderCallbackAndGetToken(provider, code);
-
-        Cookie cookie = new Cookie("auth_token", token);
-        cookie.setHttpOnly(true);
-        cookie.setPath("/");
-        cookie.setMaxAge(60 * 60);
-        response.addCookie(cookie);
-
+        callbackServiceFacade.processProviderCallbackAndGetToken(provider, code, response);
         response.sendRedirect(frontUrl + "/auth/callback");
     }
 }

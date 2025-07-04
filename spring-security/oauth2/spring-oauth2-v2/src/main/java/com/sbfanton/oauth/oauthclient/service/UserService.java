@@ -8,6 +8,7 @@ import com.sbfanton.oauth.oauthclient.repository.UserRepository;
 import com.sbfanton.oauth.oauthclient.utils.constants.AuthProviderType;
 import com.sbfanton.oauth.oauthclient.utils.constants.CodeTypes;
 import com.sbfanton.oauth.oauthclient.utils.constants.DateFormatter;
+import com.sbfanton.oauth.oauthclient.utils.constants.TokenConstants;
 import net.datafaker.Faker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,7 +29,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class UserService {
@@ -71,6 +71,8 @@ public class UserService {
 
     public boolean existsByUsername(String username) { return userRepository.existsByUsername(username); }
 
+    public boolean existsByEmailAndProvider(String email, AuthProviderType provider) { return userRepository.existsByEmailAndProvider(email, provider); }
+
     public User saveUser(User user) {
         return userRepository.save(user);
     }
@@ -81,16 +83,16 @@ public class UserService {
 
     public AuthResponseDTO login(LoginDTO loginDTO) throws Exception {
         User user = checkAuthUser(loginDTO.getIdentifier(), loginDTO.getPassword());
-        return AuthResponseDTO.builder()
-                .token(jwtService.getToken(user, false))
-                .build();
+        return generateAuthResponse(user);
     }
 
     public AuthResponseDTO register(RegisterDTO registerDTO) throws ServiceException {
         if(existsByUsername(registerDTO.getUsername()))
             throw new ServiceException("El nombre de usuario ya existe");
-        if(existsByEmail(registerDTO.getEmail()))
+
+        if(existsByEmailAndProvider(registerDTO.getEmail(), AuthProviderType.LOCAL)) {
             throw new ServiceException("El email ya existe");
+        }
 
         User user = User.builder()
                 .username(registerDTO.getUsername())
@@ -105,9 +107,7 @@ public class UserService {
 
         saveUser(user);
 
-        return AuthResponseDTO.builder()
-                .token(jwtService.getToken(user, false))
-                .build();
+        return generateAuthResponse(user);
     }
 
     public UserDTO getUserDTO(Long id) throws Exception {
@@ -136,10 +136,7 @@ public class UserService {
             saveUser(user);
         }
 
-
-        return AuthResponseDTO.builder()
-                .token(jwtService.getToken(usr != null ? usr : user, false))
-                .build();
+        return generateAuthResponse(usr != null ? usr : user);
     }
 
     public StatusDTO changeUser(Long id, UserDTO userDTO) throws Exception {
@@ -265,5 +262,19 @@ public class UserService {
         }
 
         return user;
+    }
+
+    private AuthResponseDTO generateAuthResponse(User user) {
+        String accessToken = jwtService.getToken(
+                user,
+                TokenConstants.ACCESS_TOKEN_DURATION);
+        String refreshToken = jwtService.getToken(
+                user,
+                TokenConstants.REFRESH_TOKEN_DURATION);
+
+        return AuthResponseDTO.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
     }
 }

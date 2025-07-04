@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { postCallbackReq } from '../services/UserService.js';
 import { useAuth } from "../context/AuthContext.jsx";
 
 const Callback = () => {
@@ -10,8 +9,7 @@ const Callback = () => {
   useEffect(() => {
     const handleCallback = async () => {
       try {
-        const token = await postCallbackReq();
-        await login(token);
+        await login();
         navigate('/dashboard');
       } catch (error) {
         console.error('Error en el callback:', error);

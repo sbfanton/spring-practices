@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
-import { getUserInfo, postCallbackReq } from "../services/UserService.js";
+import { getUserInfo, logoutUser } from "../services/UserService.js";
 
 const AuthContext = createContext();
 
@@ -13,27 +13,16 @@ export function AuthProvider({ children }) {
   const navigate = useNavigate();
 
   const checkAuth = async () => {
-    const tokenLocal = localStorage.getItem('token');
-
-    if (!tokenLocal) {
-      setIsAuthenticated(false);
-      setLoading(false);
-      return;
-    }
-
     try {
-      if(tokenLocal) {
-        const data = await getUserInfo();
-        setUserData({
-          username: data.username,
-          avatarUrl: data.avatarUrl ? data.avatarUrl : "",
-          web: data.web ? data.web : "",
-          email: data.email ? data.email : ""
-        });
-        setIsAuthenticated(true);
-      }
+      const data = await getUserInfo();
+      setUserData({
+        username: data.username,
+        avatarUrl: data.avatarUrl || "",
+        web: data.web || "",
+        email: data.email || ""
+      });
+      setIsAuthenticated(true);
     } catch (error) {
-      localStorage.removeItem("token");
       setIsAuthenticated(false);
       setUserData(null);
     } finally {
@@ -41,13 +30,12 @@ export function AuthProvider({ children }) {
     }
   };
 
-  const login = async (token) => {
-    localStorage.setItem('token', token);
-    await checkAuth(); // Actualiza estado global
+  const login = async () => {
+    await checkAuth();
   };
 
-  const logout = () => {
-    localStorage.removeItem('token');
+  const logout = async () => {
+    await logoutUser();
     setIsAuthenticated(false);
     setUserData(null);
   };
