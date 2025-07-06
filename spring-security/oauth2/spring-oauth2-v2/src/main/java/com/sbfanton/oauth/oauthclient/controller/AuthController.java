@@ -27,7 +27,6 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(
-            HttpServletResponse response,
             @RequestBody @Valid LoginDTO loginDTO) throws Exception {
         AuthResponseDTO authResponseDTO = userService.login(loginDTO);
         Map<String, ResponseCookie> cookiesMap = jwtService.generateTokenCookies(authResponseDTO);
@@ -39,7 +38,6 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> login(
-            HttpServletResponse response,
             @RequestBody @Valid RegisterDTO registerDTO) throws Exception {
         AuthResponseDTO authResponseDTO = userService.register(registerDTO);
         Map<String, ResponseCookie> cookiesMap = jwtService.generateTokenCookies(authResponseDTO);

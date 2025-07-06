@@ -10,12 +10,12 @@ import Callback from "./pages/Callback";
 import ParticlesBackground from './components/ParticlesBackground';
 import './css/App.css';
 import './css/AnimatedBackground.css';
+import { LoadingProvider } from './context/LoadingContext';
+import Loader from './components/Loader';
 
 function AppRoutes() {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
-
-  if (loading) return <p>Cargando...</p>;
 
   return (
     <>
@@ -47,7 +47,10 @@ export default function App() {
     <Router>
       <AuthProvider>
         <AvatarProvider>
-          <AppRoutes />
+          <LoadingProvider>
+            <Loader />
+            <AppRoutes />
+          </LoadingProvider>
         </AvatarProvider>
       </AuthProvider>
     </Router>

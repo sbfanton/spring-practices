@@ -1,5 +1,6 @@
 package com.sbfanton.oauth.oauthclient.service;
 
+import com.sbfanton.oauth.oauthclient.exception.OAuthException;
 import com.sbfanton.oauth.oauthclient.exception.ServiceException;
 import com.sbfanton.oauth.oauthclient.model.User;
 import com.sbfanton.oauth.oauthclient.model.dto.*;
@@ -121,10 +122,15 @@ public class UserService {
     }
 
     public AuthResponseDTO saveUserFromProvider(User user) throws Exception{
-
         User usr = userRepository.findByProviderAndProviderId(
                 user.getProvider(), user.getProviderId())
                 .orElse(null);
+
+        if(usr == null && user.getEmail() != null && existsByEmail(user.getEmail())) {
+            throw new OAuthException(
+                    "El mail de la red social con la que quiere iniciar sesión ya se encuentra registrado en nuestro sistema. Intente con otro usuario",
+                    HttpStatus.BAD_REQUEST);
+        }
 
         if (usr == null) {
             String username = user.getUsername() + "_" + faker.number().numberBetween(1, 1000);
@@ -154,6 +160,11 @@ public class UserService {
         user.setUsername(userDTO.getUsername());
         user.setWeb(userDTO.getWeb());
         user.setEmail(userDTO.getEmail());
+        user.setIsEmailVerified(
+                user.getEmail().equals(userDTO.getEmail()) ?
+                        user.getIsEmailVerified() :
+                        false
+        );
         saveUser(user);
 
         return StatusDTO.builder()

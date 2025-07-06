@@ -1,4 +1,6 @@
 import showAlert from '../helpers/alertService';
+import { fetchWithLoader } from "../helpers/fetchWithLoader.js";
+import Cookies from "js-cookie";
 
 export const handleSocialLogin = (provider) => {
     window.location.href =
@@ -7,7 +9,7 @@ export const handleSocialLogin = (provider) => {
 
 export const logoutUser = async() => {
     try {
-        const response = await fetch('http://localhost:8080/auth/logout', {
+        const response = await fetchWithLoader('http://localhost:8080/auth/logout', {
             method: 'GET',
             credentials: 'include'
         });
@@ -29,7 +31,7 @@ export const logoutUser = async() => {
 
 export const getUserInfo = async () => {
     try {
-        const response = await fetch('http://localhost:8080/users/me', {
+        const response = await fetchWithLoader('http://localhost:8080/users/me', {
             method: 'GET',
             credentials: 'include'
         });
@@ -67,7 +69,7 @@ export const changeUserInfo = async(userData) => {
             email: userData.email,
             avatarUrl: ''
         }
-            const response = await fetch('http://localhost:8080/users/me', {
+            const response = await fetchWithLoader('http://localhost:8080/users/me', {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
@@ -82,7 +84,17 @@ export const changeUserInfo = async(userData) => {
                 throw new Error(data.message || "Error desconocido");
             }
 
-            return data;
+            showAlert({
+                title: 'Modificación de datos',
+                text: data.message,
+                icon: 'success',
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: "Aceptar",
+                onConfirm: () => {
+                    return data;
+                }
+            });
+
         }
         catch (err) {
             showAlert({
@@ -98,7 +110,7 @@ export const changeUserInfo = async(userData) => {
 
 export const loginUser = async (username, password) => {
     try {
-        const response = await fetch('http://localhost:8080/auth/login', {
+        const response = await fetchWithLoader('http://localhost:8080/auth/login', {
             method: 'POST',
             credentials: 'include',
             headers: {
@@ -110,7 +122,7 @@ export const loginUser = async (username, password) => {
         });
 
         if (!response.ok) {
-            let data = await response.json();
+            const data = await response.json();
             throw new Error(data.message || "Error desconocido");
         }
     }
@@ -128,7 +140,7 @@ export const loginUser = async (username, password) => {
 
 export const registerUser = async (registerData) => {
     try {
-        const response = await fetch('http://localhost:8080/auth/register', {
+        const response = await fetchWithLoader('http://localhost:8080/auth/register', {
             method: 'POST',
             credentials: 'include',
             headers: {
@@ -137,9 +149,8 @@ export const registerUser = async (registerData) => {
             body: JSON.stringify(registerData)
         });
 
-        const data = await response.json();
-
         if (!response.ok) {
+            const data = await response.json();
             throw new Error(data.message || "Error desconocido");
         }
     }
@@ -159,7 +170,7 @@ export const registerUser = async (registerData) => {
 export const changePassword = async (passwordData) => {
     const token = localStorage.getItem('token');
     try {
-        const response = await fetch('http://localhost:8080/users/me/password', {
+        const response = await fetchWithLoader('http://localhost:8080/users/me/password', {
             method: 'POST',
             credentials: 'include',
             headers: {
@@ -177,7 +188,16 @@ export const changePassword = async (passwordData) => {
             throw new Error(data.message);
         }
 
-        return data;
+        showAlert({
+            title: 'Modificación de datos',
+            text: data.message,
+            icon: 'success',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: "Aceptar",
+            onConfirm: () => {
+                return data;
+            }
+        });
     }
     catch(err) {
         showAlert({
@@ -195,7 +215,7 @@ export const changeAvatar = async (file) => {
     formData.append('file', file);
     const token = localStorage.getItem('token');
     try {
-        const response = await fetch('http://localhost:8080/users/me/avatar', {
+        const response = await fetchWithLoader('http://localhost:8080/users/me/avatar', {
             method: 'POST',
             credentials: 'include',
             body: formData,
@@ -222,7 +242,7 @@ export const changeAvatar = async (file) => {
 export const getAvatar = async (filename) => {
         const token = localStorage.getItem('token');
         try {
-            const response = await fetch(`http://localhost:8080/users/me/avatar/${filename}`, {
+            const response = await fetchWithLoader(`http://localhost:8080/users/me/avatar/${filename}`, {
                 method: "GET",
                 credentials: 'include'
             });
