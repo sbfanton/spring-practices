@@ -30,12 +30,16 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class UserService {
 
     @Value("${uploads.path}")
     private String uploadsPath;
+
+    @Value("${base.url}")
+    private String baseUrl;
 
     @Autowired
     private UserRepository userRepository;
@@ -50,7 +54,10 @@ public class UserService {
     private JwtService jwtService;
 
     @Autowired
-    private AuthService authService;
+    private RedisTokenService redisTokenService;
+
+    @Autowired
+    private EmailService emailService;
 
     @Autowired
     private UserMapper userMapper;
@@ -87,7 +94,7 @@ public class UserService {
         return generateAuthResponse(user);
     }
 
-    public AuthResponseDTO register(RegisterDTO registerDTO) throws ServiceException {
+    public AuthResponseDTO register(RegisterDTO registerDTO) throws Exception {
         if(existsByUsername(registerDTO.getUsername()))
             throw new ServiceException("El nombre de usuario ya existe");
 
@@ -107,6 +114,8 @@ public class UserService {
                 .build();
 
         saveUser(user);
+
+        generateAndSendEmailValidationToken(user);
 
         return generateAuthResponse(user);
     }
@@ -140,6 +149,9 @@ public class UserService {
             }
             user.setUsername(username);
             saveUser(user);
+
+            if(!user.getIsEmailVerified())
+                generateAndSendEmailValidationToken(user);
         }
 
         return generateAuthResponse(usr != null ? usr : user);
@@ -166,6 +178,9 @@ public class UserService {
                         false
         );
         saveUser(user);
+
+        if(!user.getIsEmailVerified())
+            generateAndSendEmailValidationToken(user);
 
         return StatusDTO.builder()
                 .message("Usuario editado correctamente")
@@ -288,4 +303,45 @@ public class UserService {
                 .refreshToken(refreshToken)
                 .build();
     }
+
+    private void generateAndSendEmailValidationToken(User user) throws Exception {
+        String token = UUID.randomUUID().toString();
+        redisTokenService.saveEmailToken(token, user.getEmail());
+
+        String link = baseUrl + "/mails/validate?token=" + token;
+        emailService.sendMailVerificationMessage(user.getEmail(), link);
+    }
+
+    public String resendVerificationEmail(String email) throws Exception {
+        User user = userRepository.findByEmail(email).orElse(null);
+        if (user == null) {
+            throw new ServiceException("No existe el usuario con el mail especificado.");
+        }
+        if (user.getIsEmailVerified()) {
+            throw new ServiceException("Email ya verificado.");
+        }
+
+        generateAndSendEmailValidationToken(user);
+        return "Correo de validación reenviado";
+    }
+
+    public String validateEmail(String token) throws Exception {
+        String email = redisTokenService.getEmailByToken(token);
+        if (email == null) {
+            throw new ServiceException("Link de validación de mail incorrecto. Intente nuevamente.");
+        }
+
+        User user = userRepository.findByEmail(email).orElse(null);
+        if (user == null) {
+            throw new ServiceException("No existe el usuario con el mail especificado.");
+        }
+
+        user.setIsEmailVerified(true);
+        userRepository.save(user);
+
+        redisTokenService.deleteEmailToken(token);
+
+        return "OK";
+    }
+
 }

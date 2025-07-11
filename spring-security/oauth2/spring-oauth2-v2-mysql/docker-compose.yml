@@ -1,0 +1,18 @@
+version: '3.3'
+
+services:
+  mysql:
+    image: mysql:8.0.27
+    container_name: mysql-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: oauth2_v2_db
+      MYSQL_USER: oauth-user
+      MYSQL_PASSWORD: oauth-pass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+volumes:
+  mysql-data:

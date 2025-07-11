@@ -12,5 +12,5 @@ CREATE TABLE IF NOT EXISTS users (
     provider_id VARCHAR(500) NOT NULL,
     UNIQUE (username),
     UNIQUE (email, provider, provider_id)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
