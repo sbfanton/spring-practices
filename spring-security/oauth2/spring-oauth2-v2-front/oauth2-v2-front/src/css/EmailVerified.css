@@ -1,0 +1,45 @@
+.email-verified-title {
+    font-size: 2rem;
+    line-height: 2rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+
+.email-verified-msg {
+    color: #4b5563;
+    margin-bottom: 1rem;
+    text-align: center;
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+}
+
+.login-button {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background-color: #2563eb;
+    color: #ffffff;
+    border-radius: 0.75rem;
+    transition: background-color 0.2s ease;
+    width: fit-content;
+    font-weight: bold;
+}
+
+.login-button:hover {
+    background-color: #1d4ed8;
+    color: #ffffff;
+}
+
+.success-icon {
+    color: #22c55e;
+    font-size: 3.75rem;
+    line-height: 1;
+    margin-bottom: 1rem;
+}
+
+.error-icon {
+    color: red;
+    font-size: 3.75rem;
+    line-height: 1;
+    margin-bottom: 1rem;
+}

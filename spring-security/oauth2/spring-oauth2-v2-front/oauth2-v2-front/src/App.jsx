@@ -7,6 +7,7 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import EditUser from './pages/EditUser';
 import Callback from "./pages/Callback";
+import EmailVerified from "./pages/EmailVerified";
 import ParticlesBackground from './components/ParticlesBackground';
 import './css/App.css';
 import './css/AnimatedBackground.css';
@@ -23,7 +24,14 @@ function AppRoutes() {
       <div className="background">
         <div>
           <Routes>
-            <Route path="/login" element={<Login />} />
+            <Route
+                path="/login"
+                element={
+                  isAuthenticated
+                      ? <Navigate to="/dashboard" replace />
+                      : <Login />
+                }
+            />
             <Route path="/register" element={<Register />} />
             <Route path="/editUser" element={
                 isAuthenticated ? <EditUser /> : <Navigate to="/login" />
@@ -35,6 +43,7 @@ function AppRoutes() {
             <Route path="/" element={
               isAuthenticated ? <Dashboard /> : <Navigate to="/login" />
             } />
+            <Route path="/email-verified" element={<EmailVerified />} />
           </Routes>
         </div>
       </div>

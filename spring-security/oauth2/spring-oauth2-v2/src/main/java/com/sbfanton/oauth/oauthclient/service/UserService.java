@@ -1,5 +1,6 @@
 package com.sbfanton.oauth.oauthclient.service;
 
+import com.sbfanton.oauth.oauthclient.exception.EmailVerificationException;
 import com.sbfanton.oauth.oauthclient.exception.OAuthException;
 import com.sbfanton.oauth.oauthclient.exception.ServiceException;
 import com.sbfanton.oauth.oauthclient.model.User;
@@ -10,12 +11,14 @@ import com.sbfanton.oauth.oauthclient.utils.constants.AuthProviderType;
 import com.sbfanton.oauth.oauthclient.utils.constants.CodeTypes;
 import com.sbfanton.oauth.oauthclient.utils.constants.DateFormatter;
 import com.sbfanton.oauth.oauthclient.utils.constants.TokenConstants;
+import jakarta.servlet.http.HttpServletResponse;
 import net.datafaker.Faker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -28,6 +31,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -312,7 +316,7 @@ public class UserService {
         emailService.sendMailVerificationMessage(user.getEmail(), link);
     }
 
-    public String resendVerificationEmail(String email) throws Exception {
+    public StatusDTO resendVerificationEmail(String email) throws Exception {
         User user = userRepository.findByEmail(email).orElse(null);
         if (user == null) {
             throw new ServiceException("No existe el usuario con el mail especificado.");
@@ -322,18 +326,22 @@ public class UserService {
         }
 
         generateAndSendEmailValidationToken(user);
-        return "Correo de validación reenviado";
+        return StatusDTO.builder()
+                .code("success")
+                .message("Correo de validación de email enviado")
+                .timestamp(DateFormatter.basicFormatter(DateFormatter.BASIC_FORMATTER))
+                .build();
     }
 
-    public String validateEmail(String token) throws Exception {
+    public void validateEmail(String token, HttpServletResponse response) throws Exception {
         String email = redisTokenService.getEmailByToken(token);
         if (email == null) {
-            throw new ServiceException("Link de validación de mail incorrecto. Intente nuevamente.");
+            throw new EmailVerificationException("Link de validación de mail incorrecto. Intente nuevamente.");
         }
 
         User user = userRepository.findByEmail(email).orElse(null);
         if (user == null) {
-            throw new ServiceException("No existe el usuario con el mail especificado.");
+            throw new EmailVerificationException("No existe el usuario con el mail especificado.");
         }
 
         user.setIsEmailVerified(true);
@@ -341,7 +349,14 @@ public class UserService {
 
         redisTokenService.deleteEmailToken(token);
 
-        return "OK";
+        ResponseCookie cookie = ResponseCookie.from("email_verified", "true")
+                .httpOnly(true)
+                .sameSite("Lax")
+                .maxAge(Duration.ofMinutes(1))
+                .path("/")
+                .build();
+
+        response.setHeader("Set-Cookie", cookie.toString());
     }
 
 }

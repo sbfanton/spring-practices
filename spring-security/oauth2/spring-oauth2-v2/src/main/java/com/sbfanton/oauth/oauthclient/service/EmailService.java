@@ -21,7 +21,7 @@ public class EmailService {
         helper.setSubject("Verificación de correo");
 
         String htmlMsg = "<h3>¡Hola!</h3>" +
-                "<p>Por favor, haz click en el siguiente enlace para validar tu correo electrónico:</p>" +
+                "<p>Por favor, haz click en el siguiente enlace para validar tu correo electrónico, recuerda que el mismo es válido por 24hs:</p>" +
                 "<a href=\"" + linkUrl + "\">Verificación de email</a>" +
                 "<br><br>Saludos" +
                 "<br><br><i>Equipo de OAuth Test Project<i>";

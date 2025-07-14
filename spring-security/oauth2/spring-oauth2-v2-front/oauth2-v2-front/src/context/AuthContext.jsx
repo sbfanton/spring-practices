@@ -19,7 +19,8 @@ export function AuthProvider({ children }) {
         username: data.username,
         avatarUrl: data.avatarUrl || "",
         web: data.web || "",
-        email: data.email || ""
+        email: data.email || "",
+        isEmailVerified: data.isEmailVerified
       });
       setIsAuthenticated(true);
     } catch (error) {

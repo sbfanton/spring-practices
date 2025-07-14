@@ -1,5 +1,6 @@
 package com.sbfanton.oauth.oauthclient.controller;
 
+import com.sbfanton.oauth.oauthclient.exception.EmailVerificationException;
 import com.sbfanton.oauth.oauthclient.exception.OAuthException;
 import com.sbfanton.oauth.oauthclient.exception.ServiceException;
 import com.sbfanton.oauth.oauthclient.model.dto.StatusDTO;
@@ -52,5 +53,20 @@ public class GlobalExceptionHandler {
         response.addCookie(errorCookie);
 
         response.sendRedirect(frontUrl + "/auth/callback");
+    }
+
+    @ExceptionHandler({ EmailVerificationException.class })
+    public void emailValidationError(HttpServletResponse response, Exception ex) throws IOException {
+        String errMsg = ex.getMessage();
+        String codedMsg = URLEncoder.encode(errMsg, StandardCharsets.UTF_8)
+                .replace("+", "%20");
+        Cookie errorCookie = new Cookie("email_verification_error", codedMsg);
+        errorCookie.setPath("/");
+        errorCookie.setMaxAge(30);
+        errorCookie.setHttpOnly(false);
+        errorCookie.setSecure(false);
+        response.addCookie(errorCookie);
+
+        response.sendRedirect(frontUrl + "/email-verified");
     }
 }

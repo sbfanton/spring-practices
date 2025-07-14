@@ -34,3 +34,20 @@
         font-size: 0.875rem;
         margin-top: 0.3rem;
     }
+
+.resend-button {
+    margin-top: 0.25rem;
+    padding: 0.4rem 0.8rem;
+    background-color: #4071ef;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    width: 100%;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.resend-button:hover {
+    border: #004dff;
+}

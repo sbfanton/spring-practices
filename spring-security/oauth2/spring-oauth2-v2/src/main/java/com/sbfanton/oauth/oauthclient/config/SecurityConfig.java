@@ -22,7 +22,12 @@ public class SecurityConfig {
         http
                 .cors(Customizer.withDefaults())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/auth/**", "/oauth2/**", "/mails/validate").permitAll()
+                .requestMatchers(
+                        "/",
+                        "/auth/**",
+                        "/oauth2/**",
+                        "/mails/validate",
+                        "/mails/email-validated-status").permitAll()
                 .anyRequest().authenticated()
             ).csrf(AbstractHttpConfigurer::disable)
             .formLogin(AbstractHttpConfigurer::disable)

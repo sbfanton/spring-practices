@@ -6,7 +6,7 @@ import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import Container from '../components/Container';
 import IconButton from '../components/IconButton';
 import EditableAvatar from "../components/EditableAvatar.jsx";
-import { changePassword, getUserInfo, changeUserInfo } from "../services/UserService.js";
+import { changePassword, getUserInfo, changeUserInfo, resendVerificationEmail } from "../services/UserService.js";
 import alertService from "../helpers/alertService.js";
 import { useAuth } from "../context/AuthContext.jsx";
 
@@ -26,6 +26,9 @@ export default function EditUser() {
     newPassword: '',
     confirmPassword: '',
   });
+
+  const [resent, setResent] = useState(false);
+  const [sending, setSending] = useState(false);
 
   const [errors, setErrors] = useState({});
 
@@ -109,6 +112,10 @@ export default function EditUser() {
 
   const avatarUrl = "";
 
+  const resendVerificationMail = async () => {
+    await resendVerificationEmail(userData.email);
+  }
+
   useEffect( () => {
     async function fetchData() {
       const data = await getUserInfo();
@@ -143,6 +150,17 @@ export default function EditUser() {
                 {errors.username && <p className="error">{errors.username}</p>}
             </div>
 
+          <div className="form-group">
+            <label>Sitio web</label>
+            <input
+                type="url"
+                name="website"
+                value={generalData.website}
+                onChange={handleGeneralChange}
+                placeholder="www.mi-web.com"
+            />
+          </div>
+
             <div className="form-group">
             <label>Email</label>
             <input
@@ -155,16 +173,17 @@ export default function EditUser() {
             {errors.email && <p className="error">{errors.email}</p>}
             </div>
 
-            <div className="form-group">
-            <label>Sitio web</label>
-            <input
-                type="url"
-                name="website"
-                value={generalData.website}
-                onChange={handleGeneralChange}
-                placeholder="www.mi-web.com"
-            />
-            </div>
+          {userData && userData.isEmailVerified === false && (
+              <div className="email-verification">
+                <button
+                    type="button"
+                    onClick={resendVerificationMail}
+                    className="resend-button"
+                >
+                  Verificar email
+                </button>
+              </div>
+          )}
 
             <button type="submit" className='save-edit-button'>Guardar datos</button>
         </form>

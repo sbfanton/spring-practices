@@ -61,7 +61,6 @@ export const getUserInfo = async () => {
 }
 
 export const changeUserInfo = async(userData) => {
-    const token = localStorage.getItem('token');
     try {
         const info = {
             username: userData.username,
@@ -168,7 +167,6 @@ export const registerUser = async (registerData) => {
 
 
 export const changePassword = async (passwordData) => {
-    const token = localStorage.getItem('token');
     try {
         const response = await fetchWithLoader('http://localhost:8080/users/me/password', {
             method: 'POST',
@@ -210,10 +208,46 @@ export const changePassword = async (passwordData) => {
     }
 }
 
+export const resendVerificationEmail = async (email) => {
+    try {
+        const url = new URL('http://localhost:8080/mails/resend-validation');
+        url.searchParams.append('email', email);
+        const response = await fetchWithLoader(url.toString(), {
+            method: 'POST',
+            credentials: 'include',
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message);
+        }
+
+        showAlert({
+            title: 'Enlace de validación enviado',
+            text: data.message,
+            icon: 'success',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: "Aceptar",
+            onConfirm: () => {
+                return data;
+            }
+        });
+    }
+    catch(err) {
+        showAlert({
+            title: 'Error al cambiar la contraseña del usuario',
+            text: err.message,
+            icon: 'error',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: "Aceptar"
+        });
+    }
+}
+
 export const changeAvatar = async (file) => {
     const formData = new FormData();
     formData.append('file', file);
-    const token = localStorage.getItem('token');
     try {
         const response = await fetchWithLoader('http://localhost:8080/users/me/avatar', {
             method: 'POST',
@@ -240,7 +274,6 @@ export const changeAvatar = async (file) => {
     }
 }
 export const getAvatar = async (filename) => {
-        const token = localStorage.getItem('token');
         try {
             const response = await fetchWithLoader(`http://localhost:8080/users/me/avatar/${filename}`, {
                 method: "GET",
