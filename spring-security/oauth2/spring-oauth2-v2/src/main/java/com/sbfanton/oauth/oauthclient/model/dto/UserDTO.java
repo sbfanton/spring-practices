@@ -31,4 +31,6 @@ public class UserDTO {
     private String web;
 
     private String provider;
+
+    private Boolean hasPassword;
 }

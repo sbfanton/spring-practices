@@ -12,9 +12,13 @@ import lombok.Setter;
 @Builder
 public class PasswordEditDTO {
 
-    @NotBlank(message = "Debe enviar la contraseña actual")
     private String currentPassword;
 
     @NotBlank(message = "Debe enviar la nueva contraseña")
     private String newPassword;
+
+    @NotBlank(message = "Debe enviar la confirmación de la nueva contraseña")
+    private String confirmPassword;
+
+    private Boolean isFirstPassword;
 }

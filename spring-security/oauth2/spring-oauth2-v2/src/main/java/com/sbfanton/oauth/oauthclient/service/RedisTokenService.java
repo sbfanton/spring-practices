@@ -18,7 +18,8 @@ public class RedisTokenService {
         redisTemplate.opsForValue().set(
                 EMAIL_PREFIX + token,
                 email,
-                Duration.ofHours(24));
+                //Duration.ofHours(24));
+                Duration.ofSeconds(20));
     }
 
     public String getEmailByToken(String token) {

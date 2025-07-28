@@ -197,8 +197,13 @@ public class UserService {
         User user = getById(id).orElse(null);
         if(user == null)
             throw new ServiceException("Usuario no encontrado");
-        checkAuthUser(user.getUsername(), passwordEditDTO.getCurrentPassword());
-        user.setPassword(passwordEditDTO.getNewPassword());
+        if(!passwordEditDTO.getIsFirstPassword()) {
+            checkAuthUser(user.getUsername(), passwordEditDTO.getCurrentPassword());
+        }
+        if(!passwordEditDTO.getNewPassword().equals(passwordEditDTO.getConfirmPassword())) {
+            throw new ServiceException("La nueva contraseña es diferente a la contraseña de confirmación.");
+        }
+        user.setPassword(passwordEncoder.encode(passwordEditDTO.getNewPassword()));
         saveUser(user);
         return StatusDTO.builder()
                 .message("Contraseña cambiada correctamente.")

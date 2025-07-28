@@ -5,22 +5,13 @@ import com.sbfanton.oauth.oauthclient.model.User;
 import com.sbfanton.oauth.oauthclient.model.dto.FileDTO;
 import com.sbfanton.oauth.oauthclient.model.dto.PasswordEditDTO;
 import com.sbfanton.oauth.oauthclient.model.dto.UserDTO;
-import com.sbfanton.oauth.oauthclient.model.mapper.UserMapper;
-import com.sbfanton.oauth.oauthclient.service.JwtService;
 import com.sbfanton.oauth.oauthclient.service.UserService;
-import com.sbfanton.oauth.oauthclient.utils.GenericMapper;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/users")

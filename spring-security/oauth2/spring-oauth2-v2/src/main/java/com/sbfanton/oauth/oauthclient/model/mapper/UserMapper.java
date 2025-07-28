@@ -16,6 +16,7 @@ public class UserMapper {
                 .email(user.getEmail())
                 .isEmailVerified(user.getIsEmailVerified())
                 .provider(user.getProvider().name())
+                .hasPassword(user.getPassword() != null)
                 .build();
     }
 }

@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useNavigate } from "react-router-dom";
 import { getUserInfo, logoutUser } from "../services/UserService.js";
 
 const AuthContext = createContext();
@@ -10,7 +9,6 @@ export function AuthProvider({ children }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
 
   const checkAuth = async () => {
     try {
@@ -20,7 +18,8 @@ export function AuthProvider({ children }) {
         avatarUrl: data.avatarUrl || "",
         web: data.web || "",
         email: data.email || "",
-        isEmailVerified: data.isEmailVerified
+        isEmailVerified: data.isEmailVerified,
+        hasPassword: data.hasPassword
       });
       setIsAuthenticated(true);
     } catch (error) {

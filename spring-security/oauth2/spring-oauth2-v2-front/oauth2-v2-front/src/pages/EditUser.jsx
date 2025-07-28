@@ -17,14 +17,16 @@ export default function EditUser() {
 
  const [generalData, setGeneralData] = useState({
      username: userData.username,
-    email: userData.email,
-    website: userData.web,
+     email: userData.email,
+     website: userData.web,
+     hasPassword: userData.hasPassword
   });
 
   const [passwordData, setPasswordData] = useState({
     currentPassword: '',
     newPassword: '',
     confirmPassword: '',
+    isFirstPassword: !userData.hasPassword
   });
 
   const [resent, setResent] = useState(false);
@@ -74,28 +76,24 @@ export default function EditUser() {
 
     let errs = {};
 
-    if (!passwordData.currentPassword) errs.currentPassword = 'Debe introducir la contraseña actual';
+    if (userData.hasPassword && !passwordData.currentPassword) errs.currentPassword = 'Debe introducir la contraseña actual';
     if (!isStrongPassword(passwordData.newPassword)) errs.newPassword = 'Contraseña débil. Debe tener mínimo 8 caracteres, mayúscula, minúscula, número y carácter especial.';
     if (passwordData.newPassword !== passwordData.confirmPassword) errs.confirmPassword = 'Las contraseñas no coinciden.';
 
     setErrors(errs);
 
     if (Object.keys(errs).length === 0) {
-        const data = await changePassword(passwordData);
-        if(data.message) {
+        await changePassword(passwordData);
+        setUserData(prev => ({
+            ...prev,
+            hasPassword: true
+          }));
           setPasswordData({
             currentPassword: '',
             newPassword: '',
-            confirmPassword: ''
+            confirmPassword: '',
+            isFirstPassword: !userData.hasPassword
           })
-          alertService({
-            title: "Cambio de contraseña",
-            text: data.message,
-            icon: "success",
-            confirmButtonText: "Aceptar",
-            confirmButtonColor: "#098e00"
-          })
-        }
     }
   };
 
@@ -191,9 +189,12 @@ export default function EditUser() {
         <hr className="divider" />
 
         {/* Formulario de cambio de contraseña */}
-        <h3>Cambiar contraseña</h3>
+        {userData === null ? null : (
+          userData.hasPassword ? <h3>Cambiar contraseña</h3> : <h3>Setear contraseña</h3>
+        )}
+
         <form onSubmit={handlePasswordSubmit} noValidate>
-            <div className="form-group">
+            {userData.hasPassword && (<div className="form-group" >
             <label>Contraseña actual</label>
             <input
                 type="password"
@@ -202,7 +203,7 @@ export default function EditUser() {
                 onChange={handlePasswordChange}
             />
             {errors.currentPassword && <p className="error">{errors.currentPassword}</p>}
-            </div>
+            </div>)}
 
             <div className="form-group">
             <label>Nueva contraseña</label>

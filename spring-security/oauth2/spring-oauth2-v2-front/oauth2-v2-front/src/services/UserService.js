@@ -174,10 +174,7 @@ export const changePassword = async (passwordData) => {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                currentPassword: passwordData.currentPassword,
-                newPassWord: passwordData.newPassword
-            })
+            body: JSON.stringify(passwordData)
         });
 
         const data = await response.json();
