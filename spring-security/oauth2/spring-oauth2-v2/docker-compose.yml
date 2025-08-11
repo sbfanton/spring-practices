@@ -1,25 +1,11 @@
 version: '3.3'
 
 services:
-  springboot-app:
-    build: 
-      context: ./spring-oauth2-v2-back
-      dockerfile: Dockerfile
-    container_name: springboot_oauth2_v2
-    ports:
-      - "8080:8080"
-    stdin_open: true
-    tty: true
-    env_file:
-      - ./spring-oauth2-v2-back/.env
-    depends_on:
-      - mysql
-      - redis
-
   node-app:
     build:
       context: ./spring-oauth2-v2-front
       dockerfile: Dockerfile
+    container_name: front-oauth2-v2
     volumes:
       - .:/app
     ports:
@@ -31,7 +17,7 @@ services:
 
   mysql:
     image: mysql:8.0.27
-    container_name: mysql-db
+    container_name: mysql-db-oauth2-v2
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: oauth2_v2_db
@@ -43,7 +29,7 @@ services:
       - mysql-data:/var/lib/mysql
 
   redis:
-    container_name: redis
+    container_name: redis-oauth2-v2
     image: redis:7.0.10
     command: ["redis-server", "--appendonly", "yes"]
     sysctls:
