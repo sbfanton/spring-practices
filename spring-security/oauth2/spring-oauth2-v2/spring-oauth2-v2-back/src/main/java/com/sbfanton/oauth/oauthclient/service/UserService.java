@@ -303,6 +303,7 @@ public class UserService {
         String accessToken = jwtService.getToken(
                 user,
                 TokenConstants.ACCESS_TOKEN_DURATION);
+                //1000L * 10); // para pruebas
         String refreshToken = jwtService.getToken(
                 user,
                 TokenConstants.REFRESH_TOKEN_DURATION);

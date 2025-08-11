@@ -32,7 +32,11 @@ function AppRoutes() {
                       : <Login />
                 }
             />
-            <Route path="/register" element={<Register />} />
+            <Route path="/register" element={
+              isAuthenticated
+              ? <Navigate to="/dashboard" replace />
+              : <Register />
+            } />
             <Route path="/editUser" element={
                 isAuthenticated ? <EditUser /> : <Navigate to="/login" />
             } />

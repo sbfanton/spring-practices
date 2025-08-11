@@ -5,6 +5,7 @@ import com.sbfanton.oauth.oauthclient.model.dto.LoginDTO;
 import com.sbfanton.oauth.oauthclient.model.dto.RegisterDTO;
 import com.sbfanton.oauth.oauthclient.service.JwtService;
 import com.sbfanton.oauth.oauthclient.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,7 @@ public class AuthController {
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, cookiesMap.get("access_token").toString())
                 .header(HttpHeaders.SET_COOKIE, cookiesMap.get("refresh_token").toString())
+                .header(HttpHeaders.SET_COOKIE, cookiesMap.get("session_id").toString())
                 .build();
     }
 
@@ -44,12 +46,14 @@ public class AuthController {
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, cookiesMap.get("access_token").toString())
                 .header(HttpHeaders.SET_COOKIE, cookiesMap.get("refresh_token").toString())
+                .header(HttpHeaders.SET_COOKIE, cookiesMap.get("session_id").toString())
                 .build();
     }
 
     @GetMapping("/logout")
-    public ResponseEntity<?> logout(HttpServletResponse response) {
-        jwtService.invalidateTokenCookies(response);
+    public ResponseEntity<?> logout(HttpServletRequest request,
+                                    HttpServletResponse response) throws Exception {
+        jwtService.invalidateTokenCookies(request, response);
         return ResponseEntity.noContent().build();
     }
 }

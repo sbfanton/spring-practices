@@ -3,7 +3,9 @@ package com.sbfanton.oauth.oauthclient.service;
 import com.sbfanton.oauth.oauthclient.model.User;
 import com.sbfanton.oauth.oauthclient.model.dto.AuthResponseDTO;
 import com.sbfanton.oauth.oauthclient.utils.RandomKeyGen;
+import com.sbfanton.oauth.oauthclient.utils.constants.TokenConstants;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -11,6 +13,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
@@ -28,6 +31,9 @@ import java.util.function.Function;
 public class JwtService {
 
     private String secretKey;
+
+    @Autowired
+    private RedisTokenService redisTokenService;
 
     @PostConstruct
     public void generateSKey() {
@@ -73,21 +79,27 @@ public class JwtService {
         return getClaim(token, Claims::getExpiration);
     }
 
-    private boolean isTokenExpired(String token) {
+    public boolean isTokenExpired(String token) {
+        if(token == null)
+            return true;
         return getExpirationDate(token).before(new Date(System.currentTimeMillis()));
     }
 
-    public boolean isTokenValid(String token, User user) {
+    public boolean isTokenUserValid(String token, User user) {
         String userId = getUserIdFromToken(token);
-        return (userId.equals(String.valueOf(user.getId())) && !isTokenExpired(token));
+        return userId.equals(String.valueOf(user.getId()));
     }
 
     private Claims getClaims(String token) {
-        return Jwts.parser()
-                .verifyWith(getKey())
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
+        try {
+            return Jwts.parser()
+                    .verifyWith(getKey())
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
+        } catch (ExpiredJwtException e) {
+            return e.getClaims();
+        }
     }
 
     public <T> T getClaim(String token, Function<Claims, T> claimsResolver) {
@@ -96,7 +108,7 @@ public class JwtService {
         return claimsResolver.apply(claims);
     }
 
-    public String getTokenFromRequest(HttpServletRequest request) {
+    public String getAccessTokenFromRequest(HttpServletRequest request) {
         final String authHeaderPreffix = "Bearer ";
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         if(StringUtils.hasText(authHeader) && authHeader.startsWith(authHeaderPreffix)) {
@@ -106,6 +118,30 @@ public class JwtService {
         if (request.getCookies() != null) {
             for (Cookie cookie : request.getCookies()) {
                 if ("access_token".equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public String getRefreshTokenFromRequest(HttpServletRequest request) {
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if ("refresh_token".equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public String getSessionIdFromRequest(HttpServletRequest request) {
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if ("session_id".equals(cookie.getName())) {
                     return cookie.getValue();
                 }
             }
@@ -127,27 +163,43 @@ public class JwtService {
     }
 
     public Map<String, ResponseCookie> generateTokenCookies(AuthResponseDTO authResponseDTO) {
+        String userId = getUserIdFromToken(authResponseDTO.getRefreshToken());
+        String sessionId = redisTokenService.saveRefreshToken(userId, authResponseDTO.getRefreshToken());
+
         ResponseCookie accessTokenCookie = ResponseCookie.from("access_token", authResponseDTO.getAccessToken())
                 .httpOnly(true)
                 .path("/")
-                .maxAge(Duration.ofHours(1))
+                .maxAge(Duration.ofSeconds(TokenConstants.ACCESS_TOKEN_DURATION))
                 .sameSite("Lax")
                 .build();
 
         ResponseCookie refreshTokenCookie = ResponseCookie.from("refresh_token", authResponseDTO.getRefreshToken())
                 .httpOnly(true)
                 .path("/")
-                .maxAge(Duration.ofHours(1))
+                .maxAge(Duration.ofSeconds(TokenConstants.REFRESH_TOKEN_DURATION))
+                .sameSite("Lax")
+                .build();
+
+        ResponseCookie sessionIdCookie = ResponseCookie.from("session_id", sessionId)
+                .httpOnly(true)
+                .path("/")
+                .maxAge(Duration.ofSeconds(TokenConstants.ACCESS_TOKEN_DURATION))
                 .sameSite("Lax")
                 .build();
 
         Map<String, ResponseCookie> cookiesMap = new HashMap<>();
         cookiesMap.put("access_token", accessTokenCookie);
         cookiesMap.put("refresh_token", refreshTokenCookie);
+        cookiesMap.put("session_id", sessionIdCookie);
         return cookiesMap;
     }
 
-    public HttpServletResponse invalidateTokenCookies(HttpServletResponse response) {
+    public HttpServletResponse invalidateTokenCookies(HttpServletRequest request, HttpServletResponse response) {
+        String refreshToken = getRefreshTokenFromRequest(request);
+        String sessionId = getSessionIdFromRequest(request);
+        String userId = getUserIdFromToken(refreshToken);
+        redisTokenService.deleteRefreshToken(userId, sessionId);
+
         ResponseCookie accessCookie = ResponseCookie.from("access_token", "")
                 .httpOnly(true)
                 .path("/")
@@ -162,8 +214,16 @@ public class JwtService {
                 .sameSite("Lax")
                 .build();
 
+        ResponseCookie sessionIdCookie = ResponseCookie.from("session_id", "")
+                .httpOnly(true)
+                .path("/")
+                .maxAge(0)
+                .sameSite("Lax")
+                .build();
+
         response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
         response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, sessionIdCookie.toString());
 
         return response;
     }

@@ -29,7 +29,7 @@ export const logoutUser = async() => {
     }
 }
 
-export const getUserInfo = async () => {
+export const getUserInfo = async (withRedirect) => {
     try {
         const response = await fetchWithLoader('http://localhost:8080/users/me', {
             method: 'GET',
