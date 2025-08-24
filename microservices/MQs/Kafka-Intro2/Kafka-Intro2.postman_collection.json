@@ -1,0 +1,72 @@
+{
+	"info": {
+		"_postman_id": "57cb4ca6-b351-4f5b-a92b-b4d7fa7be336",
+		"name": "Kafka-Intro2",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "SendMessage",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/message?message=holaKafka&topic=my-topic-2",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"message"
+					],
+					"query": [
+						{
+							"key": "message",
+							"value": "holaKafka"
+						},
+						{
+							"key": "topic",
+							"value": "my-topic-2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "SendRiderLocation",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"riderId\": \"12345\",\n    \"latitude\": 23.77,\n    \"longitude\": 14.55\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/rider-location?topic=my-topic-2",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"rider-location"
+					],
+					"query": [
+						{
+							"key": "topic",
+							"value": "my-topic-2"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
