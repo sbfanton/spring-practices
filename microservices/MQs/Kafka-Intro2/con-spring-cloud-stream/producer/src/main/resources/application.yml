@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: producer
+  cloud:
+    function:
+      definition: sendRiderLocation,sendRiderStatus
+    stream:
+      bindings:
+        sendRiderLocation-out-0: # sendRiderLocation es Supplier, solo va a la salida (out) de un topic en forma automatica
+          destination: topic-prueba
+          content-type: application/json
+        sendRiderStatus-out-0:
+          destination: my-topic-2
+          content-type: text/plain
+        manualSender-out-0: # manualSender no usa interfaz funcional, se envia con spring cloud al broker de forma manual, programatica o controlada
+          destination: topic-prueba
+          content-type: application/json
+      poller:
+        fixed-delay: 5000 # se manda el mensaje al topic cada 5 segs
+      kafka:
+        binder:
+          brokers: localhost:9092
+
+
+

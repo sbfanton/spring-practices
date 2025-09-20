@@ -11,7 +11,7 @@
 				"method": "POST",
 				"header": [],
 				"url": {
-					"raw": "localhost:8080/api/message?message=holaKafka&topic=my-topic-2",
+					"raw": "localhost:8080/api/message?message=holaKafka&topic=topic-prueba",
 					"host": [
 						"localhost"
 					],
@@ -27,7 +27,7 @@
 						},
 						{
 							"key": "topic",
-							"value": "my-topic-2"
+							"value": "topic-prueba"
 						}
 					]
 				}
@@ -49,7 +49,7 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:8080/api/rider-location?topic=my-topic-2",
+					"raw": "localhost:8080/api/rider-location?topic=topic-prueba",
 					"host": [
 						"localhost"
 					],
@@ -61,8 +61,64 @@
 					"query": [
 						{
 							"key": "topic",
-							"value": "my-topic-2"
+							"value": "topic-prueba"
 						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "SendRiderLocationWithSpringCloud",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"riderId\": \"12345\",\n    \"latitude\": 23.77,\n    \"longitude\": 14.55\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/send",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"send"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Uppercase",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "\"Hello\"",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/uppercase",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"uppercase"
 					]
 				}
 			},

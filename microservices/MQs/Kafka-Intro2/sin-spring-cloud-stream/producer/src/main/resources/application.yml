@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: producer
+  #kafka:
+    #producer:
+      #bootstrap-servers: localhost:9092
+  cloud:
+    function:
+      definition: uppercase
+    function.web.path: /api/uppercase
