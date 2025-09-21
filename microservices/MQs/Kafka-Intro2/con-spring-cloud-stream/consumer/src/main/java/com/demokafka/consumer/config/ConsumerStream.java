@@ -16,4 +16,11 @@ public class ConsumerStream {
                     "@" + location.getLatitude() + "-" + location.getLongitude());
         };
     }
+
+    @Bean
+    public Consumer<String> processRiderStatus() {
+        return status -> {
+            System.out.println("Received: " + status);
+        };
+    }
 }

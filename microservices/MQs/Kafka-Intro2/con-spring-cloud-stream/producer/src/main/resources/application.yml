@@ -3,8 +3,10 @@ spring:
     name: producer
   cloud:
     function:
-      definition: sendRiderLocation,sendRiderStatus
+      definition: sendRiderLocation;sendRiderStatus
     stream:
+      function:
+        definition: sendRiderLocation;sendRiderStatus
       bindings:
         sendRiderLocation-out-0: # sendRiderLocation es Supplier, solo va a la salida (out) de un topic en forma automatica
           destination: topic-prueba
